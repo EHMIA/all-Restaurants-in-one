@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:resturant_project/features/core/app_assets/app_assets.dart';
+import 'package:resturant_project/features/core/managers/review_manager.dart';
 import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/custom_text_bottom.dart';
 import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
@@ -17,6 +18,8 @@ class WriteReviewScreen extends StatefulWidget {
     this.numOfReviews,
     this.resSpace,
     this.category,
+    this.restaurantId,
+    this.userId,
   });
   final String? resName;
   final String? resImage;
@@ -24,6 +27,8 @@ class WriteReviewScreen extends StatefulWidget {
   final String? numOfReviews;
   final String? resSpace;
   final String? category;
+  final String? restaurantId;
+  final String? userId;
 
   @override
   State<WriteReviewScreen> createState() => _WriteReviewScreenState();
@@ -33,6 +38,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController reviewController = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
+  final GlobalKey<_RatingWidgetState> ratingWidgetKey = GlobalKey();
 
   List<File> selectedImages = [];
 
@@ -68,6 +74,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
   /// Post review and navigate back
   void _postReview() {
     String review = reviewController.text;
+    double rating = ratingWidgetKey.currentState?.rating ?? 0.0;
 
     if (review.isEmpty) {
       ScaffoldMessenger.of(
@@ -76,15 +83,39 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       return;
     }
 
-    // TODO: Save review to database/backend
-    // You can send the review data (title, review, selectedImages) to your backend here
+    if (rating == 0) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a rating')));
+      return;
+    }
+
+    // Create review data map to send back
+    final reviewData = {
+      'userId':
+          widget.userId ??
+          'user_1', // TODO: Replace with actual user ID from auth
+      'userName':
+          'Current User', // TODO: Replace with actual user name from firebase or auth
+      'userProfileImage': '', // TODO: Add user profile image
+      'title': titleController.text,
+      'review': review,
+      'rating': rating,
+      'images': selectedImages,
+      'timestamp': DateTime.now(),
+    };
+
+    // Save review to ReviewManager
+    if (widget.restaurantId != null) {
+      ReviewManager().addReview(widget.restaurantId!, reviewData);
+    }
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Review posted successfully!')),
     );
 
-    // Navigate back to restaurant review page
-    Navigator.of(context).pop();
+    // Navigate back and pass the review data
+    Navigator.of(context).pop(reviewData);
   }
 
   @override
@@ -227,7 +258,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
 
                       HeightSpace(height: 12),
 
-                      const RatingWidget(),
+                      RatingWidget(key: ratingWidgetKey),
 
                       HeightSpace(height: 28),
 
@@ -412,7 +443,9 @@ class RatingWidget extends StatefulWidget {
 }
 
 class _RatingWidgetState extends State<RatingWidget> {
-  double rating = 0;
+  double rating = 0.0;
+
+  double get getRating => rating;
 
   String getRatingText() {
     if (rating >= 4.5) return "Excellent!";

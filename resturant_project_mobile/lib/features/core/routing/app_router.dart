@@ -4,6 +4,7 @@ import 'package:resturant_project/features/auth/register_screen.dart';
 import 'package:resturant_project/features/core/routing/route_name.dart';
 import 'package:resturant_project/features/expolore_screen/explore_screen.dart';
 import 'package:resturant_project/features/home_screen/home_screen.dart';
+import 'package:resturant_project/features/profile_screen/settings_screen.dart';
 import 'package:resturant_project/features/review_page/review_page.dart';
 import 'package:resturant_project/layout_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/restaurant_page_screen.dart';
@@ -28,7 +29,7 @@ class AppRouter {
         name: RouteName.explorScreen,
         builder: (context, state) {
           final searchText = state.extra as String?;
-          return ExploreScreen(searchText: searchText,);
+          return ExploreScreen(searchText: searchText);
         },
       ),
       GoRoute(
@@ -42,6 +43,7 @@ class AppRouter {
           resSpace: (state.extra as Map<String, dynamic>)['resSpace'],
           category: (state.extra as Map<String, dynamic>)['category'],
           isOpen: (state.extra as Map<String, dynamic>)['isOpen'],
+          restaurantId: (state.extra as Map<String, dynamic>)['restaurantId'],
         ),
       ),
       GoRoute(
@@ -69,7 +71,14 @@ class AppRouter {
           numOfReviews: (state.extra as Map<String, dynamic>)['numOfReviews'],
           resSpace: (state.extra as Map<String, dynamic>)['resSpace'],
           category: (state.extra as Map<String, dynamic>)['category'],
+          restaurantId: (state.extra as Map<String, dynamic>)['restaurantId'],
+          userId: (state.extra as Map<String, dynamic>)['userId'],
         ),
+      ),
+      GoRoute(
+        path: RouteName.settingsPage,
+        name: RouteName.settingsPage,
+        builder: (context, state) => SettingsScreen(),
       ),
     ],
   );

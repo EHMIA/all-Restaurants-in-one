@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/core/app_assets/app_assets.dart';
+import 'package:resturant_project/features/core/routing/route_name.dart';
 import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/profile_screen/widgets/info_tile.dart';
@@ -198,6 +198,34 @@ class ProfileScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    HeightSpace(height: 12),
+                    GestureDetector(
+                      onTap: () {
+                        GoRouter.of(context).pushNamed(RouteName.settingsPage);
+                      },
+                      child: Container(
+                        width: 342.w,
+                        height: 56.h,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.r),
+                          border: Border.all(
+                            color: AppColors.primaryColor,
+                            width: 2,
+                          ),
+                        ),
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ),
                     HeightSpace(height: 40),
                   ],
                 ),
@@ -274,7 +302,7 @@ class ProfileScreen extends StatelessWidget {
                     childAspectRatio: 1.05,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    children: const [
+                    children: [
                       ProfileCard(
                         title: "My Favorites",
                         subtitle: "12 saved items",
@@ -283,6 +311,11 @@ class ProfileScreen extends StatelessWidget {
                         bgColor: Color(0xFFFDECEC),
                       ),
                       ProfileCard(
+                        onTap: () {
+                          GoRouter.of(
+                            context,
+                          ).pushNamed(RouteName.myReviewPgeScreen);
+                        },
                         title: "My Reviews",
                         subtitle: "8 published",
                         icon: Icons.star_border,

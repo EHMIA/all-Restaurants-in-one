@@ -6,9 +6,10 @@ class CustomUserReviewCard extends StatelessWidget {
   final String profileImageUrl;
   final String name;
   final String timeAgo;
-  final int rating;
+  final double rating;
   final String reviewText;
   final VoidCallback? onTap;
+  final VoidCallback? onDelete;
 
   const CustomUserReviewCard({
     super.key,
@@ -18,6 +19,7 @@ class CustomUserReviewCard extends StatelessWidget {
     required this.rating,
     required this.reviewText,
     this.onTap,
+    this.onDelete,
   });
 
   @override
@@ -72,11 +74,18 @@ class CustomUserReviewCard extends StatelessWidget {
                   ),
                   Row(
                     children: List.generate(5, (index) {
-                      return Icon(
-                        index < rating ? Icons.star : Icons.star_border,
-                        color: Colors.amber,
-                        size: 20,
-                      );
+                      IconData starIcon;
+                      if (index < rating.floor()) {
+                        // Full star
+                        starIcon = Icons.star;
+                      } else if (index == rating.floor() && rating % 1 > 0) {
+                        // Half star
+                        starIcon = Icons.star_half;
+                      } else {
+                        // Empty star
+                        starIcon = Icons.star_border;
+                      }
+                      return Icon(starIcon, color: Colors.amber, size: 20);
                     }),
                   ),
                 ],
@@ -87,6 +96,30 @@ class CustomUserReviewCard extends StatelessWidget {
                 reviewText,
                 style: TextStyle(fontSize: 15.sp, height: 1.4.h),
               ),
+              if (onDelete != null) ...[
+                const HeightSpace(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: onDelete,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                        const WidthSpace(width: 4),
+                        Text(
+                          'Delete',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
