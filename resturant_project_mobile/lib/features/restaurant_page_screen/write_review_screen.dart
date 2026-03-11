@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:resturant_project/features/core/app_assets/app_assets.dart';
 import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/custom_text_bottom.dart';
@@ -7,7 +9,22 @@ import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
 
 class WriteReviewScreen extends StatefulWidget {
-  const WriteReviewScreen({super.key});
+  const WriteReviewScreen({
+    super.key,
+    this.resName,
+    this.resImage,
+    this.resRate,
+    this.numOfReviews,
+    this.resSpace,
+    this.category,
+  });
+  final String? resName;
+  final String? resImage;
+  final String? resRate;
+  final String? numOfReviews;
+  final String? resSpace;
+  final String? category;
+
   @override
   State<WriteReviewScreen> createState() => _WriteReviewScreenState();
 }
@@ -15,8 +32,67 @@ class WriteReviewScreen extends StatefulWidget {
 class _WriteReviewScreenState extends State<WriteReviewScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController reviewController = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
 
-  List<String> images = [AppAssets.image, AppAssets.image];
+  List<File> selectedImages = [];
+
+  /// Pick multiple images from gallery
+  void _pickImagesFromGallery() async {
+    try {
+      final List<XFile> pickedFiles = await _imagePicker.pickMultiImage(
+        imageQuality: 80,
+      );
+
+      if (pickedFiles.isNotEmpty) {
+        setState(() {
+          selectedImages.addAll(
+            pickedFiles.map((xFile) => File(xFile.path)).toList(),
+          );
+        });
+      }
+    } catch (e) {
+      print('Error picking images: $e');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error selecting images')));
+    }
+  }
+
+  /// Remove an image from the selected list
+  void _removeImage(int index) {
+    setState(() {
+      selectedImages.removeAt(index);
+    });
+  }
+
+  /// Post review and navigate back
+  void _postReview() {
+    String review = reviewController.text;
+
+    if (review.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please write a review')));
+      return;
+    }
+
+    // TODO: Save review to database/backend
+    // You can send the review data (title, review, selectedImages) to your backend here
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Review posted successfully!')),
+    );
+
+    // Navigate back to restaurant review page
+    Navigator.of(context).pop();
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    reviewController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +129,10 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(24.r),
-                      child: Image.asset(AppAssets.image, fit: BoxFit.cover),
+                      child: Image.asset(
+                        widget.resImage ?? AppAssets.image,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
 
@@ -63,7 +142,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Sobhy Kaber',
+                        widget.resName ?? 'Without Name',
                         style: TextStyle(
                           fontSize: 20.sp,
                           fontWeight: FontWeight.bold,
@@ -80,7 +159,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                           WidthSpace(width: 4),
 
                           Text(
-                            '4.5',
+                            widget.resRate ?? '0.0',
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.bold,
@@ -90,7 +169,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                           WidthSpace(width: 6),
 
                           Text(
-                            '(1,234 reviews)',
+                            '(${widget.numOfReviews ?? '0'} reviews)',
                             style: TextStyle(
                               fontSize: 13.sp,
                               color: const Color(0xff94A3B8),
@@ -102,7 +181,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                       HeightSpace(height: 4),
 
                       Text(
-                        'Egyptian • 2.1 km away',
+                        '${widget.category ?? 'No Category'} • ${widget.resSpace ?? '0.0'} km away',
                         style: TextStyle(
                           fontSize: 13.sp,
                           color: const Color(0xff94A3B8),
@@ -122,7 +201,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -213,49 +292,79 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                           scrollDirection: Axis.horizontal,
                           children: [
                             /// ADD PHOTO BUTTON
-                            Container(
-                              width: 100.w,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.r),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.camera_alt_outlined,
-                                    color: Colors.orange,
+                            GestureDetector(
+                              onTap: _pickImagesFromGallery,
+                              child: Container(
+                                width: 100.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
                                   ),
+                                ),
 
-                                  HeightSpace(height: 6),
-
-                                  Text(
-                                    "ADD PHOTOS",
-                                    style: TextStyle(
-                                      fontSize: 10.sp,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.camera_alt_outlined,
                                       color: Colors.orange,
-                                      fontWeight: FontWeight.bold,
                                     ),
-                                  ),
-                                ],
+
+                                    HeightSpace(height: 6),
+
+                                    Text(
+                                      "ADD PHOTOS",
+                                      style: TextStyle(
+                                        fontSize: 10.sp,
+                                        color: Colors.orange,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
 
                             WidthSpace(width: 12),
 
                             /// PHOTOS
-                            ...images.map((image) {
+                            ...selectedImages.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              File image = entry.value;
                               return Padding(
                                 padding: EdgeInsets.only(right: 12.w),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  child: Image.asset(
-                                    image,
-                                    width: 100.w,
-                                    height: 100.h,
-                                    fit: BoxFit.cover,
-                                  ),
+                                child: Stack(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      child: Image.file(
+                                        image,
+                                        width: 100.w,
+                                        height: 100.h,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: GestureDetector(
+                                        onTap: () => _removeImage(index),
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.red,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          padding: EdgeInsets.all(4.w),
+                                          child: const Icon(
+                                            Icons.close,
+                                            color: Colors.white,
+                                            size: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             }).toList(),
@@ -266,13 +375,27 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                   ),
                 ),
               ),
+              HeightSpace(height: 24),
               CustomTextButton(
+                width: double.infinity,
                 backgroundColor: AppColors.primaryColor,
-                onTap: () {},
+                onTap: _postReview,
                 text: 'Post Review',
                 textColor: Colors.white,
                 isIcon: false,
               ),
+              HeightSpace(height: 24),
+              CustomTextButton(
+                width: double.infinity,
+                backgroundColor: Color(0xffF1F5F9),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                text: 'Cancel',
+                textColor: Colors.black,
+                isIcon: false,
+              ),
+              HeightSpace(height: 96),
             ],
           ),
         ),

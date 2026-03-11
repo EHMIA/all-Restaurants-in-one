@@ -5,12 +5,16 @@ import 'package:resturant_project/features/core/app_assets/app_assets.dart';
 import 'package:resturant_project/features/core/routing/route_name.dart';
 import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/restaurant_page_screen/widgets/custom_user_review_card.dart';
+import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_user_review_card.dart';
 
 class CustomResReviewsPage extends StatelessWidget {
-  const CustomResReviewsPage({super.key, this.rate, this.numOfReviews});
+  const CustomResReviewsPage({super.key, this.rate, this.numOfReviews, this.resSpace, this.category, this.resName, this.resImage});
 final String? rate;
 final String? numOfReviews;
+final String? resSpace;
+final String? category;
+final String? resName;
+final String? resImage;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -69,7 +73,14 @@ final String? numOfReviews;
                   HeightSpace(height: 24),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).pushNamed(RouteName.writeReviewPage);
+                      GoRouter.of(context).pushNamed(RouteName.writeReviewPage, extra: {
+                        'image': resImage,
+                        'resName': resName,
+                        'resRate': rate,
+                        'numOfReviews': numOfReviews,
+                        'resSpace': resSpace,
+                        'category': category,
+                      });
                     },
                     child: Container(
                       width: 203.w,

@@ -1,4 +1,3 @@
-import 'package:resturant_project/restaurant_page_screen/restaurant_page_screen.dart';
 
 class RouteName {
   static const homeScreen='/homeScreen';

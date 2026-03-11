@@ -6,8 +6,8 @@ import 'package:resturant_project/features/expolore_screen/explore_screen.dart';
 import 'package:resturant_project/features/home_screen/home_screen.dart';
 import 'package:resturant_project/features/review_page/review_page.dart';
 import 'package:resturant_project/layout_screen.dart';
-import 'package:resturant_project/restaurant_page_screen/restaurant_page_screen.dart';
-import 'package:resturant_project/restaurant_page_screen/write_review_screen.dart';
+import 'package:resturant_project/features/restaurant_page_screen/restaurant_page_screen.dart';
+import 'package:resturant_project/features/restaurant_page_screen/write_review_screen.dart';
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
@@ -63,7 +63,12 @@ class AppRouter {
         path: RouteName.writeReviewPage,
         name: RouteName.writeReviewPage,
         builder: (context, state) => WriteReviewScreen(
-          
+          resImage: (state.extra as Map<String, dynamic>)['image'],
+          resName: (state.extra as Map<String, dynamic>)['resName'],
+          resRate: (state.extra as Map<String, dynamic>)['resRate'],
+          numOfReviews: (state.extra as Map<String, dynamic>)['numOfReviews'],
+          resSpace: (state.extra as Map<String, dynamic>)['resSpace'],
+          category: (state.extra as Map<String, dynamic>)['category'],
         ),
       ),
     ],

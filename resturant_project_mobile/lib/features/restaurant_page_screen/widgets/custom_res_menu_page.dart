@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/features/core/app_assets/app_assets.dart';
 import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/restaurant_page_screen/widgets/custom_res_menu_head_title.dart';
-import 'package:resturant_project/restaurant_page_screen/widgets/custom_res_menu_appetizers_card.dart';
+import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_menu_head_title.dart';
+import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_menu_appetizers_card.dart';
 
 class CustomResMenuPage extends StatelessWidget {
   const CustomResMenuPage({super.key});

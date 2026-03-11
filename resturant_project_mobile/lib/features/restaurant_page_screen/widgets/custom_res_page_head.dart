@@ -6,7 +6,7 @@ import 'package:resturant_project/features/core/app_assets/app_assets.dart';
 import 'package:resturant_project/features/core/manager/favorite_manager.dart';
 import 'package:resturant_project/features/core/widgets/restuarant_status.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/restaurant_page_screen/widgets/custom_button_res_page.dart';
+import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_button_res_page.dart';
 
 class CustomResPageHead extends StatefulWidget {
   const CustomResPageHead({
