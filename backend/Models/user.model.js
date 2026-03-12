@@ -1,6 +1,7 @@
-const mongoose = require('mongoose')
+import { Schema, model } from 'mongoose'
+import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns';
 
-const userschema =new mongoose.Schema({
+const userschema =new Schema({
     firstname :{
         type : String ,
         trim: true,
@@ -20,12 +21,14 @@ const userschema =new mongoose.Schema({
     phone :{
         type : String ,
         trim: true,
-        require :true
+        require :true,
+        match: [emailField, invalidEmailMsg]
     },
     profile_pic :{
         type : String ,
         require :true,
-        default:"default.png"
+        default:"default.png",
+        match: [photoField,invalidPhotoMsg]
     },
     password :{
         type : String ,
@@ -62,6 +65,5 @@ const userschema =new mongoose.Schema({
     default:[]
 },{timestamps:true})
 
-const Users = mongoose.model('Users',userschema)
+export const Users = model('Users',userschema);
 
-module.exports = {Users}
