@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns';
 
-const userschema =new Schema({
+const userSchema =new Schema({
     firstname :{
         type : String ,
         trim: true,
@@ -37,7 +37,7 @@ const userschema =new Schema({
     role :{
         type : String ,
         enum:['user','admin','restaurant_owner'],
-        default:'user',
+        default:'User',
         require :true
     },
     address: [{
@@ -65,5 +65,5 @@ const userschema =new Schema({
     default:[]
 },{timestamps:true})
 
-export const Users = model('Users',userschema);
+export const Users = model('User',userSchema);
 

@@ -133,14 +133,30 @@ const restaurantSchema = new Schema(
 
         openingHours: [
             {
-                day: { type: String, required: true, enum: Days , lowercase: true},
+                day: { type: String, required: true, enum: Days, lowercase: true },
                 opens: { type: String, trim: true, default: null, lowercase: true },
-                closes: { type: String, trim: true, default: null,lowercase: true },
+                closes: { type: String, trim: true, default: null, lowercase: true },
                 isClosed: { type: Boolean, default: false },
             },
         ],
-
+        Owner: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            ref: "User"
+        },
         status: { type: String, enum: RestaurantStatuses, default: "pending" },
+        approvedAt: Date,
+        approvedBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        },
+
+        rejectedAt: Date,
+        rejectedBy: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        rejectionReason: String,
     },
     { timestamps: true },
 );

@@ -21,14 +21,14 @@ function verifyToken(req,res,next){
 
 function restrictToAdmin(req,res,next){
     verifyToken(req,res,()=>{
-        if(req.user.isAdmin===true)next();
+        if(req.user.role==="admin")next();
         else res.status(403).json({message:"Only Admains have this access"});
     })
 }
 function restrictToAdminOrUser(req,res,next){
     verifyToken(req,res,()=>{
         const isOwner = req.user.id === req.params.id;
-        if(isOwner || Payload.isAdmin===true)next();
+        if(isOwner || Payload.role==="admin")next();
         else res.status(403).json({message:"Forbidden , please just change in your data"})
     })
 }
