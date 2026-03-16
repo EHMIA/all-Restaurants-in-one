@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+:root {
+  --color-background-dark:     #0F172A;
+  --color-surface-dark:        #1E293B;
+  --color-border-dark:         #334155;
+
+  --color-text-secondary:      #64748B;
+  --color-text-muted:          #94A3B8;
+  --color-border-light:        #CBD5E1;
+
+  --color-background:          #FFFFFF;
+  --color-surface:             #F8FAFC;
+  --color-text-primary:        #0F172A;
+
+  --color-primary:             #E23744;
+  --color-primary-hover:       #DC2626;
+  --color-primary-active:      #B91C1C;
+  --color-primary-light:       #FEE2E2;
+  --color-primary-dark:        #7F1D1D;
+  --color-secondary:           #FF6D00;
+
+  --color-success:             #10B981;
+  --color-warning:             #F59E0B;
+  --color-danger:              #EF4444;
+  --color-info:                #3B82F6;
+  
+  --text: #e2e8f0; 
+  --text-h: #f1f5f9;
+
+  --color-accent: #E23744;
+  --color-accent-bg: rgba(226, 55, 68, 0.15);
+  --color-accent-border: rgba(226, 55, 68, 0.5);
+  --color-social-bg: rgba(47, 48, 58, 0.5);
+  --color-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px;
+
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-heading: 'Manrope', 'Inter', system-ui, sans-serif;
+
+  --font-size-base: 18px;
+  --line-height-base: 1.45;
+  --letter-spacing-base: 0.18px;
+
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+}
+
+#root {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  border-inline: 1px solid var(--border);
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--text-h);
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  letter-spacing: -1.68px;
+  margin: 2rem 0 1.5rem;
+}
+
+h2 {
+  font-size: clamp(1.5rem, 4vw, 1.5rem);
+  line-height: 1.18;
+  letter-spacing: -0.24px;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 1024px) {
+  h1 {
+    font-size: clamp(2rem, 8vw, 2.25rem);
+    margin: 1.25rem 0;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+}
+
+p, li, .text-body {
+  margin: 0 0 1em;
+  line-height: var(--line-height-base);
+  font-weight: 400;
+}
+
+button, .btn, a {
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
