@@ -8,24 +8,9 @@ import 'package:resturant_project/features/restaurant_page_screen/widgets/custom
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_reviews_page.dart';
 
 class CustomResTabBarPage extends StatelessWidget {
-  const CustomResTabBarPage({
-    super.key,
-    this.rate,
-    this.numOfReviews,
-    this.resSpace,
-    this.category,
-    this.resName,
-    this.resImage,
-    this.restaurantId,
-  });
+  const CustomResTabBarPage({super.key, this.rate, this.numOfReviews});
   final String? rate;
   final String? numOfReviews;
-  final String? resSpace;
-  final String? category;
-  final String? resName;
-  final String? resImage;
-  final String? restaurantId;
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -58,15 +43,10 @@ class CustomResTabBarPage extends StatelessWidget {
           CustomResReviewsPage(
             rate: rate,
             numOfReviews: numOfReviews,
-            category: category,
-            resImage: resImage,
-            resName: resName,
-            resSpace: resSpace,
-            restaurantId: restaurantId,
           ),
           CustomResInfoPage(),
         ],
-        onChange: (index) => print(index),
+        //onChange: (index) => print(index),
       ),
     );
   }

@@ -1,0 +1,214 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:resturant_project/features/auth/login/presentation/bloc/login_state.dart';
+import 'package:resturant_project/features/core/constants/constant_validate.dart';
+import 'package:resturant_project/features/core/routing/route_name.dart';
+import 'package:resturant_project/features/core/styles/app_colors.dart';
+import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
+import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../bloc/login_bloc.dart';
+import '../bloc/login_event.dart';
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key, required this.onSignUpClicked});
+  final VoidCallback onSignUpClicked;
+  @override
+  State<LoginScreen> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  Future<void> saveLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<LoginBloc, LoginState>(
+      listener: (context, state) {
+        if (state.error != null) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(state.error!)));
+        } else if (!state.isLoading) {
+          GoRouter.of(context).goNamed(RouteName.layOutScreen);
+        }
+      },
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const HeightSpace(height: 24),
+
+            /// Email
+            CustomTextField(
+              controller: _emailController,
+              validator: (value) =>
+                  ConstantValidate().validateEmail(value ?? ''),
+              hintTextStyle: TextStyle(
+                fontSize: 16.sp,
+                color: const Color(0xff94A3B8),
+                fontWeight: FontWeight.w500,
+                fontFamily: "Poppins",
+              ),
+              textStyle: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold,
+                color: Color(0xff94A3B8),
+              ),
+              prefixIcon: Icon(
+                Icons.email_outlined,
+                color: Color(0xff94A3B8),
+                size: 25.sp,
+                fontWeight: FontWeight.bold,
+              ),
+
+              fillColor: Color(0xffF8FAFC),
+              borderColor: Color(0xff94A3B8),
+              radius: 8,
+
+              textFieldTitle: "Email",
+              hintText: "Enter your email",
+
+              keyBoardType: TextInputType.emailAddress,
+            ),
+
+            const HeightSpace(height: 20),
+
+            /// Password
+            CustomTextField(
+              controller: _passwordController,
+              validator: (value) =>
+                  ConstantValidate().validatePassword(value ?? ''),
+              hintTextStyle: TextStyle(
+                fontSize: 16.sp,
+                color: const Color(0xff94A3B8),
+                fontWeight: FontWeight.w500,
+                fontFamily: "Poppins",
+              ),
+              textStyle: TextStyle(
+                fontSize: 16.sp,
+                fontFamily: "Poppins",
+                fontWeight: FontWeight.bold,
+                color: Color(0xff94A3B8),
+              ),
+              prefixIcon: Icon(
+                Icons.lock_outline,
+                color: Color(0xff94A3B8),
+                size: 25.sp,
+              ),
+
+              fillColor: Color(0xffF8FAFC),
+              borderColor: Color(0xff94A3B8),
+              radius: 8,
+
+              textFieldTitle: "Password",
+              hintText: "Enter your password",
+
+              isPassword: true,
+            ),
+            HeightSpace(height: 15),
+
+            /// Remember me
+            Row(
+              children: [
+                const Spacer(),
+
+                GestureDetector(
+                  onTap: () {
+                    GoRouter.of(
+                      context,
+                    ).pushNamed(RouteName.forgotPasswordPage);
+                  },
+
+                  child: Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            /// Login Button
+            SizedBox(
+              width: double.infinity,
+              child: BlocBuilder<LoginBloc, LoginState>(
+                builder: (context, state) {
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: state.isLoading
+                        ? null
+                        : () {
+                            if (_formKey.currentState!.validate()) {
+                              context.read<LoginBloc>().add(
+                                LoginButtonPressed(
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                ),
+                              );
+                            }
+                          },
+                    child: state.isLoading
+                        ? CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            "Login",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18.sp,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  );
+                },
+              ),
+            ),
+
+            const HeightSpace(height: 25),
+            Text.rich(
+              TextSpan(
+                text: "Don't have an account? ",
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Color(0xff64748B),
+                  fontWeight: FontWeight.w600,
+                ),
+                children: [
+                  TextSpan(
+                    text: "Sign Up Free",
+                    style: TextStyle(color: AppColors.primaryColor),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = widget.onSignUpClicked,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -7,8 +8,10 @@ import 'package:resturant_project/features/core/app_assets/app_assets.dart';
 import 'package:resturant_project/features/core/constants/constant_data.dart';
 import 'package:resturant_project/features/core/routing/route_name.dart';
 import 'package:resturant_project/features/core/styles/app_colors.dart';
+import 'package:resturant_project/features/core/widgets/custom_text_bottom.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/features/core/widgets/custom_category_item.dart';
+import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_cubit.dart';
+import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
 import 'package:resturant_project/features/home_screen/widgets/custom_featured_restaurants_card.dart';
 import 'package:resturant_project/features/home_screen/widgets/custom_headline_text.dart';
 import 'package:resturant_project/features/home_screen/widgets/search_text_field_widget.dart';
@@ -70,51 +73,54 @@ class _HomeScreenState extends State<HomeScreen> {
                       CustomHeadlineText(
                         text: "Discover the best\nrestaurants in\nCairo",
                       ),
+                      HeightSpace(height: 30),
                       //search field
-                      SearchTextFieldWidget(
-                        hintText: 'Search dishes...',
-                        controller: searchController,
-                        onPressed: () async {
-                          FocusScope.of(context).unfocus();
-                          if (searchController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: AppColors.primaryColor,
-                                content: Text('Search field must not be empty'),
-                              ),
-                            );
-                            return;
-                          }
-                          await GoRouter.of(context).pushNamed(
-                            RouteName.explorScreen,
-                            extra: searchController.text,
-                          );
-                        },
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SearchTextFieldWidget(
+                              hintText: 'Search dishes...',
+                              controller: searchController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Search field must not be empty';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                          WidthSpace(width: 8),
+                          CustomTextButton(
+                            isIcon: false,
+                            radius: 25.r,
+                            width: 85.w,
+                            text: 'Search',
+                            backgroundColor: AppColors.primaryColor,
+                            icon: CupertinoIcons.search,
+                            onTap: () {
+                              if (searchController.text.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    backgroundColor: AppColors.primaryColor,
+                                    content: Text(
+                                      'Search field must not be empty',
+                                    ),
+                                  ),
+                                );
+                                return;
+                              }
+                              context.read<ExploreCubit>().setSearch(
+                                searchController.text,
+                              );
+                              context.read<LayoutCubit>().changeTab(1);
+                              FocusScope.of(context).unfocus();
+                            },
+                          ),
+                        ],
                       ),
                       HeightSpace(height: 24),
+
                       //Buttons search and nearby
-                      // CustomButtonHome(
-                      //   width: double.infinity,
-                      //   text: 'Search',
-                      //   color: AppColors.primaryColor, //Color(0xffFF6D00),
-                      //   icon: CupertinoIcons.search,
-                      //   onTap: () {
-                      //     if (searchController.text.isEmpty) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(
-                      //           backgroundColor: AppColors.primaryColor,
-                      //           content: Text('Search field must not be empty'),
-                      //         ),
-                      //       );
-                      //       return;
-                      //     }
-                      //     GoRouter.of(context).pushNamed(
-                      //       RouteName.explorScreen,
-                      //       extra: searchController.text,
-                      //     );
-                      //     FocusScope.of(context).unfocus();
-                      //   },
-                      // ),
                     ],
                   ),
                 ),
@@ -167,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      GoRouter.of(context).pushNamed(RouteName.explorScreen);
+                      context.read<LayoutCubit>().changeTab(1);
                     },
                     child: Text(
                       "View All",
@@ -245,8 +251,6 @@ class _HomeScreenState extends State<HomeScreen> {
             GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
-                mainAxisSpacing: 16.h,
-                crossAxisSpacing: 16.w,
               ),
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),

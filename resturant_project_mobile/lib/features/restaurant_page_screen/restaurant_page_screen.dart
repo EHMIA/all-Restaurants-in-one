@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:resturant_project/features/core/manager/favorite_repository.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_bloc.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_page_head.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_tab_bar_page.dart';
 
@@ -12,7 +15,6 @@ class RestaurantPageScreen extends StatelessWidget {
     this.resSpace,
     this.category,
     this.isOpen,
-    this.restaurantId,
   });
   final String? image;
   final String? resName;
@@ -21,33 +23,30 @@ class RestaurantPageScreen extends StatelessWidget {
   final String? resSpace;
   final String? category;
   final bool? isOpen;
-  final String? restaurantId;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          CustomResPageHead(
-            resName: resName,
-            image: image,
-            resRate: resRate,
-            numReviews: resPeopleRate,
-            category: category,
-            resSpace: resSpace,
-            isOpen: isOpen,
-          ),
-          Expanded(
-            child: CustomResTabBarPage(
-              rate: resRate,
-              numOfReviews: resPeopleRate,
-              category: category,
-              resImage: image,
+    return BlocProvider<FavoriteBloc>(
+      create: (context) => FavoriteBloc(FavoriteRepository()),
+      child: Scaffold(
+        body: Column(
+          children: [
+            CustomResPageHead(
               resName: resName,
+              image: image,
+              resRate: resRate,
+              numReviews: resPeopleRate,
+              category: category,
               resSpace: resSpace,
-              restaurantId: restaurantId,
+              isOpen: isOpen,
             ),
-          ),
-        ],
+            Expanded(
+              child: CustomResTabBarPage(
+                rate: resRate,
+                numOfReviews: resPeopleRate,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

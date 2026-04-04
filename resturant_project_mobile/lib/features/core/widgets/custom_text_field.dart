@@ -17,6 +17,11 @@ class CustomTextField extends StatefulWidget {
     this.radius,
     this.maxLines = 1,
     this.onFieldSubmitted,
+    this.fillColor,
+    this.borderColor,
+    this.cursorColor, // NEW: cursor color
+    this.textStyle, this.hintTextStyle, // NEW: text style for user input
+
   });
 
   final String? textFieldTitle;
@@ -30,6 +35,11 @@ class CustomTextField extends StatefulWidget {
   final double? radius;
   final int? maxLines;
   final void Function(String)? onFieldSubmitted;
+  final Color? fillColor;
+  final Color? borderColor;
+  final Color? cursorColor; // NEW
+  final TextStyle? textStyle; // NEW
+  final TextStyle? hintTextStyle; // NEW
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -52,10 +62,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
         if (widget.textFieldTitle != null)
           Row(
             children: [
-              WidthSpace(width: 16),
               Text(
                 widget.textFieldTitle!,
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: "Poppins",
+                  color: const Color(0xff334155),
+                ),
               ),
             ],
           ),
@@ -68,20 +82,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
           onFieldSubmitted: widget.onFieldSubmitted,
           obscureText: widget.isPassword && !isPasswordVisible,
           obscuringCharacter: '●',
-          cursorColor: Colors.black,
+          cursorColor:
+              widget.cursorColor ?? Colors.black, // NEW: customizable cursor
+          style: widget
+              .textStyle, // NEW: apply custom text style (can be null → theme default)
           decoration: InputDecoration(
             hintText: widget.hintText ?? '',
-            hintStyle: TextStyle(
-              fontSize: 15.sp,
-              color: const Color(0xff94A3B8),
-              fontWeight: FontWeight.w500,
-            ),
+            hintStyle: widget.hintTextStyle, // NEW: customizable hint text style
             contentPadding: EdgeInsets.symmetric(
               horizontal: 18.w,
               vertical: 18.h,
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: widget.fillColor ?? Colors.white,
             prefixIcon: widget.prefixIcon,
             suffixIcon: widget.isPassword
                 ? GestureDetector(
@@ -113,11 +126,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 : null,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.radius?.r ?? 18.r),
-              borderSide: const BorderSide(color: Colors.transparent, width: 1),
+              borderSide: BorderSide(
+                color: widget.borderColor ?? Colors.black,
+                width: 1,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.radius?.r ?? 18.r),
-              borderSide: BorderSide(color: AppColors.primaryColor, width: 1),
+              borderSide: BorderSide(
+                color: widget.borderColor ?? AppColors.primaryColor,
+                width: 2,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.radius?.r ?? 18.r),
@@ -125,7 +144,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(widget.radius?.r ?? 18.r),
-              borderSide: const BorderSide(color: Colors.red, width: 1),
+              borderSide: const BorderSide(color: Colors.red, width: 2),
             ),
           ),
         ),

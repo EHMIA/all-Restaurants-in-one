@@ -8,6 +8,8 @@ class RouteName {
   static const signInPage = '/signInPage';
   static const registerPage = '/registerPage';
   static const writeReviewPage = '/writeReviewPage';
-  static const myReviewsPage = '/myReviewsPage';
-  static const settingsPage = '/settingsPage';
+  static const onBoardingScreen = '/onBoardingScreen';
+  static const authRouteScreen = '/authRouteScreen';
+  static const forgotPasswordPage = '/forgotPasswordPage';
+  static const resetPasswordPage = '/resetPasswordPage';
 }

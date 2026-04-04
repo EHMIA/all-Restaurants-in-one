@@ -1,12 +1,13 @@
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/features/auth/login_screen.dart';
-import 'package:resturant_project/features/auth/register_screen.dart';
+import 'package:resturant_project/features/auth/auth_route_screen.dart';
+import 'package:resturant_project/features/auth/login/presentation/page/forgot_password_screen.dart';
+import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
 import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/expolore_screen/explore_screen.dart';
+import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
 import 'package:resturant_project/features/home_screen/home_screen.dart';
-import 'package:resturant_project/features/profile_screen/settings_screen.dart';
 import 'package:resturant_project/features/review_page/review_page.dart';
-import 'package:resturant_project/layout_screen.dart';
+import 'package:resturant_project/features/splash_screen/splash_screen.dart';
+import 'package:resturant_project/features/bottom_navigation_bar/page/layout_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/restaurant_page_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/write_review_screen.dart';
 
@@ -15,15 +16,27 @@ class AppRouter {
     initialLocation: RouteName.layOutScreen,
     routes: [
       GoRoute(
+        path: RouteName.onBoardingScreen,
+        name: RouteName.onBoardingScreen,
+        builder: (context, state) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: RouteName.authRouteScreen,
+        name: RouteName.authRouteScreen,
+        builder: (context, state) => const AuthRouteScreen(),
+      ),
+      GoRoute(
         path: RouteName.layOutScreen,
         name: RouteName.layOutScreen,
         builder: (context, state) => LayoutScreen(),
       ),
+
       GoRoute(
         path: RouteName.homeScreen,
         name: RouteName.homeScreen,
         builder: (context, state) => HomeScreen(),
       ),
+
       GoRoute(
         path: RouteName.explorScreen,
         name: RouteName.explorScreen,
@@ -43,7 +56,6 @@ class AppRouter {
           resSpace: (state.extra as Map<String, dynamic>)['resSpace'],
           category: (state.extra as Map<String, dynamic>)['category'],
           isOpen: (state.extra as Map<String, dynamic>)['isOpen'],
-          restaurantId: (state.extra as Map<String, dynamic>)['restaurantId'],
         ),
       ),
       GoRoute(
@@ -52,33 +64,19 @@ class AppRouter {
         builder: (context, state) => ReviewPage(),
       ),
       GoRoute(
-        path: RouteName.signInPage,
-        name: RouteName.signInPage,
-        builder: (context, state) => LoginPage(),
+        path: RouteName.forgotPasswordPage,
+        name: RouteName.forgotPasswordPage,
+        builder: (context, state) => ForgotPasswordScreen(),
       ),
       GoRoute(
-        path: RouteName.registerPage,
-        name: RouteName.registerPage,
-        builder: (context, state) => SignUpPage(),
+        path: RouteName.resetPasswordPage,
+        name: RouteName.resetPasswordPage,
+        builder: (context, state) => ResetPasswordScreen(),
       ),
       GoRoute(
         path: RouteName.writeReviewPage,
         name: RouteName.writeReviewPage,
-        builder: (context, state) => WriteReviewScreen(
-          resImage: (state.extra as Map<String, dynamic>)['image'],
-          resName: (state.extra as Map<String, dynamic>)['resName'],
-          resRate: (state.extra as Map<String, dynamic>)['resRate'],
-          numOfReviews: (state.extra as Map<String, dynamic>)['numOfReviews'],
-          resSpace: (state.extra as Map<String, dynamic>)['resSpace'],
-          category: (state.extra as Map<String, dynamic>)['category'],
-          restaurantId: (state.extra as Map<String, dynamic>)['restaurantId'],
-          userId: (state.extra as Map<String, dynamic>)['userId'],
-        ),
-      ),
-      GoRoute(
-        path: RouteName.settingsPage,
-        name: RouteName.settingsPage,
-        builder: (context, state) => SettingsScreen(),
+        builder: (context, state) => WriteReviewScreen(),
       ),
     ],
   );

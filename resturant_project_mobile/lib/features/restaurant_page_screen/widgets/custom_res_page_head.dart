@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/manager/favorite_manager.dart';
-import 'package:resturant_project/features/core/widgets/restuarant_status.dart';
+import 'package:resturant_project/features/core/manager/favorite_repository.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_bloc.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_event.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_state.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_button_res_page.dart';
 
 class CustomResPageHead extends StatefulWidget {
@@ -13,7 +16,11 @@ class CustomResPageHead extends StatefulWidget {
     super.key,
     this.image,
     this.numReviews,
-    this.category, this.isOpen, this.resName, this.resRate, this.resSpace,
+    this.category,
+    this.isOpen,
+    this.resName,
+    this.resRate,
+    this.resSpace,
   });
   final String? image;
   final String? resName;
@@ -28,15 +35,11 @@ class CustomResPageHead extends StatefulWidget {
 }
 
 class _CustomResPageHeadState extends State<CustomResPageHead> {
-  bool isFavorite = false;
   @override
   void initState() {
     super.initState();
-
-    isFavorite = FavoriteManager.favorites.any(
-      (element) => element['resName'] == widget.resName,
-    );
   }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -77,23 +80,30 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
           Positioned(
             top: 48.h,
             right: 16.w,
-            child: CustomButtonResPage(
-              onTap: () {
-                final restaurant = {
-                  "resName": widget.resName,
-                  "image": widget.image,
-                  "resRate": widget.resRate,
-                  "resSpace": widget.resSpace,
-                  "resPeopleRate": widget.numReviews,
-                  "isOpen": widget.isOpen,
-                };
+            child: BlocBuilder<FavoriteBloc, FavoriteState>(
+              builder: (context, state) {
+                final isFavorite = state.favorites.any(
+                  (element) => element['resName'] == widget.resName,
+                );
 
-                setState(() {
-                  FavoriteManager.toggleFavorite(restaurant);
-                  isFavorite = !isFavorite;
-                });
+                return CustomButtonResPage(
+                  onTap: () {
+                    final restaurant = {
+                      "resName": widget.resName,
+                      "image": widget.image,
+                      "resRate": widget.resRate,
+                      "resSpace": widget.resSpace,
+                      "resPeopleRate": widget.numReviews,
+                      "isOpen": widget.isOpen,
+                    };
+
+                    context.read<FavoriteBloc>().add(
+                      ToggleFavoriteRestaurant(restaurant),
+                    );
+                  },
+                  icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                );
               },
-              icon: isFavorite ? Icons.favorite : Icons.favorite_border,
             ),
           ),
 
@@ -112,7 +122,9 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: widget.isOpen==true?Color(0xff22C55E): Color(0xff64748B),
+                    color: widget.isOpen == true
+                        ? Color(0xff22C55E)
+                        : Color(0xff64748B),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
@@ -122,7 +134,7 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                       fontSize: 12.sp,
                       fontWeight: FontWeight.bold,
                     ),
-                ),
+                  ),
                 ),
 
                 HeightSpace(height: 12),
