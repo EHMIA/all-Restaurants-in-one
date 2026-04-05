@@ -1,14 +1,15 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/auth/signup/presentation/bloc/sign_up_bloc.dart';
-import 'package:resturant_project/features/auth/signup/presentation/bloc/sign_up_event.dart';
-import 'package:resturant_project/features/auth/signup/presentation/bloc/sign_up_state.dart';
+import 'package:resturant_project/features/auth/signup/presentation/page/widgets_signup/custom_footer_signup.dart';
+import 'package:resturant_project/features/auth/signup/presentation/page/widgets_signup/custom_terms_and_privacy.dart';
 import 'package:resturant_project/features/core/constants/constant_validate.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+
+import '../../../../signup/presentation/bloc/signup_bloc.dart';
+import '../../../../signup/presentation/bloc/signup_event.dart';
+import '../../../../signup/presentation/bloc/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.onLoginClicked});
@@ -226,31 +227,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             const HeightSpace(height: 16),
         
-            /// Terms
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Checkbox(value: false, onChanged: (v) {}),
-                const Expanded(
-                  child: Text.rich(
-                    TextSpan(
-                      text: "I agree to the ",
-                      children: [
-                        TextSpan(
-                          text: "Terms of Service",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                        TextSpan(text: " and "),
-                        TextSpan(
-                          text: "Privacy Policy",
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            const CustomTermsAndPrivacy(),
         
             const HeightSpace(height: 20),
         
@@ -297,24 +274,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
         
-            const HeightSpace(height: 20),
-        
-            /// Login link
-            Center(
-              child: Text.rich(
-                TextSpan(
-                  text: "Already have an account? ",
-                  children: [
-                    TextSpan(
-                      text: "Login",
-                      style: const TextStyle(color: AppColors.primaryColor),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = widget.onLoginClicked,
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            CustomFooterSignup(onLoginClicked: widget.onLoginClicked),
           ],
         ),
       ),

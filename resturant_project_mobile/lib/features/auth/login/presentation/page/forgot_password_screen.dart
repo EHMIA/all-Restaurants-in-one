@@ -54,15 +54,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Reset link sent successfully'),
+          content: Text('OTP sent successfully'),
           backgroundColor: Colors.green,
         ),
       );
 
-      // Navigate to reset password after a short delay
+      // Navigate to OTP verification screen after a short delay
       Future.delayed(Duration(seconds: 1), () {
         if (mounted) {
-          GoRouter.of(context).goNamed(RouteName.resetPasswordPage);
+          GoRouter.of(
+            context,
+          ).goNamed(RouteName.otpPage, extra: _emailPhoneController.text);
         }
       });
     } else {
@@ -159,7 +161,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         SizedBox(
                           width: 280.w,
                           child: Text(
-                            "Enter the email or phone number associated with your account and we'll send you a reset link.",
+                            "Enter the email or phone number associated with your account and we'll send you an OTP to verify your identity.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 14.sp,
@@ -207,7 +209,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                   const HeightSpace(height: 32),
 
-                  /// Send Reset Link Button
+                  /// Send OTP Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -224,7 +226,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Send Reset Link",
+                            "Send OTP",
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w700,

@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/auth/auth_route_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/forgot_password_screen.dart';
+import 'package:resturant_project/features/auth/login/presentation/page/otp_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
 import 'package:resturant_project/features/core/routing/route_name.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
@@ -13,7 +14,7 @@ import 'package:resturant_project/features/restaurant_page_screen/write_review_s
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
-    initialLocation: RouteName.layOutScreen,
+    initialLocation: RouteName.authRouteScreen,
     routes: [
       GoRoute(
         path: RouteName.onBoardingScreen,
@@ -67,6 +68,14 @@ class AppRouter {
         path: RouteName.forgotPasswordPage,
         name: RouteName.forgotPasswordPage,
         builder: (context, state) => ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: RouteName.otpPage,
+        name: RouteName.otpPage,
+        builder: (context, state) {
+          final email = state.extra as String? ?? '';
+          return OtpScreen(email: email);
+        },
       ),
       GoRoute(
         path: RouteName.resetPasswordPage,

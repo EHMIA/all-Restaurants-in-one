@@ -4,9 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/auth/login/presentation/bloc/login_state.dart';
+import 'package:resturant_project/features/auth/login/presentation/page/widgets/widgets_login/custom_footer_login.dart';
+import 'package:resturant_project/features/auth/login/presentation/page/widgets/widgets_login/custom_login_forget_password.dart';
 import 'package:resturant_project/features/core/constants/constant_validate.dart';
 import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
 import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,7 +34,7 @@ class _LoginPageState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginBloc, LoginState>(
+    return  BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state.error != null) {
           ScaffoldMessenger.of(
@@ -118,33 +119,12 @@ class _LoginPageState extends State<LoginScreen> {
 
               isPassword: true,
             ),
-            HeightSpace(height: 15),
+            const HeightSpace(height: 15),
 
             /// Remember me
-            Row(
-              children: [
-                const Spacer(),
+            const CustomLoginForgetPassword(),
 
-                GestureDetector(
-                  onTap: () {
-                    GoRouter.of(
-                      context,
-                    ).pushNamed(RouteName.forgotPasswordPage);
-                  },
-
-                  child: Text(
-                    "Forgot Password?",
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryColor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
+            const HeightSpace(height: 20),
 
             /// Login Button
             SizedBox(
@@ -156,7 +136,7 @@ class _LoginPageState extends State<LoginScreen> {
                       backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(14.r),
                       ),
                     ),
                     onPressed: state.isLoading
@@ -172,7 +152,7 @@ class _LoginPageState extends State<LoginScreen> {
                             }
                           },
                     child: state.isLoading
-                        ? CircularProgressIndicator(color: Colors.white)
+                        ?const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             "Login",
                             style: TextStyle(
@@ -187,25 +167,7 @@ class _LoginPageState extends State<LoginScreen> {
               ),
             ),
 
-            const HeightSpace(height: 25),
-            Text.rich(
-              TextSpan(
-                text: "Don't have an account? ",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Color(0xff64748B),
-                  fontWeight: FontWeight.w600,
-                ),
-                children: [
-                  TextSpan(
-                    text: "Sign Up Free",
-                    style: TextStyle(color: AppColors.primaryColor),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = widget.onSignUpClicked,
-                  ),
-                ],
-              ),
-            ),
+            CustomFooterLogin(onSignUpClicked: widget.onSignUpClicked),
           ],
         ),
       ),

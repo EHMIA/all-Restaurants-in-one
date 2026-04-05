@@ -11,5 +11,6 @@ class RouteName {
   static const onBoardingScreen = '/onBoardingScreen';
   static const authRouteScreen = '/authRouteScreen';
   static const forgotPasswordPage = '/forgotPasswordPage';
+  static const otpPage = '/otpPage';
   static const resetPasswordPage = '/resetPasswordPage';
 }
