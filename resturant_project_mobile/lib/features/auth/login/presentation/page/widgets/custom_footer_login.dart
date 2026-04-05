@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../../core/styles/app_colors.dart';
-import '../../../../../../core/widgets/spacing_widgets.dart';
+import '../../../../../core/styles/app_colors.dart';
+import '../../../../../core/widgets/spacing_widgets.dart';
 
 class CustomFooterLogin extends StatelessWidget {
   const CustomFooterLogin({super.key, required this.onSignUpClicked});

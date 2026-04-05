@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../../../../core/styles/app_colors.dart';
-import '../../../bloc/auth_route_bloc.dart';
-import '../../../bloc/auth_route_event.dart';
-import '../../../bloc/auth_route_state.dart';
+import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import '../../../../../core/styles/app_colors.dart';
+import '../../bloc/auth_route_bloc.dart';
+import '../../bloc/auth_route_event.dart';
+import '../../bloc/auth_route_state.dart';
 
 class CustomLoginSignupToggle extends StatelessWidget {
   const CustomLoginSignupToggle({super.key});
@@ -51,7 +51,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(width: 4),
+              const WidthSpace(width: 4),
 
               /// Sign Up
               Expanded(

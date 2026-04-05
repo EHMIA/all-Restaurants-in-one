@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/features/auth/auth_route_screen.dart';
+import 'package:resturant_project/features/auth/auth_route/presentaion/page/auth_route_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/forgot_password_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/otp_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
@@ -14,7 +14,7 @@ import 'package:resturant_project/features/restaurant_page_screen/write_review_s
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
-    initialLocation: RouteName.authRouteScreen,
+    initialLocation: RouteName.resetPasswordPage,
     routes: [
       GoRoute(
         path: RouteName.onBoardingScreen,

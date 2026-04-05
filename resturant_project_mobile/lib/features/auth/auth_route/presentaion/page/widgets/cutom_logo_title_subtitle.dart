@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../../core/widgets/spacing_widgets.dart';
+import '../../../../../core/widgets/spacing_widgets.dart';
 
 class CutomLogoTitleSubtitle extends StatelessWidget {
   const CutomLogoTitleSubtitle({super.key});
@@ -10,7 +10,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
     return Column(
       children: [
         /// Logo
-        HeightSpace(height: 32),
+        const HeightSpace(height: 32),
         CircleAvatar(
           radius: 35.r,
           backgroundColor: Colors.red.withValues(alpha: 0.1),
@@ -29,7 +29,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 4),
+        const HeightSpace(height: 4),
 
         /// Subtitle
         Text(
@@ -42,7 +42,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
           ),
         ),
 
-        const SizedBox(height: 24),
+        const HeightSpace(height: 24),
       ],
     );
   }

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/auth/login/presentation/page/widgets/widgets_auth_route/custom_login_signup_toggle.dart';
-import 'package:resturant_project/features/auth/login/presentation/page/widgets/widgets_auth_route/cutom_logo_title_subtitle.dart';
+import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/custom_login_signup_toggle.dart';
+import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/cutom_logo_title_subtitle.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
 
-import 'login/presentation/bloc/auth_route_bloc.dart';
-import 'login/presentation/page/widgets/widgets_auth_route/custom_auth_switcher_body.dart';
+import '../bloc/auth_route_bloc.dart';
+import 'widgets/custom_auth_switcher_body.dart';
 
 class AuthRouteScreen extends StatefulWidget {
   const AuthRouteScreen({super.key});
@@ -16,8 +16,6 @@ class AuthRouteScreen extends StatefulWidget {
 }
 
 class _AuthRouteScreenState extends State<AuthRouteScreen> {
-  int selectedIndex = 0;
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -41,16 +39,16 @@ class _AuthRouteScreenState extends State<AuthRouteScreen> {
                     ),
                   ],
                 ),
-                child: Column(
+                child:const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const CutomLogoTitleSubtitle(),
+                     CutomLogoTitleSubtitle(),
 
-                    const CustomLoginSignupToggle(),
+                     CustomLoginSignupToggle(),
 
-                    const HeightSpace(height: 24),
+                     HeightSpace(height: 24),
 
-                    const CustomAuthSwitcherBody(),
+                     CustomAuthSwitcherBody(),
                   ],
                 ),
               ),

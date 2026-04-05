@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/auth/signup/presentation/page/widgets_signup/custom_footer_signup.dart';
-import 'package:resturant_project/features/auth/signup/presentation/page/widgets_signup/custom_terms_and_privacy.dart';
+import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_footer_signup.dart';
+import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_terms_and_privacy.dart';
 import 'package:resturant_project/features/core/constants/constant_validate.dart';
 import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
 
-import '../../../../signup/presentation/bloc/signup_bloc.dart';
-import '../../../../signup/presentation/bloc/signup_event.dart';
-import '../../../../signup/presentation/bloc/signup_state.dart';
+import '../bloc/signup_bloc.dart';
+import '../bloc/signup_event.dart';
+import '../bloc/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.onLoginClicked});
