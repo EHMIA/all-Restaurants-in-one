@@ -2,12 +2,7 @@ import { Schema, model } from 'mongoose'
 import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns';
 
 const userSchema =new Schema({
-    firstname :{
-        type : String ,
-        trim: true,
-        require :true
-    },
-    lastname :{
+    fullname :{
         type : String ,
         trim: true,
         require :true
@@ -61,6 +56,8 @@ const userSchema =new Schema({
             trim:true,
             default: ""
         },
+        otp: String,
+        otpExpire: Date,
     }],
     default:[]
 },{timestamps:true})
