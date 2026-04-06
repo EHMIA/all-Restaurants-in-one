@@ -1,9 +1,9 @@
-const dotenv = require('dotenv'); 
-const User = require('../Models/user.model');
-const nodemailer = require('nodemailer');
-dotenv.config();
+import { config } from 'dotenv'; 
+import { findOne } from '../Models/user.model';
+import { createTransport } from 'nodemailer';
+config();
 
-const transporter = nodemailer.createTransport({
+const transporter = createTransport({
     service: 'Gmail',
     auth: { 
         user: process.env.EMAIL,
@@ -23,7 +23,7 @@ const forgotPassword = async (req, res) => {
             return res.status(400).json({ message: 'Email is required' });
         }
 
-        const user = await User.findOne({ email });
+        const user = await findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'User not found' });
         }
@@ -48,4 +48,4 @@ const forgotPassword = async (req, res) => {
     }
 };
 
-module.exports = { forgotPassword };
+export  { forgotPassword };

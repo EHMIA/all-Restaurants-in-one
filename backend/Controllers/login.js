@@ -1,12 +1,12 @@
 const router = express.Router();
-// const dotenv = require('dotenv'); 
+// import dotenv from 'dotenv'; 
 // const User = require('../Models/user.model');
 // dotenv.config();
 
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const User = require('../Models/user.model');
-const { loginSchema } = require('../Validators/login_validation');
+import { compare } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import { findOne, Users } from '../Models/user.model';
+import { loginSchema } from '../Validators/login_validation';
 
 const login = async (req, res) => {
     try {
@@ -18,25 +18,20 @@ const login = async (req, res) => {
 
         let { email, password } = req.body;
 
-        email = email.trim();
 
-        const user = await User.findOne({ email });
+        const user = await findOne({ email });
         if (!user) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
 
 
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
+        const token = user.generateToken();
 
 
         const userWithoutPassword = {
@@ -47,7 +42,7 @@ const login = async (req, res) => {
         };
 
         res.status(200).json({
-            message: 'Login successful',
+            message: 'Login successfully',
             token,
             user: userWithoutPassword
         });
@@ -58,4 +53,5 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { login };
+export
+ { login };

@@ -62,5 +62,14 @@ const userSchema =new Schema({
     default:[]
 },{timestamps:true})
 
+userSchema.methods.generateToken=function(){
+        return token=sign(
+            { id: this._id,
+              role : this.role
+             },
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
+        );
+}
 export const Users = model('User',userSchema);
 

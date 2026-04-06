@@ -1,10 +1,10 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv'); 
-const User = require('../Models/user.model');
-const { registerSchema } = require('../Validators/register_validation');
-dotenv.config();
+import express from 'express';
+import { hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import { config } from 'dotenv'; 
+import User, { findOne } from '../Models/user.model';
+import { registerSchema } from '../Validators/register_validation';
+config();
 
 const register = async (req, res) => {  
     try {
@@ -15,16 +15,11 @@ const register = async (req, res) => {
         }               
         let {fullname, phone , email, password } = req.body;
 
-
-        fullname = fullname.trim();
-        phone = phone.trim();
-        email = email.trim();
-
-        const existingUser = await User.findOne({ email });
+        const existingUser = await findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already exists' });
         }       
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hash(password, 10);
 
         const newUser = new User({
             fullname,
@@ -33,16 +28,25 @@ const register = async (req, res) => {
             password: hashedPassword
         });
         await newUser.save();
-        const token = jwt.sign(
-            { id: newUser._id },
+        const token = sign(
+            { id: newUser._id ,
+              role : newUser.role
+             },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
+         const userWithoutPassword = {
+            id: newUser._id,
+            fullname: newUser.fullname,
+            email: newUser.email,
+            phone: newUser.phone
+        };
+
         res.status(201).json({
             message: 'User registered successfully',
             token,
-            user: newUser
+            user: userWithoutPassword
         });
     } catch (err) {
         console.error(err);
@@ -50,4 +54,4 @@ const register = async (req, res) => {
     }   
 };
 
-module.exports = { register };
+export  { register };

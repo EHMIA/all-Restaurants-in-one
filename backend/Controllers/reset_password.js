@@ -1,5 +1,5 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
+import express from 'express';
+import { hash } from 'bcrypt';
 
 
 
@@ -27,7 +27,7 @@ const resetPassword = async (req, res) => {
         }
 
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await hash(password, 10);
 
         user.password = hashedPassword;
         user.otp = null;
@@ -42,4 +42,4 @@ const resetPassword = async (req, res) => {
     }
 };
 
-module.exports = { resetPassword };
+export  { resetPassword };
