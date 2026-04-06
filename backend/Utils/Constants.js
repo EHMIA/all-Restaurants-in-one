@@ -1,7 +1,7 @@
 // constansts used in the project
 
 const Days = [
-    'sunday','monday', 'tuesday', 'wednesday', 'thursday',
+    'sunday', 'monday', 'tuesday', 'wednesday', 'thursday',
     'friday', 'saturday'
 ];
 
@@ -15,10 +15,7 @@ const CuisineTypes = [
 ];
 
 const MenuCategories = [
-    'Appetizers', 'Salads', 'Soups', 'Main Courses',
-    'Grills', 'Shawarma', 'Pasta', 'Pizza',
-    'Burgers & Sandwiches', 'Rice Dishes', 'Vegetarian',
-    'Sides', 'Desserts', 'Beverages'
+    'Food','Dessert','Drinks'
 ];
 
 const PriceRanges = ["low", "medium", "high"];
@@ -31,6 +28,8 @@ const LIMITS = {
     CUISINE_TYPES: 5,
     NAME_MIN: 3,
     NAME_MAX: 50,
+    DESCRIPTION_MIN: 10,
+    DESCRIPTION_MAX: 500
 };
 
-export  { Days, CuisineTypes, MenuCategories, PriceRanges, RestaurantStatuses, LIMITS };
+export { Days, CuisineTypes, MenuCategories, PriceRanges, RestaurantStatuses, LIMITS };

@@ -1,39 +1,39 @@
 import { Schema, model } from 'mongoose'
 import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns';
 
-const userSchema =new Schema({
-    fullname :{
-        type : String ,
+const userSchema = new Schema({
+    fullname: {
+        type: String,
         trim: true,
-        require :true
+        require: true
     },
-    email :{
-        type : String ,
+    email: {
+        type: String,
         unique: true,
         trim: true,
-        require :true
+        require: true
     },
-    phone :{
-        type : String ,
+    phone: {
+        type: String,
         trim: true,
-        require :true,
+        require: true,
         match: [emailField, invalidEmailMsg]
     },
-    profile_pic :{
-        type : String ,
-        require :true,
-        default:"default.png",
-        match: [photoField,invalidPhotoMsg]
+    profile_pic: {
+        type: String,
+        require: true,
+        default: "default.png",
+        match: [photoField, invalidPhotoMsg]
     },
-    password :{
-        type : String ,
-        require :true
+    password: {
+        type: String,
+        require: true
     },
-    role :{
-        type : String ,
-        enum:['user','admin','restaurant_owner'],
-        default:'User',
-        require :true
+    role: {
+        type: String,
+        enum: ['user', 'admin', 'Owner'],
+        default: 'User',
+        require: true
     },
     address: [{
         governorate: {
@@ -53,23 +53,24 @@ const userSchema =new Schema({
         },
         details: {
             type: String,
-            trim:true,
+            trim: true,
             default: ""
         },
         otp: String,
         otpExpire: Date,
     }],
-    default:[]
-},{timestamps:true})
+    default: []
+}, { timestamps: true })
 
-userSchema.methods.generateToken=function(){
-        return token=sign(
-            { id: this._id,
-              role : this.role
-             },
-            process.env.JWT_SECRET,
-            { expiresIn: '15m' }
-        );
+userSchema.methods.generateToken = function () {
+    return token = sign(
+        {
+            id: this._id,
+            role: this.role
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '15m' }
+    );
 }
-export const Users = model('User',userSchema);
+export const Users = model('User', userSchema);
 

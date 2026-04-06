@@ -3,7 +3,7 @@ import { deleteAllMsgService, deleteOneMsgService, getMyNotificationsService, ge
 
 const getMyNotifications = asyncHandler(async(req,res)=>{
     const notifications=await getMyNotificationsService(req.user.id);
-    if(notifications.length===0)
+    if(!notifications)
         return res.status(404).json({message:"No notifications found"});
     res.status(200).json(notifications);
 })

@@ -2,6 +2,7 @@ import { notificationModel } from "../Models/notifications.model";
 
 const getMyNotificationsService = async(receiverId)=>{
     const notifications=await notificationModel.find({receiver:receiverId});
+    if (notifications.length===0) return null;
     return notifications;
 }
 
@@ -25,7 +26,7 @@ const markAsReadService=async(notificationId)=>{
 
 const maskAllAsReadService=async(receiverId)=>{
     const notifications=await notificationModel.find({receiver:receiverId});
-    if (!notifications) return null;
+    if (notifications.length===0) return null;
     notifications.forEach((notification)=>{
         notification.isRead=true;
         notification.save();
@@ -41,7 +42,7 @@ const deleteOneMsgService=async(notificationId)=>{
 
 const deleteAllMsgService=async(receiverId)=>{
     const notifications=await notificationModel.deleteMany({receiver:receiverId});
-    if (!notifications) return null;
+    if (notifications.deletedCount===0) return null;
     return notifications;
 }
 export {

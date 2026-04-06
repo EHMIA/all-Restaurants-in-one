@@ -1,43 +1,67 @@
-import jwt from "jsonwebtoken"
+import {verify} from "jsonwebtoken"
+import  { Users } from "../Models/user.model.js"
 
-function verifyToken(req,res,next){
-    const authHeader=req.headers.authorization;
+const optionalProtect= async(req,res,next)=>{
+    const authHeader= req.headers.authorization;
+
     if(!authHeader || !authHeader.startsWith("Bearer ")){
-        res.status(401).json({message:"Token not Provided or it is Wrong"});
+        req.user=null;
+        return next();
     }
-    const Token=authHeader.split(' ')[1];
-    if(Token){
-        try {
-            const Payload=jwt.verify(Token,process.env.JWT_SECRET);
-            req.user=Payload;
-            next();
-        } catch (error) {
-            res.status(401).json({message:"Invalid Token"});
+    const token = authHeader.split(" ")[1];
+    try {
+        const decoded= verify.apply(token,process.env.JWT_SECRET);
+        const user= await Users.findById(decoded.id).select("_id role");
+        
+        req.user= user || null;
+        next();
+    } catch (error) {
+        req.user=null;
+        next();
+    }
+}
+
+// token required
+const Protect = async(req,res,next)=>{
+    const authHeader= req.headers.authorization;
+
+    if(!authHeader || !authHeader.startsWith("Bearer ")){
+        return res.status(401).json({message: "Token not provided"})
+    }
+
+    const token = authHeader.split(" ")[1];
+    try {
+        const decoded= verify.apply(token,process.env.JWT_SECRET);
+        const user= await Users.findById(decoded.id).select("_id role");
+        
+        if(!user){
+            return res.status(401).json({message:"User not found"});
         }
-    }else{
-        res.status(401).json({message:"No token Provided"});
+
+        req.user=user;
+        next();
+    } catch (error) {
+                return res.status(401).json({message: "Invalid or expired token"})
     }
 }
 
-function restrictToAdmin(req,res,next){
-    verifyToken(req,res,()=>{
-        if(req.user.role==="admin")next();
-        else res.status(403).json({message:"Only Admains have this access"});
-    })
+const restrictToAdminOrAccountOwner= (req,res,next)=>{
+    if(!req.user){
+        return res.status(401).json({message: "Please Login first"});
+    }
+
+    const isAccOwner= req.params.id && req.params.id=== req.user.id;
+
+    if(isAccOwner || req.user.id=="admin"){
+        return next();
+    }
+
+    return res.status(403).json({message:"You can Only modify your data"});
 }
-function restrictToAdminOrUser(req,res,next){
-    verifyToken(req,res,()=>{
-        const isOwner = req.user.id === req.params.id;
-        if(isOwner || Payload.role==="admin")next();
-        else res.status(403).json({message:"Forbidden , please just change in your data"})
-    })
-}
 
 
-
-
-export{
-    verifyToken,
-    restrictToAdmin,
-    restrictToAdminOrUser
+export {
+    optionalProtect,
+    Protect,
+    restrictToAdminOrAccountOwner
 }

@@ -30,6 +30,13 @@ const restaurantSchema = new Schema(
             required: true,
         },
 
+        description: {
+            type: String,
+            trim: true,
+            minlength: LIMITS.DESCRIPTION_MIN,
+            maxlength: LIMITS.DESCRIPTION_MAX,
+            required: true,
+        },
         coverPhoto: {
             type: String,
             trim: true,
@@ -40,6 +47,7 @@ const restaurantSchema = new Schema(
             required: true,
             min: 0,
             max: 5,
+            // default: 0,
         },
 
         delivery: {
