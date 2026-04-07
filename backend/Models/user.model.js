@@ -24,7 +24,7 @@ const userSchema = new Schema({
     profile_pic: {
         type: String,
         required: true,
-        default: "default.png",
+        default: "https://avatars.hsoubcdn.com/725a4674fbb20a98fc72f205e9c359f8?s=256",
         match: [photoField, invalidPhotoMsg],
     },
     password: {
