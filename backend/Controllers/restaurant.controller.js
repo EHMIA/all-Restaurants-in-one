@@ -137,7 +137,7 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
         coverPhoto: coverImageUrl,
         gallery: galleryUrls,
         Owner: req.user._id,
-        rating: req.body.rating || 0
+        
     });
 
     if (req.user.role === "admin") {

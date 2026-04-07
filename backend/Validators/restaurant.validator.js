@@ -16,7 +16,7 @@ const createRestaurantValidation = (obj) => {
         name: joi.string().trim().min(LIMITS.NAME_MIN).max(LIMITS.NAME_MAX).required(),
         phoneNumber: joi.string().trim().pattern(phoneNumberField).required(),
         cuisineType: joi.array().items(joi.string().valid(...CuisineTypes)).min(1).required(),
-        
+        delivery: joi.boolean().required(),
         Gallery: joi.array().items(joi.string()).min(4).required()
             .messages({
                 "array.min": "Gallery must have at least 4 photos",
