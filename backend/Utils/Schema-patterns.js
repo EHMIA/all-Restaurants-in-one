@@ -14,7 +14,6 @@ const hoursField =
 
 // Error messages
 const invalidPhoneMsg = "Phone number must be Egyptian, 11 digits, starting with 010, 011, 012, or 015";
-const invalidPhotoMsg = "Invalid photo URL format";
 const invalidEmailMsg = "Invalid email format";
 
 export  {
