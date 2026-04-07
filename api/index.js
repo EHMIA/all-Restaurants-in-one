@@ -16,7 +16,7 @@ app.use(json());
 
 // Routes
 app.use("/auth", authRoutes);
-
+        
 // temporary route for check back response on vercel
 app.get("/", (req, res) => {
     res.status(200).json({ message: "API is running smoothly on Vercel" });
