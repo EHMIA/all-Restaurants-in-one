@@ -101,80 +101,73 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
 });
 
 
-
 const createNewRestaurant = asyncHandler(async (req, res) => {
     const { error } = createRestaurantValidation(req.body);
-    if (error)
-        return res.status(400).json({ message: error.details[0].message });
+    if (error) return res.status(400).json({ message: error.details[0].message });
 
-    const existingOwner = await restaurantModel.findOne({ Owner: req.user.id });
-    if (existingOwner)
-        return res.status(400).json({ message: "You already have a restaurant" });
+    const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
+    if (existingOwner) return res.status(400).json({ message: "You already have a restaurant" });
 
     const existingRestaurant = await restaurantModel.findOne({ email: req.body.email });
-    if (existingRestaurant)
-        return res.status(400).json({ message: "This Restaurant is Already exist" });
+    if (existingRestaurant) return res.status(400).json({ message: "This Restaurant Already exists" });
 
-    const {
-        email, name, rating, delivery,
-        priceRange, facebookLink, cuisineType, phoneNumber,
-        whatsappNumber, address, openingHours
-    } = req.body;
+    let coverImageUrl = null;
+    if (req.files?.["coverImage"]) {
+        coverImageUrl = await uploadToCloudinary(req.files["coverImage"][0].buffer);
+    }
 
-    const coverImageFile = req.files["coverImage"] ? req.files["coverImage"][0].path : null;
-    const galleryFiles = req.files["gallery"] ? req.files["gallery"].map(file => file.path) : [];
-
+    let galleryUrls = [];
+    if (req.files?.["gallery"]) {
+        galleryUrls = await Promise.all(
+            req.files["gallery"].map(file => uploadToCloudinary(file.buffer))
+        );
+    }
 
     const newRestaurant = new restaurantModel({
-        email,
-        name,
-        coverPhoto: coverImageFile,
-        rating: rating || 0,
-        delivery,
-        priceRange,
-        facebookLink,
-        cuisineType,
-        phoneNumber,
-        whatsappNumber,
-        address,
-        Gallery: galleryFiles,
-        openingHours,
-        Owner: req.user.id
+        ...req.body, 
+        coverPhoto: coverImageUrl,
+        Gallery: galleryUrls,
+        Owner: req.user._id,
+        rating: req.body.rating || 0
     });
 
     if (req.user.role === "admin") {
         newRestaurant.status = "approved";
         newRestaurant.approvedAt = new Date();
-        newRestaurant.approvedBy = req.user.id;
-        const savedRestaurant = await newRestaurant.save();
-        res.status(201).json(savedRestaurant);
-    } else if (req.user.role === "user") {
+        newRestaurant.approvedBy = req.user._id;
+    } else {
         newRestaurant.status = "pending";
-        const savedRestaurant = await newRestaurant.save();
-
-        const admins = await getAllAdminService();
-        if (!admins || admins.length === 0)
-            return res.status(404).json({ message: "No admins found" });
-
-        const notifications = admins.map((admin) => ({
-            sender: req.user.id,
-            message: `new restaurant request from ${req.user.name}`,
-            receiver: admin._id,
-            type: "pending",
-            restaurant: savedRestaurant._id
-        }));
-        await notificationModel.insertMany(notifications);
-        res.status(201).json(savedRestaurant);
     }
-});
 
+    const savedRestaurant = await newRestaurant.save();
+
+    if (req.user.role !== "admin") {
+        const admins = await getAllAdminService();
+        if (admins && admins.length > 0) {
+            const notifications = admins.map(admin => ({
+                sender: req.user._id,
+                message: `New restaurant request from ${req.user.name}`,
+                receiver: admin._id,
+                type: "pending",
+                restaurant: savedRestaurant._id
+            }));
+            await notificationModel.insertMany(notifications);
+        }
+    }
+
+    
+    res.status(201).json({
+        message: req.user.role === "admin" ? "Approved successfully" : "Created successfully",
+        restaurant: savedRestaurant
+    });
+});
 
 // admin accpet or reject a request
 // send sender id in the url
 const acceptRejectRequest = asyncHandler(async (req, res) => {
     const { action, reason } = req.body;
     const restaurantId = req.params.id;
-    const AdminId = req.user.id;
+    const AdminId = req.user._id;
     const restaurant = await getOneRestaurantService(restaurantId);
     if (!restaurant)
         return res.status(404).json({ message: "No restaurant found" });
@@ -182,7 +175,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
     if (action === "accept") {
         await updateRestaurantStatus(restaurantId, "approved", AdminId);
         await notificationModel.create({
-            sender: req.user.id, // admin
+            sender: req.user._id, // admin
             message: `Your request has been approved and now you are Owner`,
             receiver: restaurant.Owner,
             type: "approved"
@@ -203,7 +196,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
         }
         await updateRestaurantStatus(restaurantId, "rejected", AdminId, reason);
         await notificationModel.create({
-            sender: req.user.id, // admin
+            sender: req.user._id, // admin
             message: `Your request has been rejected Because ${reason}`,
             restaurant: restaurantId,
             receiver: restaurant.Owner,

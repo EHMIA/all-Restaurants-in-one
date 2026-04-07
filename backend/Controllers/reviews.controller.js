@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler"
-import { deleteMyReviewsService, getMyReviewsService } from "../Services/reviews.service.js";
+import {  getMyReviewsService } from "../Services/reviews.service.js";
 
 // account_owner 
 const getMyReviews= asyncHandler(async(req,res)=>{
@@ -10,15 +10,13 @@ const getMyReviews= asyncHandler(async(req,res)=>{
 });
 
 
-const getRestaurantReviews=asyncHandler(async(req,res)=>{
+// const getRestaurantReviews=asyncHandler(async(req,res)=>{
     
-})
-
-
+// })
 
 
 
 export{
     getMyReviews,
-    deleteMyReviews
+    
 }

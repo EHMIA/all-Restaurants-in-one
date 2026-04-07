@@ -1,6 +1,5 @@
 import { model, Schema } from "mongoose";
 import {
-    photoField,
     phoneNumberField,
     invalidPhoneMsg,
 } from "../Utils/Schema-patterns.js";
@@ -35,7 +34,6 @@ const restaurantSchema = new Schema(
             trim: true,
             minlength: LIMITS.DESCRIPTION_MIN,
             maxlength: LIMITS.DESCRIPTION_MAX,
-            required: true,
         },
         coverPhoto: {
             type: String,
@@ -44,10 +42,9 @@ const restaurantSchema = new Schema(
 
         rating: {
             type: Number,
-            required: true,
             min: 0,
             max: 5,
-            // default: 0,
+            default: 0,
         },
 
         delivery: {
@@ -59,12 +56,10 @@ const restaurantSchema = new Schema(
             type: String,
             trim: true,
             enum: PriceRanges,
-            required: true,
         },
 
         facebookLink: {
             type: String,
-            required: true,
             trim: true,
         },
 
@@ -120,7 +115,6 @@ const restaurantSchema = new Schema(
             {
                 type: String,
                 trim: true,
-                match: [photoField, "Invalid photo URL"],
             },
         ],
 
@@ -133,7 +127,6 @@ const restaurantSchema = new Schema(
                     type: String,
                     trim: true,
                     required: true,
-                    match: [photoField, "Invalid image URL"],
                 },
                 category: { type: String, required: true, enum: MenuCategories },
             },

@@ -24,6 +24,7 @@ const RestaurantStatuses = ["pending", "approved", "rejected"];
 const LIMITS = {
     MENU_ITEMS: 10,
     GALLERY_PHOTOS: 40,
+    Gallery_MIN: 4,
     BRANCHES: 5,
     CUISINE_TYPES: 5,
     NAME_MIN: 3,

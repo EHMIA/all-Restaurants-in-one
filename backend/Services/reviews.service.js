@@ -21,6 +21,5 @@ const getRestaurantReviewsService= async(restaurantId)=>{
 
 export {
     getMyReviewsService,
-    deleteMyReviewsService,
     getRestaurantReviewsService
 }

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { restrictToAdminOrAccountOwner } from "../Middlewares/auth.middleware.js";
-import { createNewRestaurant } from "../Controllers/restaurant.controller.js";
+import { createNewRestaurant, getAllRestaurants, getOneRestaurant } from "../Controllers/restaurant.controller.js";
 import { uploadRestaurantData } from "../Middlewares/upload.middleware.js";
+import { Protect, restrictToAdminOrAccountOwner } from "../Middlewares/auth.middleware.js";
 const router = Router();
 
 // get all restaurants (pagination) and filtering 
@@ -14,7 +14,7 @@ const router = Router();
  *         ../restaurants/top=5
  *         }
  */
-router.get("/restaurants")
+router.get("/",getAllRestaurants);
 
 
 /**
@@ -29,15 +29,16 @@ router.get("/restaurants")
  *        ../restaurant/:restaurantId/all  -> all restaurant data
  *        }
  */
-router.get("/restaurant/:id");
+router.get("/:id",getOneRestaurant);
 
 /**
  * @desc create restaurant
  * @Method POST
  * @access admin or user => middleware (token)
- * @Route ../restaurant/:createrId
+ * @Route ../restaurants/
  */
-router.post("/restaurant/:id",uploadRestaurantData,createNewRestaurant)
+
+router.post("/",Protect,uploadRestaurantData,createNewRestaurant)
             
 
 
@@ -49,6 +50,9 @@ router.post("/restaurant/:id",uploadRestaurantData,createNewRestaurant)
  * edit main data (owner)
  */
 
+
+
+export default router;
 
 
 

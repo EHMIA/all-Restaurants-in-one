@@ -1,4 +1,4 @@
-import {verify} from "jsonwebtoken"
+import jwt from "jsonwebtoken"
 import  { Users } from "../Models/user.model.js"
 
 const optionalProtect= async(req,res,next)=>{
@@ -10,7 +10,7 @@ const optionalProtect= async(req,res,next)=>{
     }
     const token = authHeader.split(" ")[1];
     try {
-        const decoded= verify.apply(token,process.env.JWT_SECRET);
+        const decoded= jwt.verify(token, process.env.JWT_SECRET);
         const user= await Users.findById(decoded.id).select("_id role");
         
         req.user= user || null;
@@ -31,7 +31,7 @@ const Protect = async(req,res,next)=>{
 
     const token = authHeader.split(" ")[1];
     try {
-        const decoded= verify.apply(token,process.env.JWT_SECRET);
+        const decoded= jwt.verify(token, process.env.JWT_SECRET);
         const user= await Users.findById(decoded.id).select("_id role");
         
         if(!user){
@@ -59,8 +59,16 @@ const restrictToAdminOrAccountOwner= (req,res,next)=>{
     return res.status(403).json({message:"You can Only modify your data"});
 }
 
+// const restrictToRestaurantOwner= (req,res,next)=>{
+//     if(!req.user){
+//         return res.status(401).json({message: "Please Login first"});
+//     }
+//     if(req.user.role==="admin"){
+//         return next();
+//     }
+// }
 
-export {
+export{
     optionalProtect,
     Protect,
     restrictToAdminOrAccountOwner
