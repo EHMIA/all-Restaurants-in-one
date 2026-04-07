@@ -21,9 +21,6 @@ const createRestaurantValidation = (obj) => {
         coverPhoto: string().trim().pattern(photoField)
             .messages({ "string.pattern.base": "Invalid cover photo URL" }),
 
-        rating: number().min(0).max(5).required()
-            .messages({ "number.base": "Rating must be a number", "any.required": "Rating is required" }),
-
         delivery: boolean().required()
             .messages({ "any.required": "Delivery field is required" }),
 
