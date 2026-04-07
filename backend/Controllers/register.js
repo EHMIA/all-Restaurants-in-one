@@ -31,7 +31,7 @@ const register = asyncHandler(async (req, res) => {
 
     res.status(201).json({
         token,
-        user: userWithoutPassword,
+        user: [userWithoutPassword, { role: newUser.role }],
     });
 });
 
