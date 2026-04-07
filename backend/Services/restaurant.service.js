@@ -1,5 +1,5 @@
-import { restaurantModel } from "../Models/restaurant.model";
-import { getRestaurantReviewsService } from "./reviews.service";
+import { restaurantModel } from "../Models/restaurant.model.js";
+import { getRestaurantReviewsService } from "./reviews.service.js";
 
 /**
  * @param {*} 

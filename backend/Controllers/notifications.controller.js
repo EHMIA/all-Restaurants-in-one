@@ -1,5 +1,5 @@
 import {asyncHandler} from "express-async-handler"
-import { deleteAllMsgService, deleteOneMsgService, getMyNotificationsService, getOneMsgService, markAsReadService, maskAllAsReadService } from "../Services/notificaions.service"
+import { deleteAllMsgService, deleteOneMsgService, getMyNotificationsService, getOneMsgService, markAsReadService, maskAllAsReadService } from "../Services/notificaions.service.js"
 
 const getMyNotifications = asyncHandler(async(req,res)=>{
     const notifications=await getMyNotificationsService(req.user.id);

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { restrictToAdminOrAccountOwner } from "../Middlewares/auth.middleware";
-import { createNewRestaurant } from "../Controllers/restaurant.controller";
-import { uploadRestaurantData } from "../Middlewares/upload.middleware";
+import { restrictToAdminOrAccountOwner } from "../Middlewares/auth.middleware.js";
+import { createNewRestaurant } from "../Controllers/restaurant.controller.js";
+import { uploadRestaurantData } from "../Middlewares/upload.middleware.js";
 const router = Router();
 
 // get all restaurants (pagination) and filtering 

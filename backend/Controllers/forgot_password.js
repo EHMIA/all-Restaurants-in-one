@@ -1,6 +1,6 @@
 import { config } from 'dotenv'; 
-import { findOne } from '../Models/user.model';
 import { createTransport } from 'nodemailer';
+import { Users } from '../Models/user.model.js';
 config();
 
 const transporter = createTransport({
@@ -23,7 +23,7 @@ const forgotPassword = async (req, res) => {
             return res.status(400).json({ message: 'Email is required' });
         }
 
-        const user = await findOne({ email });
+        const user = await Users.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'User not found' });
         }

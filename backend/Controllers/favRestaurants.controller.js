@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler"
-import { getOneRestaurantService } from "../Services/restaurant.service"
-import { addRestaurantToFavService, getMyFavRestaurantsService, removeRestaurantFromFavService } from "../Services/favRestaurants.service"
-import { favResModel } from "../Models/FavoriteRestaurants.model";
+import { getOneRestaurantService } from "../Services/restaurant.service.js"
+import { addRestaurantToFavService, getMyFavRestaurantsService, removeRestaurantFromFavService } from "../Services/favRestaurants.service.js"
+import { favResModel } from "../Models/FavoriteRestaurants.model.js";
 
 // account_owner
 const getMyFavRestaurants=asyncHandler(async(req,res)=>{

@@ -1,1 +1,0 @@
-// uploading the images to cloadinary

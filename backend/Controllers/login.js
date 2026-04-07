@@ -1,12 +1,6 @@
-const router = express.Router();
-// import dotenv from 'dotenv'; 
-// const User = require('../Models/user.model');
-// dotenv.config();
-
 import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
-import { findOne, Users } from '../Models/user.model';
-import { loginSchema } from '../Validators/login_validation';
+import { Users } from '../Models/user.model.js';
+import { loginSchema } from '../Validators/login_validation.js';
 
 const login = async (req, res) => {
     try {
@@ -19,7 +13,7 @@ const login = async (req, res) => {
         let { email, password } = req.body;
 
 
-        const user = await findOne({ email });
+        const user = await Users.findOne({ email });
         if (!user) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
@@ -53,5 +47,4 @@ const login = async (req, res) => {
     }
 };
 
-export
- { login };
+export { login };

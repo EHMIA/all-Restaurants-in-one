@@ -1,39 +1,39 @@
 import { Schema, model } from 'mongoose'
-import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns';
+import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns.js';
+import jwt from 'jsonwebtoken';
 
 const userSchema = new Schema({
     fullname: {
         type: String,
         trim: true,
-        require: true
+        required: true
     },
     email: {
         type: String,
         unique: true,
         trim: true,
-        require: true
+        required: true,
+        match: [emailField, invalidEmailMsg]
     },
     phone: {
         type: String,
         trim: true,
-        require: true,
-        match: [emailField, invalidEmailMsg]
+        required: true
     },
     profile_pic: {
         type: String,
-        require: true,
-        default: "default.png",
-        match: [photoField, invalidPhotoMsg]
+        required: true,
+        default: "default.png"
     },
     password: {
         type: String,
-        require: true
+        required: true
     },
     role: {
         type: String,
         enum: ['user', 'admin', 'Owner'],
-        default: 'User',
-        require: true
+        default: 'user',
+        required: true
     },
     address: [{
         governorate: {
@@ -55,15 +55,14 @@ const userSchema = new Schema({
             type: String,
             trim: true,
             default: ""
-        },
-        otp: String,
-        otpExpire: Date,
+        }
     }],
-    default: []
-}, { timestamps: true })
+    otp: String,
+    otpExpire: Date
+}, { timestamps: true });
 
 userSchema.methods.generateToken = function () {
-    return token = sign(
+    return jwt.sign(
         {
             id: this._id,
             role: this.role
@@ -72,5 +71,5 @@ userSchema.methods.generateToken = function () {
         { expiresIn: '15m' }
     );
 }
-export const Users = model('User', userSchema);
 
+export const Users = model('User', userSchema);

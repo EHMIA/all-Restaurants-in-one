@@ -3,12 +3,24 @@ import {configDotenv} from "dotenv"
 import express, { json } from "express"
 import mongoose from "mongoose"
 import authRoutes from "./Routes/auth.route.js"
+import  {errorHandler, notFoundHandler}  from "./Middlewares/notFoundErrorHandler.middleware.js";
 const app=express();
 
-app.use(json());
-app.use("auth/", authRoutes);
+
 configDotenv();
 ConnectDB();
+
+app.use(json());
+app.use("/auth", authRoutes);
+
+
+// Not Found Handler middleware
+app.use(notFoundHandler);
+
+//Error Handler middleware
+app.use(errorHandler);
+
+
 
 
 // const PORT = process.env.PORT || 3000;

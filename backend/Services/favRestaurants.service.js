@@ -1,4 +1,4 @@
-import { favResModel } from "../Models/FavoriteRestaurants.model"
+import { favResModel } from "../Models/FavoriteRestaurants.model.js"
 
 // just users
 // get all favs

@@ -1,4 +1,4 @@
-import { reviewModel } from "../Models/reviews.model"
+import { reviewModel } from "../Models/reviews.model.js"
 
 
 const getMyReviewsService= async(userId)=>{

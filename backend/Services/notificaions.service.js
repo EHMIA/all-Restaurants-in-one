@@ -1,4 +1,4 @@
-import { notificationModel } from "../Models/notifications.model";
+import { notificationModel } from "../Models/notifications.model.js";
 
 const getMyNotificationsService = async(receiverId)=>{
     const notifications=await notificationModel.find({receiver:receiverId});

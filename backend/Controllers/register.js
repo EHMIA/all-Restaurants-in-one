@@ -1,42 +1,40 @@
-import express from 'express';
 import { hash } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
-import { config } from 'dotenv'; 
-import User, { findOne } from '../Models/user.model';
-import { registerSchema } from '../Validators/register_validation';
-config();
+import { Users } from '../Models/user.model.js';
+import { registerSchema } from '../Validators/register_validation.js';
+import jwt from 'jsonwebtoken';
 
-const register = async (req, res) => {  
+const register = async (req, res) => {
     try {
-        const { error } = registerSchema.validate(req.body);            
+        const { error } = registerSchema.validate(req.body);
 
         if (error) {
             return res.status(400).json({ error: error.details[0].message });
-        }               
-        let {fullname, phone , email, password } = req.body;
+        }
+        let { fullname, phone, email, password } = req.body;
 
-        const existingUser = await findOne({ email });
+        const existingUser = await Users.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'Email already exists' });
-        }       
+        }
         const hashedPassword = await hash(password, 10);
 
-        const newUser = new User({
+        const newUser = new Users({
             fullname,
             email,
             phone,
             password: hashedPassword
         });
         await newUser.save();
-        const token = sign(
-            { id: newUser._id ,
-              role : newUser.role
-             },
+        const token = jwt.sign(
+            {
+                id: newUser._id,
+                role: newUser.role
+            },
             process.env.JWT_SECRET,
             { expiresIn: '1h' }
         );
 
-         const userWithoutPassword = {
+        const userWithoutPassword = {
             id: newUser._id,
             fullname: newUser.fullname,
             email: newUser.email,
@@ -51,7 +49,7 @@ const register = async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Server registration error' });
-    }   
+    }
 };
 
-export  { register };
+export { register };
