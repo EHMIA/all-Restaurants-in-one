@@ -106,7 +106,9 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     if (typeof req.body.address === 'string') req.body.address = JSON.parse(req.body.address);
     if (typeof req.body.openingHours === 'string') req.body.openingHours = JSON.parse(req.body.openingHours);
     if (typeof req.body.cuisineType === 'string') req.body.cuisineType = JSON.parse(req.body.cuisineType);
-
+    if (req.body.delivery) {
+req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
+    }
     const tempBody = { ...req.body };
     if (req.files?.["Gallery"]) tempBody.Gallery = new Array(req.files["Gallery"].length).fill("temp_url");
     if (req.files?.["coverImage"]) tempBody.coverPhoto = "temp_url";
@@ -133,11 +135,11 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     }
 
     const newRestaurant = new restaurantModel({
-        ...req.body, 
+        ...req.body,
         coverPhoto: coverImageUrl,
         gallery: galleryUrls,
         Owner: req.user._id,
-        
+
     });
 
     if (req.user.role === "admin") {
@@ -164,7 +166,7 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
         }
     }
 
-    
+
     res.status(201).json({
         message: req.user.role === "admin" ? "Approved successfully" : "Created successfully",
         restaurant: savedRestaurant
