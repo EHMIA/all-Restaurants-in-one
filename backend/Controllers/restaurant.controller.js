@@ -5,7 +5,6 @@ import { CalculateOpenNow, createRestaurantValidation } from "../Validators/rest
 import { getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { getAllAdminService } from "../Services/user.service.js";
 import { notificationModel } from "../Models/notifications.model.js";
-import { cloudinary } from "../Utils/cloudinary.js";
 
 /**
  * @desc get all restaurants

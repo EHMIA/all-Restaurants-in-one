@@ -1,5 +1,6 @@
-import { connect, connection } from "mongoose";
+import mongoose from 'mongoose';
 
+const { connect, connection } = mongoose;
 export async function ConnectDB() {
     // check if we are already connected        
     if (connection.readyState >= 1) {
