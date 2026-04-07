@@ -102,7 +102,16 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
 
 
 const createNewRestaurant = asyncHandler(async (req, res) => {
-    const { error } = createRestaurantValidation(req.body);
+
+    if (typeof req.body.address === 'string') req.body.address = JSON.parse(req.body.address);
+    if (typeof req.body.openingHours === 'string') req.body.openingHours = JSON.parse(req.body.openingHours);
+    if (typeof req.body.cuisineType === 'string') req.body.cuisineType = JSON.parse(req.body.cuisineType);
+    
+    const tempBody = { ...req.body };
+    if (req.files?.["Gallery"]) tempBody.Gallery = new Array(req.files["Gallery"].length).fill("temp_url");
+    if (req.files?.["coverImage"]) tempBody.coverPhoto = "temp_url";
+
+    const { error } = createRestaurantValidation(tempBody);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
@@ -117,9 +126,9 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     }
 
     let galleryUrls = [];
-    if (req.files?.["gallery"]) {
+    if (req.files?.["Gallery"]) {
         galleryUrls = await Promise.all(
-            req.files["gallery"].map(file => uploadToCloudinary(file.buffer))
+            req.files["Gallery"].map(file => uploadToCloudinary(file.buffer))
         );
     }
 
