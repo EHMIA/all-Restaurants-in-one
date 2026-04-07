@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { emailField, invalidEmailMsg, invalidPhotoMsg, photoField } from '../Utils/Schema-patterns.js';
+import { emailField, invalidEmailMsg, invalidPhoneMsg, invalidPhotoMsg, phoneNumberField, photoField } from '../Utils/Schema-patterns.js';
 import jwt from 'jsonwebtoken';
 
 const userSchema = new Schema({
@@ -18,12 +18,14 @@ const userSchema = new Schema({
     phone: {
         type: String,
         trim: true,
-        required: true
+        required: true,
+        match: [phoneNumberField, invalidPhoneMsg]
     },
     profile_pic: {
         type: String,
         required: true,
-        default: "default.png"
+        default: "default.png",
+        match: [photoField, invalidPhotoMsg],
     },
     password: {
         type: String,
