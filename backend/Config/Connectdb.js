@@ -1,12 +1,15 @@
-import { connect } from "mongoose"
+import { connect, connection } from "mongoose";
 
-export async  function ConnectDB(){
+export async function ConnectDB() {
+    // check if we are already connected        
+    if (connection.readyState >= 1) {
+        return;
+    }
+
     try {
         await connect(process.env.MONGO_URI);
-        console.log(`Server running on PORT ${process.env.PORT}`);
-        
+        console.log("Connected to MongoDB successfully!");
     } catch (error) {
-        console.log(`ERROR ${error}`);
-        
+        console.error(`ERROR connecting to MongoDB: ${error}`);
     }
 }

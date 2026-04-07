@@ -1,0 +1,7 @@
+flutter/
+build/
+android/
+ios/
+.flutter/
+*.apk
+*.ipa
