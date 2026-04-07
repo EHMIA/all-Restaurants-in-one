@@ -123,30 +123,6 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
 
     const coverImageFile = req.files["coverImage"] ? req.files["coverImage"][0].path : null;
     const galleryFiles = req.files["gallery"] ? req.files["gallery"].map(file => file.path) : [];
-    const menuFiles = req.files["menuImages"] ? req.files["menuImages"].map(file => file.path) : [];
-
-
-    // check menu data
-    let parseMenu = [];
-    try {
-        parseMenu = JSON.parse(menu || "[]");
-    } catch (error) {
-        return res.status(400).json({ message: "Invalid menu JSON format" })
-    }
-
-    // check if number of dishes equal number of dishes photos
-    if (parseMenu.length !== menuFiles.length) {
-        return res.status(400).json({ message: " May be One dish don't have image" })
-    }
-
-    // menu merge
-    const finalMenu = parseMenu.map((dish, index) => ({
-        dishName: dish.dishName,
-        price: dish.price,
-        description: dish.description || null,
-        image: menuFiles[index],
-        category: dish.category
-    }))
 
 
     const newRestaurant = new restaurantModel({
@@ -162,7 +138,6 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
         whatsappNumber,
         address,
         Gallery: galleryFiles,
-        menu: finalMenu,
         openingHours,
         Owner: req.user.id
     });

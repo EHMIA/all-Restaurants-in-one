@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose'
-import { emailField, invalidEmailMsg, invalidPhoneMsg, invalidPhotoMsg, phoneNumberField, photoField } from '../Utils/Schema-patterns.js';
+import { emailField, invalidEmailMsg, invalidPhoneMsg, phoneNumberField } from '../Utils/Schema-patterns.js';
 import jwt from 'jsonwebtoken';
 
 const userSchema = new Schema({
