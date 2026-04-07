@@ -99,19 +99,26 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
         serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
     }));
 });
-
-
 const createNewRestaurant = asyncHandler(async (req, res) => {
-
     if (typeof req.body.address === 'string') req.body.address = JSON.parse(req.body.address);
     if (typeof req.body.openingHours === 'string') req.body.openingHours = JSON.parse(req.body.openingHours);
     if (typeof req.body.cuisineType === 'string') req.body.cuisineType = JSON.parse(req.body.cuisineType);
+    
     if (req.body.delivery) {
-req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
+        req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
     }
+
     const tempBody = { ...req.body };
-    if (req.files?.["Gallery"]) tempBody.Gallery = new Array(req.files["Gallery"].length).fill("temp_url");
-    if (req.files?.["coverImage"]) tempBody.coverPhoto = "temp_url";
+    
+    const galleryFiles = req.files?.["gallery"] || req.files?.["Gallery"]; 
+    const coverFile = req.files?.["coverImage"];
+
+    if (galleryFiles) {
+        tempBody.Gallery = new Array(galleryFiles.length).fill("temp_url");
+    }
+    if (coverFile) {
+        tempBody.coverPhoto = "temp_url";
+    }
 
     const { error } = createRestaurantValidation(tempBody);
     if (error) return res.status(400).json({ message: error.details[0].message });
@@ -123,23 +130,22 @@ req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
     if (existingRestaurant) return res.status(400).json({ message: "This Restaurant Already exists" });
 
     let coverImageUrl = null;
-    if (req.files?.["coverImage"]) {
-        coverImageUrl = await uploadToCloudinary(req.files["coverImage"][0].buffer);
+    if (coverFile) {
+        coverImageUrl = await uploadToCloudinary(coverFile[0].buffer);
     }
 
     let galleryUrls = [];
-    if (req.files?.["Gallery"]) {
+    if (galleryFiles) {
         galleryUrls = await Promise.all(
-            req.files["Gallery"].map(file => uploadToCloudinary(file.buffer))
+            galleryFiles.map(file => uploadToCloudinary(file.buffer))
         );
     }
 
     const newRestaurant = new restaurantModel({
-        ...req.body,
+        ...req.body, 
         coverPhoto: coverImageUrl,
-        gallery: galleryUrls,
+        Gallery: galleryUrls, 
         Owner: req.user._id,
-
     });
 
     if (req.user.role === "admin") {
@@ -165,7 +171,6 @@ req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
             await notificationModel.insertMany(notifications);
         }
     }
-
 
     res.status(201).json({
         message: req.user.role === "admin" ? "Approved successfully" : "Created successfully",
@@ -236,5 +241,6 @@ export {
     createNewRestaurant,
     getAllRestaurants,
     getOneRestaurant,
-    acceptRejectRequest
+    acceptRejectRequest,
+    
 }
