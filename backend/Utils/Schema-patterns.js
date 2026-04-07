@@ -1,8 +1,5 @@
 // Regex patterns and  error messages
 
-const photoField =
-    /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&/=]*)\.(jpe?g|png|gif|webp|svg|bmp|ico|tiff?)$/i;
-
 const emailField =
     /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -21,7 +18,7 @@ const invalidPhotoMsg = "Invalid photo URL format";
 const invalidEmailMsg = "Invalid email format";
 
 export  {
-    photoField, emailField, phoneNumberField,
+    emailField, phoneNumberField,
     facebookLinkField, hoursField,
-    invalidPhoneMsg, invalidPhotoMsg, invalidEmailMsg
+    invalidPhoneMsg, invalidEmailMsg
 };
