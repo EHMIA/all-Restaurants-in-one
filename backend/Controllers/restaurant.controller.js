@@ -5,6 +5,7 @@ import { CalculateOpenNow, createRestaurantValidation } from "../Validators/rest
 import { getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { getAllAdminService } from "../Services/user.service.js";
 import { notificationModel } from "../Models/notifications.model.js";
+import { uploadToCloudinary } from "../Utils/cloudinary.js";
 
 /**
  * @desc get all restaurants
@@ -99,29 +100,31 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
         serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
     }));
 });
+
+
 const createNewRestaurant = asyncHandler(async (req, res) => {
     if (typeof req.body.address === 'string') req.body.address = JSON.parse(req.body.address);
     if (typeof req.body.openingHours === 'string') req.body.openingHours = JSON.parse(req.body.openingHours);
     if (typeof req.body.cuisineType === 'string') req.body.cuisineType = JSON.parse(req.body.cuisineType);
-    
+
     if (req.body.delivery) {
         req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
     }
 
-    const tempBody = { ...req.body };
+const tempBody = { ...req.body };
     
     const galleryFiles = req.files?.["gallery"] || req.files?.["Gallery"]; 
     const coverFile = req.files?.["coverImage"];
 
-    if (galleryFiles) {
-        tempBody.Gallery = new Array(galleryFiles.length).fill("temp_url");
-    }
-    if (coverFile) {
-        tempBody.coverPhoto = "temp_url";
-    }
+    if (galleryFiles) tempBody.Gallery = new Array(galleryFiles.length).fill("temp_url");
+    if (coverFile) tempBody.coverPhoto = "temp_url";
 
-    const { error } = createRestaurantValidation(tempBody);
+    
+    const { error, value }= createRestaurantValidation(tempBody);
     if (error) return res.status(400).json({ message: error.details[0].message });
+
+    const finalData = { ...value };
+    delete finalData.Gallery;
 
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
     if (existingOwner) return res.status(400).json({ message: "You already have a restaurant" });
@@ -142,7 +145,7 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     }
 
     const newRestaurant = new restaurantModel({
-        ...req.body, 
+        ...finalData, 
         coverPhoto: coverImageUrl,
         Gallery: galleryUrls, 
         Owner: req.user._id,

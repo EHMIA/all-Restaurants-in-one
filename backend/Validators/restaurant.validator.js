@@ -44,7 +44,7 @@ const createRestaurantValidation = (obj) => {
         menu: joi.array().items(joi.object()).default([]),
     });
 
-    return schema.validate(obj); 
+    return schema.validate(obj, { convert: true });
 };
 const CalculateOpenNow=(restaurant)=>{
     const dateNow= new Date();
