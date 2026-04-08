@@ -56,6 +56,7 @@ const restaurantSchema = new Schema(
             type: String,
             trim: true,
             enum: PriceRanges,
+            default: "low",
         },
 
         facebookLink: {

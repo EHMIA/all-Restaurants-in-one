@@ -3,6 +3,8 @@
 const notFoundHandler = (req, res, next) => {
     const error = new Error(`Not Found - ${req.originalUrl}`);
     res.status(404);
+    console.log(error);
+    
     next(error);
 };
 const errorHandler = (err, req, res, next) => {

@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler"
 import { restaurantModel } from "../Models/restaurant.model.js";
-import { PriceRanges } from "../Utils/Constants.js";
+import { DeliveryEnum, PriceRanges } from "../Utils/Constants.js";
 import { CalculateOpenNow, createRestaurantValidation } from "../Validators/restaurant.validator.js";
 import { getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { getAllAdminService } from "../Services/user.service.js";
@@ -22,7 +22,6 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     Limit = parseInt(Limit) || 10;
     const Skip = (Page - 1) * Limit;
     const PriceValidation = PriceRanges;
-    const DeliveryEnum = ["true", "false"];
     const Conditions = {};
 
     //just get the approved restaurants
@@ -94,6 +93,8 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
     const Restaurant = await getOneRestaurantService(restaurantId, returnQuery);
     if (!Restaurant)
         return res.status(404).json({ message: "Restaurant not found" });
+    console.log(Restaurant);
+    
     res.status(200).json(({
         ...Restaurant.toObject(),
         isOpen: CalculateOpenNow(Restaurant),
@@ -107,8 +108,13 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     if (typeof req.body.openingHours === 'string') req.body.openingHours = JSON.parse(req.body.openingHours);
     if (typeof req.body.cuisineType === 'string') req.body.cuisineType = JSON.parse(req.body.cuisineType);
 
+
     if (req.body.delivery) {
-        req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
+        if (!DeliveryEnum.includes(req.body.delivery.toLowerCase())) {
+            return res.status(400).json({ message: "Delivery must be true or false" });
+        } else {
+            req.body.delivery = (req.body.delivery === "1" || req.body.delivery === "true");
+        }
     }
 
 const tempBody = { ...req.body };
@@ -127,7 +133,20 @@ const tempBody = { ...req.body };
     delete finalData.Gallery;
 
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
-    if (existingOwner) return res.status(400).json({ message: "You already have a restaurant" });
+    if (existingOwner) {
+        if(existingOwner.status === "pending"){
+            return res.status(400).json({ message: "You already have a pending restaurant request" });
+        }else if(existingOwner.status === "approved"){
+            return res.status(400).json({ message: "You already have a restaurant" });
+        }else{
+            return res.status(400).json(
+                { 
+                    message: "Your previous request was rejected. Please review and update your existing data instead of creating a new one" ,
+                    resturantId: existingOwner._id
+                }
+            );
+        }
+    }
 
     const existingRestaurant = await restaurantModel.findOne({ email: req.body.email });
     if (existingRestaurant) return res.status(400).json({ message: "This Restaurant Already exists" });
@@ -176,9 +195,11 @@ const tempBody = { ...req.body };
     }
 
     res.status(201).json({
-        message: req.user.role === "admin" ? "Approved successfully" : "Created successfully",
-        restaurant: savedRestaurant
-    });
+    message: req.user.role === "admin" 
+        ? "Restaurant created and approved successfully" 
+        : "Your request has been sent successfully and is awaiting admin approval",
+    restaurant: savedRestaurant
+});
 });
 
 // admin accpet or reject a request
@@ -245,5 +266,5 @@ export {
     getAllRestaurants,
     getOneRestaurant,
     acceptRejectRequest,
-    
+    editRestaurantMainData
 }

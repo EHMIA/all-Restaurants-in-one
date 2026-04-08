@@ -4,7 +4,7 @@ import express, { json } from "express";
 import authRoutes from "../backend/Routes/auth.route.js";
 import RestaurantsRoutes from "../backend/Routes/restaurant.route.js";
 import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundErrorHandler.middleware.js";
-
+import SettingsRoutes from "../backend/Routes/adminSettings.route.js";   
 
 configDotenv();
 const app = express();
@@ -18,7 +18,7 @@ app.use(json());
 // Routes
 app.use("/auth", authRoutes);
 app.use("/restaurants", RestaurantsRoutes);
-
+app.use("/admin", SettingsRoutes);
 // temporary route for check back response on vercel
 app.get("/", (req, res) => {
     res.status(200).json({ message: "API is running smoothly on Vercel" });
@@ -28,5 +28,14 @@ app.get("/", (req, res) => {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-//export app to use on vercel
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`Server is running locally on http://localhost:${PORT}`);
+});
+
 export default app;
+
+// //export app to use on vercel
+// export default app;

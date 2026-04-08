@@ -52,11 +52,23 @@ const restrictToAdminOrAccountOwner= (req,res,next)=>{
 
     const isAccOwner= req.params.id && req.params.id=== req.user.id;
 
-    if(isAccOwner || req.user.id=="admin"){
+    if(isAccOwner || req.user.role=="admin"){
         return next();
     }
 
     return res.status(403).json({message:"You can Only modify your data"});
+}
+
+
+const restrictToAdmin= (req,res,next)=>{
+    if(!req.user){
+        return res.status(401).json({message: "Please Login first"});
+    }
+
+    if(req.user.role=="admin"){
+        return next();
+    }
+    return res.status(403).json({message:"Only Admains have this access"});
 }
 
 // const restrictToRestaurantOwner= (req,res,next)=>{
@@ -71,5 +83,6 @@ const restrictToAdminOrAccountOwner= (req,res,next)=>{
 export{
     optionalProtect,
     Protect,
-    restrictToAdminOrAccountOwner
+    restrictToAdminOrAccountOwner,
+    restrictToAdmin
 }

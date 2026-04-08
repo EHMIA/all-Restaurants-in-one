@@ -20,6 +20,7 @@ const MenuCategories = [
 
 const PriceRanges = ["low", "medium", "high"];
 const RestaurantStatuses = ["pending", "approved", "rejected"];
+const DeliveryEnum = ["true", "false" , "1", "0"];
 
 const LIMITS = {
     MENU_ITEMS: 10,
@@ -33,4 +34,4 @@ const LIMITS = {
     DESCRIPTION_MAX: 500
 };
 
-export { Days, CuisineTypes, MenuCategories, PriceRanges, RestaurantStatuses, LIMITS };
+export { Days, CuisineTypes, MenuCategories, PriceRanges, RestaurantStatuses, LIMITS , DeliveryEnum };
