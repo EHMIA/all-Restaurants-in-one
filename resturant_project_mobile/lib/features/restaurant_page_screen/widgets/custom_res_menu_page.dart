@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_menu_head_title.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_menu_appetizers_card.dart';
 

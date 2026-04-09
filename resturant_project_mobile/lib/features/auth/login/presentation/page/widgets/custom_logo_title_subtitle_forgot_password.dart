@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../../core/app_assets/app_assets.dart';
-import '../../../../../core/styles/app_colors.dart';
-import '../../../../../core/widgets/spacing_widgets.dart';
+import '../../../../../../core/app_assets/app_assets.dart';
+import '../../../../../../core/styles/app_colors.dart';
+import '../../../../../../core/widgets/spacing_widgets.dart';
 
 class CustomLogoTitleSubtitleForgotPassword extends StatelessWidget {
   const CustomLogoTitleSubtitleForgotPassword({super.key});

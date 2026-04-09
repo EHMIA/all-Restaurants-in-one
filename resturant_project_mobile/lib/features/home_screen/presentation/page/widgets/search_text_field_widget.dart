@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
+import 'package:resturant_project/core/widgets/custom_text_field.dart';
 
 class SearchTextFieldWidget extends StatefulWidget {
   const SearchTextFieldWidget({

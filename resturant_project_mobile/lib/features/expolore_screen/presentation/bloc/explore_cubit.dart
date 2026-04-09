@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_state.dart';
-import '../../../core/constants/constant_data.dart';
+import '../../../../core/constants/constant_data.dart';
 
 class ExploreCubit extends Cubit<ExploreState> {
   ExploreCubit() : super(ExploreState());

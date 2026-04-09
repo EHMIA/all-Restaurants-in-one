@@ -1,28 +1,21 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'otp_event.dart';
 import 'otp_state.dart';
 
-class OtpBloc extends Bloc<OtpEvent, OtpState> {
+class OtpCubit extends Cubit<OtpState> {
   Timer? _resendTimer;
   static const int resendCountdownDuration = 60; // 60 seconds
 
-  OtpBloc() : super(const OtpState(canResend: true)) {
-    on<OtpVerifyButtonPressed>(_onVerifyOtp);
-    on<OtpResendButtonPressed>(_onResendOtp);
-  }
+  OtpCubit() : super(const OtpState(canResend: true));
 
-  Future<void> _onVerifyOtp(
-    OtpVerifyButtonPressed event,
-    Emitter<OtpState> emit,
-  ) async {
+  Future<void> verifyOtp(String otp, String email) async {
     emit(state.copyWith(isLoading: true, error: null));
 
     // Simulate API call
     await Future.delayed(const Duration(seconds: 2));
 
     // Mock validation - replace with actual API call
-    if (event.otp.length == 6 && event.otp == "123456") {
+    if (otp.length == 6 && otp == "123456") {
       emit(state.copyWith(isLoading: false, isOtpVerified: true));
     } else {
       emit(
@@ -34,17 +27,14 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     }
   }
 
-  Future<void> _onResendOtp(
-    OtpResendButtonPressed event,
-    Emitter<OtpState> emit,
-  ) async {
+  Future<void> resendOtp(String email) async {
     emit(state.copyWith(isLoading: true, error: null, canResend: false));
 
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
 
     // Start countdown timer
-    _startResendCountdown(emit);
+    _startResendCountdown();
 
     emit(
       state.copyWith(
@@ -55,7 +45,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     );
   }
 
-  void _startResendCountdown(Emitter<OtpState> emit) {
+  void _startResendCountdown() {
     _resendTimer?.cancel();
     int countdown = resendCountdownDuration;
 
@@ -68,6 +58,11 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
         emit(state.copyWith(canResend: true, resendCountdown: 0));
       }
     });
+  }
+
+  void reset() {
+    _resendTimer?.cancel();
+    emit(const OtpState(canResend: true));
   }
 
   @override

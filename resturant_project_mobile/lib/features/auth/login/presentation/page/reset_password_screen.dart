@@ -4,14 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_password_requirements_reset_password.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_text_field.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../bloc/reset_password_bloc.dart';
-import '../bloc/reset_password_event.dart';
+import '../bloc/reset_password_cubit.dart';
 import '../bloc/reset_password_state.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
@@ -40,7 +39,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ResetPasswordBloc(),
+      create: (context) => ResetPasswordCubit(),
       child: Scaffold(
         backgroundColor: const Color(0xffFFF8F0),
         appBar: AppBar(
@@ -50,7 +49,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             onPressed: () => context.pop(),
           ),
         ),
-        body: BlocConsumer<ResetPasswordBloc, ResetPasswordState>(
+        body: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
           listener: (context, state) {
             if (state is ResetPasswordSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -187,14 +186,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   ? null
                                   : () {
                                       if (_formKey.currentState!.validate()) {
-                                        context.read<ResetPasswordBloc>().add(
-                                          ResetPasswordSubmitted(
-                                            newPassword:
-                                                _newPasswordController.text,
-                                            confirmPassword:
-                                                _confirmPasswordController.text,
-                                          ),
-                                        );
+                                        context
+                                            .read<ResetPasswordCubit>()
+                                            .resetPassword(
+                                              newPassword:
+                                                  _newPasswordController.text,
+                                              confirmPassword:
+                                                  _confirmPasswordController
+                                                      .text,
+                                            );
                                       }
                                     },
                               style: ElevatedButton.styleFrom(

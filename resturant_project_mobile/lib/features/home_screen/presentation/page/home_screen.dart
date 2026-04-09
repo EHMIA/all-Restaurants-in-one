@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/constants/constant_data.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_bottom.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/constants/constant_data.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_text_bottom.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
 import 'package:resturant_project/features/home_screen/presentation/page/widgets/custom_featured_restaurants_card.dart';
 import 'package:resturant_project/features/home_screen/presentation/page/widgets/custom_headline_text.dart';
@@ -256,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               context.read<HomeBloc>().add(
                                 FilterByCategory(cat['title']),
                               );
-                               context.read<LayoutCubit>().changeTab(1);
+                              context.read<LayoutCubit>().changeTab(1);
                             },
                             child: Container(
                               width: 64.w,

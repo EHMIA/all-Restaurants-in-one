@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 class RatingChip extends StatelessWidget {
   const RatingChip({

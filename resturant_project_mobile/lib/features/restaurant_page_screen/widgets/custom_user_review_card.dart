@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 class CustomUserReviewCard extends StatelessWidget {
   final String profileImageUrl;

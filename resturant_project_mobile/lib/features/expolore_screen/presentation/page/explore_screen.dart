@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/constants/constant_data.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_bottom.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/constants/constant_data.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_text_bottom.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_cubit.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_state.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/custom_list_cards.dart';
-import 'package:resturant_project/features/core/widgets/custom_category_item.dart';
-import 'package:resturant_project/features/home_screen/widgets/search_text_field_widget.dart';
+import 'package:resturant_project/core/widgets/custom_category_item.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_icon_button.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_bottom_sheet.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/active_filter_chip.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/explore_empty_state.dart';
+
+import '../../../home_screen/presentation/page/widgets/search_text_field_widget.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key, this.searchText, this.category});
@@ -25,7 +26,6 @@ class ExploreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize cubit with search text and category if provided
     final cubit = context.read<ExploreCubit>();
     if (searchText != null && searchText!.isNotEmpty) {
       cubit.setSearch(searchText!);

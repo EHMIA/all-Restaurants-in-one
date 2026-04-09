@@ -5,13 +5,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_footer_forgot_password.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_logo_title_subtitle_forgot_password.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
-import '../bloc/forget_password_bloc.dart';
-import '../bloc/forget_password_event.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_text_field.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import '../bloc/forget_password_cubit.dart';
 import '../bloc/forget_password_state.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -23,8 +22,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _emailPhoneController = TextEditingController();
-  final GlobalKey<FormState> _formKey =
-      GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String? validateEmailOrPhone(String emailOrPhone) {
     if (emailOrPhone.isEmpty) return 'Email or phone number cannot be empty';
@@ -42,7 +40,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ForgotPasswordBloc(),
+      create: (context) => ForgotPasswordCubit(),
       child: Scaffold(
         backgroundColor: const Color(0xffFFF8F0),
         appBar: AppBar(
@@ -52,20 +50,18 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             onPressed: () => context.pop(),
           ),
         ),
-        body: BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
+        body: BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
           listener: (context, state) {
             if (state is ForgotPasswordSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  
                   content: Text(state.message),
                   backgroundColor: Colors.green,
                 ),
               );
-              GoRouter.of(context).pushNamed(
-                RouteName.otpPage,
-                extra: _emailPhoneController.text,
-              );
+              GoRouter.of(
+                context,
+              ).pushNamed(RouteName.otpPage, extra: _emailPhoneController.text);
             } else if (state is ForgotPasswordFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -116,7 +112,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                             ),
                           ),
                           const HeightSpace(height: 32),
-                          
+
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -124,12 +120,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   ? null
                                   : () {
                                       if (_formKey.currentState!.validate()) {
-                                        context.read<ForgotPasswordBloc>().add(
-                                          SendOtpEvent(
-                                            emailOrPhone:
-                                                _emailPhoneController.text,
-                                          ),
-                                        );
+                                        context
+                                            .read<ForgotPasswordCubit>()
+                                            .sendOtp(
+                                              _emailPhoneController.text,
+                                            );
                                       }
                                     },
                               style: ElevatedButton.styleFrom(

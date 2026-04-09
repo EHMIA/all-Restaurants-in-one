@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
 
 class ConstantData {
   //restaurant categories data

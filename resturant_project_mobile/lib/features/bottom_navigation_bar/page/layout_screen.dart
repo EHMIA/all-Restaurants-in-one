@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/page/custom_bottom_nav_bar.dart';
-import 'package:resturant_project/features/core/manager/favorite_repository.dart';
+import 'package:resturant_project/core/manager/favorite_repository.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_cubit.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_bloc.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_event.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/favorite_screen.dart';
-import 'package:resturant_project/features/home_screen/home_screen.dart';
 import 'package:resturant_project/features/profile_screen/profile_screen.dart';
+
+import '../../home_screen/presentation/page/home_screen.dart';
 
 class LayoutScreen extends StatelessWidget {
   const LayoutScreen({super.key});

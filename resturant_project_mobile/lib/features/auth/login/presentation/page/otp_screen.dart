@@ -4,13 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
-import 'package:resturant_project/features/auth/login/presentation/bloc/otp_bloc.dart';
-import 'package:resturant_project/features/auth/login/presentation/bloc/otp_event.dart';
+import 'package:resturant_project/features/auth/login/presentation/bloc/otp_cubit.dart';
 import 'package:resturant_project/features/auth/login/presentation/bloc/otp_state.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -23,18 +22,18 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _pinController = TextEditingController();
-  late OtpBloc _otpBloc;
+  late OtpCubit _otpCubit;
 
   @override
   void initState() {
     super.initState();
-    _otpBloc = OtpBloc();
+    _otpCubit = OtpCubit();
   }
 
   @override
   void dispose() {
     _pinController.dispose();
-    _otpBloc.close();
+    _otpCubit.close();
     super.dispose();
   }
 
@@ -61,12 +60,12 @@ class _OtpScreenState extends State<OtpScreen> {
       return;
     }
 
-    _otpBloc.add(OtpVerifyButtonPressed(otp: otp, email: widget.email));
+    _otpCubit.verifyOtp(otp, widget.email);
   }
 
   void _handleResendOtp() {
     _pinController.clear();
-    _otpBloc.add(OtpResendButtonPressed(email: widget.email));
+    _otpCubit.resendOtp(widget.email);
   }
 
   @override
@@ -83,8 +82,8 @@ class _OtpScreenState extends State<OtpScreen> {
         ),
       ),
       backgroundColor: Color(0xffFFF8F0),
-      body: BlocListener<OtpBloc, OtpState>(
-        bloc: _otpBloc,
+      body: BlocListener<OtpCubit, OtpState>(
+        bloc: _otpCubit,
         listener: (context, state) {
           if (state.error != null && state.error!.isNotEmpty) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -194,8 +193,8 @@ class _OtpScreenState extends State<OtpScreen> {
                     const HeightSpace(height: 48),
 
                     /// OTP Input Field
-                    BlocBuilder<OtpBloc, OtpState>(
-                      bloc: _otpBloc,
+                    BlocBuilder<OtpCubit, OtpState>(
+                      bloc: _otpCubit,
                       builder: (context, state) {
                         return Pinput(
                           controller: _pinController,
@@ -280,8 +279,8 @@ class _OtpScreenState extends State<OtpScreen> {
                     const HeightSpace(height: 40),
 
                     /// Verify Button
-                    BlocBuilder<OtpBloc, OtpState>(
-                      bloc: _otpBloc,
+                    BlocBuilder<OtpCubit, OtpState>(
+                      bloc: _otpCubit,
                       builder: (context, state) {
                         return GestureDetector(
                           onTap: state.isLoading ? null : _handleVerifyOtp,
@@ -327,8 +326,8 @@ class _OtpScreenState extends State<OtpScreen> {
                     const HeightSpace(height: 20),
 
                     /// Resend OTP Section
-                    BlocBuilder<OtpBloc, OtpState>(
-                      bloc: _otpBloc,
+                    BlocBuilder<OtpCubit, OtpState>(
+                      bloc: _otpCubit,
                       builder: (context, state) {
                         return Column(
                           children: [

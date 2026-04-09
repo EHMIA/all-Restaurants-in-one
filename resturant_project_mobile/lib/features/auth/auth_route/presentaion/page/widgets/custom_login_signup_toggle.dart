@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
-import '../../../../../core/styles/app_colors.dart';
-import '../../bloc/auth_route_bloc.dart';
-import '../../bloc/auth_route_event.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import '../../../../../../core/styles/app_colors.dart';
+import '../../bloc/auth_route_cubit.dart';
 import '../../bloc/auth_route_state.dart';
 
 class CustomLoginSignupToggle extends StatelessWidget {
@@ -12,7 +11,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthRouteBloc, AuthRouteState>(
+    return BlocBuilder<AuthRouteCubit, AuthRouteState>(
       builder: (context, state) {
         return Container(
           height: 50.h,
@@ -25,7 +24,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
               /// Login
               Expanded(
                 child: GestureDetector(
-                  onTap: () => context.read<AuthRouteBloc>().add(TapLoginTab()),
+                  onTap: () => context.read<AuthRouteCubit>().selectLoginTab(),
                   child: AnimatedContainer(
                     margin: EdgeInsets.all(4.sp),
                     duration: const Duration(milliseconds: 300),
@@ -56,8 +55,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
               /// Sign Up
               Expanded(
                 child: GestureDetector(
-                  onTap: () =>
-                      context.read<AuthRouteBloc>().add(TapSignUpTab()),
+                  onTap: () => context.read<AuthRouteCubit>().selectSignUpTab(),
                   child: AnimatedContainer(
                     margin: EdgeInsets.all(4.sp),
                     duration: const Duration(milliseconds: 300),

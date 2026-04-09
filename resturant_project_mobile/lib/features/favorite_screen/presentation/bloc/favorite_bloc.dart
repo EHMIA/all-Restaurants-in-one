@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'favorite_event.dart';
 import 'favorite_state.dart';
-import 'package:resturant_project/features/core/manager/favorite_repository.dart';
+import 'package:resturant_project/core/manager/favorite_repository.dart';
 
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   final FavoriteRepository repository;

@@ -6,14 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:resturant_project/features/auth/login/presentation/bloc/login_state.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_footer_login.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_login_forget_password.dart';
-import 'package:resturant_project/features/core/constants/constant_validate.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/constants/constant_validate.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/core/widgets/custom_text_field.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../bloc/login_bloc.dart';
-import '../bloc/login_event.dart';
+import '../bloc/login_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.onSignUpClicked});
@@ -34,7 +33,7 @@ class _LoginPageState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return  BlocListener<LoginBloc, LoginState>(
+    return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.error != null) {
           ScaffoldMessenger.of(
@@ -129,7 +128,7 @@ class _LoginPageState extends State<LoginScreen> {
             /// Login Button
             SizedBox(
               width: double.infinity,
-              child: BlocBuilder<LoginBloc, LoginState>(
+              child: BlocBuilder<LoginCubit, LoginState>(
                 builder: (context, state) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -143,16 +142,14 @@ class _LoginPageState extends State<LoginScreen> {
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
-                              context.read<LoginBloc>().add(
-                                LoginButtonPressed(
-                                  email: _emailController.text,
-                                  password: _passwordController.text,
-                                ),
+                              context.read<LoginCubit>().login(
+                                _emailController.text,
+                                _passwordController.text,
                               );
                             }
                           },
                     child: state.isLoading
-                        ?const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             "Login",
                             style: TextStyle(

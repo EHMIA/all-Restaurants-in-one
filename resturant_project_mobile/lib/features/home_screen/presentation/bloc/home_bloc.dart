@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/constants/constant_data.dart';
+import '../../../../core/constants/constant_data.dart';
 import 'home_state.dart';
 import 'home_event.dart';
 

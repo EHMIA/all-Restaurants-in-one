@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 
 class CustomResMenuHeadTitle extends StatelessWidget {
   const CustomResMenuHeadTitle({super.key, this.appetizersItemsCount, this.title});

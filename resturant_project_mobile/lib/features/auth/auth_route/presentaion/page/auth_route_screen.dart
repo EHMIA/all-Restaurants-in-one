@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/custom_login_signup_toggle.dart';
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/cutom_logo_title_subtitle.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../bloc/auth_route_bloc.dart';
+import '../bloc/auth_route_cubit.dart';
 import 'widgets/custom_auth_switcher_body.dart';
 
 class AuthRouteScreen extends StatefulWidget {
@@ -19,7 +19,7 @@ class _AuthRouteScreenState extends State<AuthRouteScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthRouteBloc(),
+      create: (context) => AuthRouteCubit(),
       child: Scaffold(
         backgroundColor: const Color(0xffFFF8F0),
         body: SafeArea(
@@ -39,16 +39,16 @@ class _AuthRouteScreenState extends State<AuthRouteScreen> {
                     ),
                   ],
                 ),
-                child:const Column(
+                child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                     CutomLogoTitleSubtitle(),
+                    CutomLogoTitleSubtitle(),
 
-                     CustomLoginSignupToggle(),
+                    CustomLoginSignupToggle(),
 
-                     HeightSpace(height: 24),
+                    HeightSpace(height: 24),
 
-                     CustomAuthSwitcherBody(),
+                    CustomAuthSwitcherBody(),
                   ],
                 ),
               ),

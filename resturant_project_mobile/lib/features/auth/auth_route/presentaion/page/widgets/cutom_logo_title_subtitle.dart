@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../../../core/widgets/spacing_widgets.dart';
+import '../../../../../../core/widgets/spacing_widgets.dart';
 
 class CutomLogoTitleSubtitle extends StatelessWidget {
   const CutomLogoTitleSubtitle({super.key});

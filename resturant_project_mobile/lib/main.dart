@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/routing/app_router.dart';
+import 'package:resturant_project/core/routing/app_router.dart';
 
 void main() {
   runApp(const MyApp());

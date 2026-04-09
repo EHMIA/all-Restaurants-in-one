@@ -1,7 +1,7 @@
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_info_page.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_menu_page.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_photo_page.dart';

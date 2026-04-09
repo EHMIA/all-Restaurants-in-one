@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/features/core/app_assets/app_assets.dart';
-import 'package:resturant_project/features/core/styles/app_colors.dart';
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 
-import '../core/widgets/spacing_widgets.dart';
+import '../../core/widgets/spacing_widgets.dart';
 
 class ReviewPage extends StatelessWidget {
   const ReviewPage({super.key});

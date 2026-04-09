@@ -3,18 +3,18 @@ import 'package:resturant_project/features/auth/auth_route/presentaion/page/auth
 import 'package:resturant_project/features/auth/login/presentation/page/forgot_password_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/otp_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
-import 'package:resturant_project/features/core/routing/route_name.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
-import 'package:resturant_project/features/home_screen/home_screen.dart';
 import 'package:resturant_project/features/review_page/review_page.dart';
 import 'package:resturant_project/features/splash_screen/splash_screen.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/page/layout_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/restaurant_page_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/write_review_screen.dart';
+import '../../features/home_screen/presentation/page/home_screen.dart';
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
-    initialLocation: RouteName.resetPasswordPage,
+    initialLocation: RouteName.layOutScreen,
     routes: [
       GoRoute(
         path: RouteName.onBoardingScreen,

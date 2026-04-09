@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../../core/routing/route_name.dart';
-import '../../../../../core/styles/app_colors.dart';
+import '../../../../../../core/routing/route_name.dart';
+import '../../../../../../core/styles/app_colors.dart';
 
 class CustomLoginForgetPassword extends StatelessWidget {
   const CustomLoginForgetPassword({super.key});

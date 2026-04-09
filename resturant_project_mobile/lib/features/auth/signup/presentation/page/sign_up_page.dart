@@ -3,12 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_footer_signup.dart';
 import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_terms_and_privacy.dart';
-import 'package:resturant_project/features/core/constants/constant_validate.dart';
-import 'package:resturant_project/features/core/widgets/custom_text_field.dart';
-import 'package:resturant_project/features/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/core/constants/constant_validate.dart';
+import 'package:resturant_project/core/widgets/custom_text_field.dart';
+import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../bloc/signup_bloc.dart';
-import '../bloc/signup_event.dart';
+import '../bloc/signup_cubit.dart';
 import '../bloc/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -29,7 +28,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    return BlocListener<SignUpBloc, SignUpState>(
+    return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state.error != null) {
           ScaffoldMessenger.of(
@@ -51,7 +50,7 @@ class _SignUpPageState extends State<SignUpPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const HeightSpace(height: 16),
-        
+
             /// Full Name
             CustomTextField(
               controller: _fullNameController,
@@ -73,23 +72,24 @@ class _SignUpPageState extends State<SignUpPage> {
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
-        
+
               fillColor: Color(0xffF8FAFC),
               borderColor: Color(0xff94A3B8),
               radius: 8,
-        
+
               textFieldTitle: "Full Name",
               hintText: "Enter your full name",
-        
+
               keyBoardType: TextInputType.name,
             ),
-        
+
             const HeightSpace(height: 16),
-        
+
             /// Email
             CustomTextField(
               controller: _emailController,
-              validator: (value) => ConstantValidate().validateEmail(value ?? ''),
+              validator: (value) =>
+                  ConstantValidate().validateEmail(value ?? ''),
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
                 color: const Color(0xff94A3B8),
@@ -108,19 +108,19 @@ class _SignUpPageState extends State<SignUpPage> {
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
-        
+
               fillColor: Color(0xffF8FAFC),
               borderColor: Color(0xff94A3B8),
               radius: 8,
-        
+
               textFieldTitle: "Email",
               hintText: "Enter your email",
-        
+
               keyBoardType: TextInputType.emailAddress,
             ),
-        
+
             const HeightSpace(height: 16),
-        
+
             /// Phone
             CustomTextField(
               controller: _phoneController,
@@ -142,19 +142,19 @@ class _SignUpPageState extends State<SignUpPage> {
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
-        
+
               fillColor: Color(0xffF8FAFC),
               borderColor: Color(0xff94A3B8),
               radius: 8,
-        
+
               textFieldTitle: "Phone",
               hintText: "Enter your phone number",
-        
+
               keyBoardType: TextInputType.phone,
             ),
-        
+
             const HeightSpace(height: 16),
-        
+
             /// Password
             CustomTextField(
               controller: _passwordController,
@@ -177,20 +177,20 @@ class _SignUpPageState extends State<SignUpPage> {
                 color: Color(0xff94A3B8),
                 size: 25.sp,
               ),
-        
+
               fillColor: Color(0xffF8FAFC),
               borderColor: Color(0xff94A3B8),
               radius: 8,
-        
+
               textFieldTitle: "Password",
               hintText: "Enter your password",
-        
+
               keyBoardType: TextInputType.visiblePassword,
               isPassword: true,
             ),
-        
+
             const HeightSpace(height: 16),
-        
+
             /// Confirm Password
             CustomTextField(
               controller: _confirmPasswordController,
@@ -214,25 +214,25 @@ class _SignUpPageState extends State<SignUpPage> {
                 color: Color(0xff94A3B8),
                 size: 25.sp,
               ),
-        
+
               fillColor: Color(0xffF8FAFC),
               borderColor: Color(0xff94A3B8),
               radius: 8,
-        
+
               textFieldTitle: "Confirm Password",
               hintText: "Re-enter your password",
-        
+
               keyBoardType: TextInputType.visiblePassword,
               isPassword: true,
             ),
             const HeightSpace(height: 16),
-        
+
             const CustomTermsAndPrivacy(),
-        
+
             const HeightSpace(height: 20),
-        
+
             /// Create Account Button
-            BlocBuilder<SignUpBloc, SignUpState>(
+            BlocBuilder<SignUpCubit, SignUpState>(
               builder: (context, state) {
                 return SizedBox(
                   width: double.infinity,
@@ -247,17 +247,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     onPressed: state.isLoading
                         ? null
                         : () {
-                          if (_formKey.currentState!.validate()) {
-                            context.read<SignUpBloc>().add(
-                              SignUpButtonPressed(
+                            if (_formKey.currentState!.validate()) {
+                              context.read<SignUpCubit>().signUp(
                                 fullName: _fullNameController.text,
                                 email: _emailController.text,
                                 phone: _phoneController.text,
                                 password: _passwordController.text,
-                              ),
-                            );
-                          }
-                        },
+                              );
+                            }
+                          },
                     child: state.isLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
@@ -273,7 +271,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 );
               },
             ),
-        
+
             CustomFooterSignup(onLoginClicked: widget.onLoginClicked),
           ],
         ),

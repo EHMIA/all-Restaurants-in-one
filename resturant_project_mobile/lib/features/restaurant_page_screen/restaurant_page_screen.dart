@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:resturant_project/features/core/manager/favorite_repository.dart';
+import 'package:resturant_project/core/manager/favorite_repository.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_bloc.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_page_head.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_res_tab_bar_page.dart';
