@@ -131,9 +131,11 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
 
         const timeNow = new Date();
     res.status(200).json(({
-        ...Restaurant,
-        isOpen: CalculateOpenNow(restaurantData),
-        serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
+        data:{ 
+            ...Restaurant,
+            isOpen: CalculateOpenNow(restaurantData),
+            serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
+            }
     }));
 });
 

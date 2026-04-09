@@ -27,7 +27,6 @@ const getMyFavRestaurantsService= async(userID)=>{
 
 // add to fav
 const addRestaurantToFavService=async(restaurantID,userID)=>{
-
     const favRestaurant= new favResModel(
         {
             restaurant:restaurantID,
