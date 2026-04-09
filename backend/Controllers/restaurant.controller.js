@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler"
 import { restaurantModel } from "../Models/restaurant.model.js";
-import { DeliveryEnum, PriceRanges } from "../Utils/Constants.js";
+import { CuisineTypes, DeliveryEnum, PriceRanges } from "../Utils/Constants.js";
 import { CalculateOpenNow, createRestaurantValidation } from "../Validators/restaurant.validator.js";
 import { getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { getAllAdminService } from "../Services/user.service.js";
@@ -14,62 +14,89 @@ import { uploadToCloudinary } from "../Utils/cloudinary.js";
  * @Access public
  */
 
-
 const getAllRestaurants = asyncHandler(async (req, res) => {
     let { Page, Limit, priceRange, minRating, delivery, cuisineType, Top } = req.query;
 
-    Page = parseInt(Page) || 1;
-    Limit = parseInt(Limit) || 10;
+    let Conditions = { status: "approved" };
+    let Sort = {};
+
+    if (Top) {
+        const topLimit = parseInt(Top) || 5;
+        Page = 1;
+        Limit = topLimit;
+        Sort = { rating: -1 };
+    } else {
+        Page = parseInt(Page) || 1;
+        Limit = parseInt(Limit) || 10;
+        Sort = { createdAt: -1 };
+    }
+
     const Skip = (Page - 1) * Limit;
-    const PriceValidation = PriceRanges;
-    const Conditions = {};
 
-    //just get the approved restaurants
-    Conditions.status = "approved";
+
     if (minRating) {
-        const rating_av = parseFloat(rating);
+        const rating_av = parseFloat(minRating);
         if (isNaN(rating_av) || rating_av > 5 || rating_av < 0) {
-            return res.status(400).json({ message: "Rating is limited between 0 to 5" })
-        } else {
-            Conditions.rating = { $gte: rating_av };
+            return res.status(400).json({ message: "Rating must be between 0 and 5" });
         }
+        Conditions.rating = { $gte: rating_av };
     }
-    if (delivery) {
-        if (!DeliveryEnum.includes(delivery.toLowerCase())) {
-            return res.status(400).json({ message: "Delivery must be true or false" });
-        } else {
-            Conditions.delivery = delivery === "true";
-        }
-    }
-    if (cuisineType) Conditions.cuisineType = { $in: cuisineType };
-    if (priceRange) {
-        if (!PriceValidation.includes(priceRange.toLowerCase())) {
-            return res.status(400).json({ message: "PriceRange must be low, medium or high" });
-        } else {
-            Conditions.priceRange = priceRange;
-        }
-    }
-    const [restaurants, totalResNumber] = await getAllRestaurantsService(Conditions, Skip, Limit);
-    if (!restaurants)
-        return res.status(404).json({ message: "No Restaurants Found" });
 
-    const timeNow = new Date();
+
+    if (delivery) {
+        Conditions.delivery = delivery === "true";
+    }
+
+    if (cuisineType) {
+        const cuisineArray = Array.isArray(cuisineType) ? cuisineType : [cuisineType];
+
+        const isValid = cuisineArray.every(type => CuisineTypes.includes(type));
+
+        if (!isValid) {
+            return res.status(400).json({
+                message: `Invalid cuisine type. Available types are:
+                { ${CuisineTypes.join(", ")}
+            }`
+            });
+        }
+
+        Conditions.cuisineType = { $in: cuisineArray };
+    }
+    if (priceRange) {
+        Conditions.priceRange = priceRange.toLowerCase();
+    }
+
+
+    const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort);
+
+    if (!result)
+        return res.status(200).json({
+            data: [],
+            meta: {
+                totalResNumber: 0,
+                pagesCount: 0,
+                Page: Page,
+                Limit: Limit
+            }
+        });
+
+    const [restaurants, totalResNumber] = result;
+
     const resData = restaurants.map(res => ({
         ...res.toObject(),
         isOpen: CalculateOpenNow(res),
-        serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
-    }))
+        serverTime: new Date().toISOString()
+    }));
 
-    const pagesCount = Math.ceil(totalResNumber / Limit);
     res.status(200).json({
         data: resData,
         meta: {
-            totalResNumber, // restaurant number
-            pagesCount, // pages counter
-            Page, // page number
-            Limit
+            totalResNumber: totalResNumber,
+            pagesCount: Math.ceil(totalResNumber / Limit),
+            Page: Page,
+            Limit: Limit
         }
-    })
+    });
 });
 
 
@@ -94,7 +121,7 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
     if (!Restaurant)
         return res.status(404).json({ message: "Restaurant not found" });
     console.log(Restaurant);
-    
+
     res.status(200).json(({
         ...Restaurant.toObject(),
         isOpen: CalculateOpenNow(Restaurant),
@@ -117,16 +144,16 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
         }
     }
 
-const tempBody = { ...req.body };
-    
-    const galleryFiles = req.files?.["gallery"] || req.files?.["Gallery"]; 
+    const tempBody = { ...req.body };
+
+    const galleryFiles = req.files?.["gallery"] || req.files?.["Gallery"];
     const coverFile = req.files?.["coverImage"];
 
     if (galleryFiles) tempBody.Gallery = new Array(galleryFiles.length).fill("temp_url");
     if (coverFile) tempBody.coverPhoto = "temp_url";
 
-    
-    const { error, value }= createRestaurantValidation(tempBody);
+
+    const { error, value } = createRestaurantValidation(tempBody);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
     const finalData = { ...value };
@@ -134,14 +161,14 @@ const tempBody = { ...req.body };
 
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
     if (existingOwner) {
-        if(existingOwner.status === "pending"){
+        if (existingOwner.status === "pending") {
             return res.status(400).json({ message: "You already have a pending restaurant request" });
-        }else if(existingOwner.status === "approved"){
+        } else if (existingOwner.status === "approved") {
             return res.status(400).json({ message: "You already have a restaurant" });
-        }else{
+        } else {
             return res.status(400).json(
-                { 
-                    message: "Your previous request was rejected. Please review and update your existing data instead of creating a new one" ,
+                {
+                    message: "Your previous request was rejected. Please review and update your existing data instead of creating a new one",
                     resturantId: existingOwner._id
                 }
             );
@@ -164,9 +191,9 @@ const tempBody = { ...req.body };
     }
 
     const newRestaurant = new restaurantModel({
-        ...finalData, 
+        ...finalData,
         coverPhoto: coverImageUrl,
-        Gallery: galleryUrls, 
+        Gallery: galleryUrls,
         Owner: req.user._id,
     });
 
@@ -195,11 +222,11 @@ const tempBody = { ...req.body };
     }
 
     res.status(201).json({
-    message: req.user.role === "admin" 
-        ? "Restaurant created and approved successfully" 
-        : "Your request has been sent successfully and is awaiting admin approval",
-    restaurant: savedRestaurant
-});
+        message: req.user.role === "admin"
+            ? "Restaurant created and approved successfully"
+            : "Your request has been sent successfully and is awaiting admin approval",
+        restaurant: savedRestaurant
+    });
 });
 
 // admin accpet or reject a request

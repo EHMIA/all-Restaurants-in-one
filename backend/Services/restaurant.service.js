@@ -11,13 +11,21 @@ import { getRestaurantReviewsService } from "./reviews.service.js";
  * handle return number of reviews
  * handle if fav or no for each restaurant
  */
-const getAllRestaurantsService = async (conditions, skip, limit) => {
+const getAllRestaurantsService = async (conditions, skip, limit, sort) => {
     const [restaurants, totalResNumber] = await Promise.all([
-        restaurantModel.find(conditions).skip(skip).limit(limit)
+        restaurantModel.find(conditions)
+            .sort(sort) 
+            .skip(skip)
+            .limit(limit)
             .select("_id name coverPhoto rating delivery priceRange cuisineType openingHours status"),
         restaurantModel.countDocuments(conditions)
     ]);
+    console.log(conditions);
+    console.log(sort);
     if (restaurants.length === 0) return null;
+    console.log(conditions);
+    console.log(sort);
+    
     return [restaurants, totalResNumber];
 }
 
