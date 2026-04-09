@@ -142,7 +142,6 @@ const getOneRestaurantService = async (restaurantId, returnQuery) => {
         }
     ]);
 
-    
     if (!Restaurant) return null;
         return Restaurant[0];
 }

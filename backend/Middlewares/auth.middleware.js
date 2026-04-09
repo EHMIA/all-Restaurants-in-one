@@ -52,6 +52,17 @@ const Protect = async(req,res,next)=>{
     }
 }
 
+const restrictToAccountOwner= (req,res,next)=>{
+    if(!req.user){
+        return res.status(401).json({message: "Please Login first"});
+    }
+
+    if(req.user.role==="user"){
+        return next();
+    }
+    return res.status(403).json({message:"Only users have this access"});
+}
+
 const restrictToAdminOrAccountOwner= (req,res,next)=>{
     if(!req.user){
         return res.status(401).json({message: "Please Login first"});
@@ -62,7 +73,6 @@ const restrictToAdminOrAccountOwner= (req,res,next)=>{
     if(isAccOwner || req.user.role=="admin"){
         return next();
     }
-
     return res.status(403).json({message:"You can Only modify your data"});
 }
 
@@ -78,18 +88,10 @@ const restrictToAdmin= (req,res,next)=>{
     return res.status(403).json({message:"Only Admains have this access"});
 }
 
-// const restrictToRestaurantOwner= (req,res,next)=>{
-//     if(!req.user){
-//         return res.status(401).json({message: "Please Login first"});
-//     }
-//     if(req.user.role==="admin"){
-//         return next();
-//     }
-// }
-
 export{
     optionalProtect,
     Protect,
     restrictToAdminOrAccountOwner,
-    restrictToAdmin
+    restrictToAdmin,
+    restrictToAccountOwner
 }

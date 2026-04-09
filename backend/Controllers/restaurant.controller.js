@@ -286,14 +286,6 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
 
 
 
-// Edit Restaurant Data
-
-const editRestaurantMainData = asyncHandler(async (req, res) => {
-
-})
-
-
-
 
 
 export {
@@ -301,5 +293,5 @@ export {
     getAllRestaurants,
     getOneRestaurant,
     acceptRejectRequest,
-    editRestaurantMainData
+    
 }
