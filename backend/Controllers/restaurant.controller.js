@@ -67,7 +67,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     }
 
 
-    const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort);
+    const UserId= req.user ? req.user._id : null;
+    const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort, UserId);
 
     if (!result)
         return res.status(200).json({
@@ -83,7 +84,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     const [restaurants, totalResNumber] = result;
 
     const resData = restaurants.map(res => ({
-        ...res.toObject(),
+        ...res,
         isOpen: CalculateOpenNow(res),
         serverTime: new Date().toISOString()
     }));

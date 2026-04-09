@@ -4,20 +4,28 @@ import  { Users } from "../Models/user.model.js"
 const optionalProtect= async(req,res,next)=>{
     const authHeader= req.headers.authorization;
 
-    if(!authHeader || !authHeader.startsWith("Bearer ")){
+    if(!authHeader){
         req.user=null;
         return next();
     }
+
+    if(authHeader && !authHeader.startsWith("Bearer ")){
+        return res.status(401).json({message: "Invalid token format"});
+    }
+
     const token = authHeader.split(" ")[1];
     try {
         const decoded= jwt.verify(token, process.env.JWT_SECRET);
         const user= await Users.findById(decoded.id).select("_id role");
-        
-        req.user= user || null;
+                
+        if (!user) {
+            return res.status(401).json({ message: "User no longer exists" });
+        }
+
+        req.user= user;
         next();
     } catch (error) {
-        req.user=null;
-        next();
+        return res.status(401).json({message: "Invalid or expired token"})
     }
 }
 
@@ -37,7 +45,6 @@ const Protect = async(req,res,next)=>{
         if(!user){
             return res.status(401).json({message:"User not found"});
         }
-
         req.user=user;
         next();
     } catch (error) {
