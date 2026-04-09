@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { restaurantModel } from "../Models/restaurant.model.js";
 import { getRestaurantReviewsService } from "./reviews.service.js";
 
@@ -30,15 +31,15 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
     if (UserId) {
         pipeline.push({
             $lookup: {
-                from: "favorites", 
-                let: { resId: "$_id" }, 
+                from: "favorites",
+                let: { resId: "$_id" },
                 pipeline: [
                     {
                         $match: {
                             $expr: {
                                 $and: [
-                                    { $eq: ["$restaurant", "$$resId"] }, 
-                                    { $eq: ["$user", new mongoose.Types.ObjectId(UserId)] } 
+                                    { $eq: ["$restaurant", "$$resId"] },
+                                    { $eq: ["$user", new mongoose.Types.ObjectId(UserId)] }
                                 ]
                             }
                         }
@@ -49,23 +50,23 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
         });
     }
 
-    
+
     pipeline.push({
         $project: {
             _id: 1,
-                name: 1,
-                coverPhoto: 1,
-                rating: 1,
-                delivery: 1,
-                priceRange: 1,
-                cuisineType: 1,
-                openingHours: 1,
-                status: 1,
-                reviewsCount: { $size: "$reviewsData" },
+            name: 1,
+            coverPhoto: 1,
+            rating: 1,
+            delivery: 1,
+            priceRange: 1,
+            cuisineType: 1,
+            openingHours: 1,
+            status: 1,
+            reviewsCount: { $size: "$reviewsData" },
 
-            isFavorite: UserId 
-                ? { $gt: [{ $size: "$userFavorite" }, 0] } 
-                : { $literal: false } 
+            isFavorite: UserId
+                ? { $gt: [{ $size: "$userFavorite" }, 0] }
+                : { $literal: false }
         }
     });
 
@@ -98,9 +99,9 @@ const getOneRestaurantService = async (restaurantId, returnQuery) => {
     } else if (returnQuery) {
         queryFields = [returnQuery];
     }
-        const Restaurant = await restaurantModel.aggregate([
+    const Restaurant = await restaurantModel.aggregate([
         {
-            $match: {   
+            $match: {
                 _id: new mongoose.Types.ObjectId(restaurantId),
                 status: "approved"
             }
@@ -128,43 +129,22 @@ const getOneRestaurantService = async (restaurantId, returnQuery) => {
                 phoneNumber: 1,
                 whatsappNumber: 1,
                 cuisineType: 1,
-                openingHours: 1,                
+                openingHours: 1,
                 status: 1,
-                Gallery: { $cond: [ { $in: [ "Gallery", queryFields ] }, "$Gallery", "$$REMOVE" ] },
-                menu: { $cond: [ { $in: [ "menu", queryFields ] }, "$menu", "$$REMOVE" ] },
-                reviews: { $cond: [ { $in: [ "reviews", queryFields ] }, "$reviewsData", "$$REMOVE" ] },
-                reviewsCount: { $size: "$reviewsData" },
-                isFavorite: { $gt: [{ $size: "$userFavorite" }, 0] }
+                Gallery: { $cond: [{ $in: ["Gallery", queryFields] }, "$Gallery", "$$REMOVE"] },
+                menu: { $cond: [{ $in: ["menu", queryFields] }, "$menu", "$$REMOVE"] },
+                reviews: { $cond: [{ $in: ["reviews", queryFields] }, "$reviewsData", "$$REMOVE"] },
+                reviewsCount: { $size: { $ifNull: ["$reviewsData", []] } },
+                isFavorite: {
+                    $gt: [{ $size: { $ifNull: ["$userFavorite", []] } }, 0]
+                }
             }
         }
     ]);
-        
+
     
-        // findOne({
-        //     _id: restaurantId,
-        //     status: "approved"
-        // }).select(`name description coverPhoto rating delivery priceRange Owner facebookLink address phoneNumber whatsappNumber cuisineType openingHours status ${returnQuery=="Gallery"|| returnQuery=="menu" ? returnQuery : returnQuery=="all" ? ["Gallery", "menu"]:""}`);
-
-
-        let restaurantReviews= await getRestaurantReviewsService(restaurantId);
-        if(returnQuery=="reviews" || returnQuery=="all"){
-            if(!restaurantReviews){
-                restaurantReviews=[];
-            }
-        }
     if (!Restaurant) return null;
-    if(returnQuery=="reviews" || returnQuery=="all"){
-        return {
-        Restaurant,
-        restaurantReviews,
-        restaurantReviewsCount:restaurantReviews.length
-    };
-    }else{
-        return {
-        Restaurant,
-        restaurantReviewsCount:restaurantReviews.length
-    };
-    }
+        return Restaurant[0];
 }
 
 // just admins

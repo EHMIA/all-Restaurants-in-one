@@ -102,30 +102,37 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
 
 const getOneRestaurant = asyncHandler(async (req, res) => {
-    const Query = req.query;
+
+    const selection = req.query.select; 
     const restaurantId = req.params.id;
+    
     let returnQuery;
-    if (Query == null) {
+
+    if (!selection) {
         returnQuery = null;
-    } else if (Query = "Gallery") {
+    } else if (selection === "Gallery") {
         returnQuery = "Gallery";
-    } else if (Query = "reviews") {
+    } else if (selection === "reviews") {
         returnQuery = "reviews";
-    } else if (Query = "menu") {
+    } else if (selection === "menu") {
         returnQuery = "menu";
-    } else if (Query == "all") {
-        returnQuery == "all"
+    } else if (selection === "all") {
+        returnQuery = "all";
     } else {
         return res.status(404).json({ message: "Invalid Query" });
     }
+
     const Restaurant = await getOneRestaurantService(restaurantId, returnQuery);
     if (!Restaurant)
         return res.status(404).json({ message: "Restaurant not found" });
     console.log(Restaurant);
 
+    const restaurantData = Restaurant;
+
+        const timeNow = new Date();
     res.status(200).json(({
-        ...Restaurant.toObject(),
-        isOpen: CalculateOpenNow(Restaurant),
+        ...Restaurant,
+        isOpen: CalculateOpenNow(restaurantData),
         serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
     }));
 });
