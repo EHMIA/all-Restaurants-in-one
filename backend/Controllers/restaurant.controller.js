@@ -102,41 +102,30 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
 
 const getOneRestaurant = asyncHandler(async (req, res) => {
-
-    const selection = req.query.select; 
     const restaurantId = req.params.id;
+    const Restaurant = await getOneRestaurantService(restaurantId);
     
-    let returnQuery;
+    if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
-    if (!selection) {
-        returnQuery = null;
-    } else if (selection === "Gallery") {
-        returnQuery = "Gallery";
-    } else if (selection === "reviews") {
-        returnQuery = "reviews";
-    } else if (selection === "menu") {
-        returnQuery = "menu";
-    } else if (selection === "all") {
-        returnQuery = "all";
-    } else {
-        return res.status(404).json({ message: "Invalid Query" });
-    }
-
-    const Restaurant = await getOneRestaurantService(restaurantId, returnQuery);
-    if (!Restaurant)
-        return res.status(404).json({ message: "Restaurant not found" });
-    console.log(Restaurant);
-
-    const restaurantData = Restaurant;
-
-        const timeNow = new Date();
-    res.status(200).json(({
-        data:{ 
+    res.status(200).json({
+        data: {
             ...Restaurant,
-            isOpen: CalculateOpenNow(restaurantData),
-            serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
-            }
-    }));
+            isOpen: CalculateOpenNow(Restaurant),
+            serverTime: new Date().toISOString()
+        }
+    });
+});
+
+const getSelectionRestaurant = asyncHandler(async (req, res) => {
+    const restaurantId = req.params.id;
+    const selection = req.query.select;
+
+    if (!selection) return res.status(400).json({ message: "Selection query is required" });
+
+    const Restaurant = await getOneRestaurantService(restaurantId, selection);
+    if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
+
+    res.status(200).json({ data: Restaurant });
 });
 
 
@@ -295,5 +284,5 @@ export {
     getAllRestaurants,
     getOneRestaurant,
     acceptRejectRequest,
-    
+    getSelectionRestaurant
 }

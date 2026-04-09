@@ -84,21 +84,21 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
  * @returns restaurant
  */
 
-/**
- * handle return user name for each review in case of "reviews" and "all"
- * handle return number of reviews
- * handle if fav or no
- */
-const getOneRestaurantService = async (restaurantId, returnQuery) => {
 
-    let queryFields = [];
-    if (returnQuery === "all") {
-        queryFields = ["Gallery", "menu", "reviews"];
-    } else if (Array.isArray(returnQuery)) {
-        queryFields = returnQuery;
-    } else if (returnQuery) {
-        queryFields = [returnQuery];
+const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
+    let rawFields = [];
+    if (returnQuery) {
+        rawFields = Array.isArray(returnQuery) ? returnQuery : [returnQuery];
     }
+
+    let queryFields = rawFields.map(f => f.toLowerCase());
+    const isAll = queryFields.length === 0 || queryFields.includes("all");
+    const showMainInfo = isAll;
+
+    if (isAll) {
+        queryFields = ["gallery", "menu", "reviews"];
+    }
+
     const Restaurant = await restaurantModel.aggregate([
         {
             $match: {
@@ -117,34 +117,30 @@ const getOneRestaurantService = async (restaurantId, returnQuery) => {
         {
             $project: {
                 _id: 1,
-                name: 1,
-                description: 1,
-                coverPhoto: 1,
-                rating: 1,
-                delivery: 1,
-                priceRange: 1,
-                Owner: 1,
-                facebookLink: 1,
-                address: 1,
-                phoneNumber: 1,
-                whatsappNumber: 1,
-                cuisineType: 1,
-                openingHours: 1,
-                status: 1,
-                Gallery: { $cond: [{ $in: ["Gallery", queryFields] }, "$Gallery", "$$REMOVE"] },
+                name: { $cond: [showMainInfo, "$name", "$$REMOVE"] },
+                description: { $cond: [showMainInfo, "$description", "$$REMOVE"] },
+                coverPhoto: { $cond: [showMainInfo, "$coverPhoto", "$$REMOVE"] },
+                rating: { $cond: [showMainInfo, "$rating", "$$REMOVE"] },
+                delivery: { $cond: [showMainInfo, "$delivery", "$$REMOVE"] },
+                priceRange: { $cond: [showMainInfo, "$priceRange", "$$REMOVE"] },
+                Owner: { $cond: [showMainInfo, "$Owner", "$$REMOVE"] },
+                facebookLink: { $cond: [showMainInfo, "$facebookLink", "$$REMOVE"] },
+                address: { $cond: [showMainInfo, "$address", "$$REMOVE"] },
+                phoneNumber: { $cond: [showMainInfo, "$phoneNumber", "$$REMOVE"] },
+                whatsappNumber: { $cond: [showMainInfo, "$whatsappNumber", "$$REMOVE"] },
+                cuisineType: { $cond: [showMainInfo, "$cuisineType", "$$REMOVE"] },
+                openingHours: { $cond: [showMainInfo, "$openingHours", "$$REMOVE"] },
+                status: { $cond: [showMainInfo, "$status", "$$REMOVE"] },
+                Gallery: { $cond: [{ $in: ["gallery", queryFields] }, "$Gallery", "$$REMOVE"] },
                 menu: { $cond: [{ $in: ["menu", queryFields] }, "$menu", "$$REMOVE"] },
                 reviews: { $cond: [{ $in: ["reviews", queryFields] }, "$reviewsData", "$$REMOVE"] },
-                reviewsCount: { $size: { $ifNull: ["$reviewsData", []] } },
-                isFavorite: {
-                    $gt: [{ $size: { $ifNull: ["$userFavorite", []] } }, 0]
-                }
+                reviewsCount: { $cond: [showMainInfo, { $size: { $ifNull: ["$reviewsData", []] } }, "$$REMOVE"] }
             }
         }
     ]);
 
-    if (!Restaurant) return null;
-        return Restaurant[0];
-}
+    return Restaurant.length > 0 ? Restaurant[0] : null;
+};
 
 // just admins
 const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
