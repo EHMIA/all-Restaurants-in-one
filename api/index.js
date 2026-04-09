@@ -2,6 +2,7 @@ import { ConnectDB } from "../backend/Config/Connectdb.js";
 import { configDotenv } from "dotenv";
 import express, { json } from "express";
 import authRoutes from "../backend/Routes/auth.route.js";
+import userRoutes from "../backend/Routes/user.route.js";
 import RestaurantsRoutes from "../backend/Routes/restaurant.route.js";
 import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundErrorHandler.middleware.js";
 import SettingsRoutes from "../backend/Routes/adminSettings.route.js";   
@@ -17,6 +18,7 @@ app.use(json());
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/user", userRoutes);
 app.use("/restaurants", RestaurantsRoutes);
 app.use("/admin", SettingsRoutes);
 // temporary route for check back response on vercel
