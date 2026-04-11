@@ -22,7 +22,7 @@ class ConstantValidate {
   }
 
 
-  String? validateEmail(String email) {
+   String? validateEmail(String email) {
     if (email.isEmpty) {
       return 'Email cannot be empty';
     }

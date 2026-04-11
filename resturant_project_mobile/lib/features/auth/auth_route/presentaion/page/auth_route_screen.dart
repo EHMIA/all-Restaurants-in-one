@@ -20,36 +20,39 @@ class _AuthRouteScreenState extends State<AuthRouteScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => AuthRouteCubit(),
-      child: Scaffold(
-        backgroundColor: const Color(0xffFFF8F0),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 33.sp),
-              child: Container(
-                padding: EdgeInsets.all(24.sp),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30.r),
-                  boxShadow: [
-                    BoxShadow(
-                      spreadRadius: 5.r,
-                      blurRadius: 15.r,
-                      color: Colors.black.withValues(alpha: 0.1),
-                    ),
-                  ],
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CutomLogoTitleSubtitle(),
-
-                    CustomLoginSignupToggle(),
-
-                    HeightSpace(height: 24),
-
-                    CustomAuthSwitcherBody(),
-                  ],
+      child: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: Scaffold(
+          backgroundColor: const Color(0xffFFF8F0),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.sp, vertical: 33.sp),
+                child: Container(
+                  padding: EdgeInsets.all(24.sp),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30.r),
+                    boxShadow: [
+                      BoxShadow(
+                        spreadRadius: 5.r,
+                        blurRadius: 15.r,
+                        color: Colors.black.withValues(alpha: 0.1),
+                      ),
+                    ],
+                  ),
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CutomLogoTitleSubtitle(),
+        
+                      CustomLoginSignupToggle(),
+        
+                      HeightSpace(height: 24),
+        
+                      CustomAuthSwitcherBody(),
+                    ],
+                  ),
                 ),
               ),
             ),

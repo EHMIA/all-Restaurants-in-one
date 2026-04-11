@@ -18,12 +18,15 @@ class CustomFooterSignup extends StatelessWidget {
           child: Text.rich(
             TextSpan(
               text: "Already have an account? ",
+              style: TextStyle(fontFamily: "Poppins", fontSize: 14),
               children: [
                 TextSpan(
                   text: "Login",
-                  style: const TextStyle(color: AppColors.primaryColor),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = onLoginClicked,
+                  style: const TextStyle(
+                    color: AppColors.primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  recognizer: TapGestureRecognizer()..onTap = onLoginClicked,
                 ),
               ],
             ),

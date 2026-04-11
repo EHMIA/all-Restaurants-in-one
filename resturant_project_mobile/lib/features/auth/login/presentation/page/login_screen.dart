@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/forget_password_cubit.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/login_state.dart';
@@ -41,10 +42,9 @@ class _LoginPageState extends State<LoginScreen> {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.primaryColor);
         } else if (state is LoginSuccess) {
+          CustomSnackBar.show(context, message: "Login successful!", backgroundColor: Colors.green);
           GoRouter.of(context).goNamed(RouteName.layOutScreen);
         }
       },
@@ -152,6 +152,7 @@ class _LoginPageState extends State<LoginScreen> {
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
+                              FocusScope.of(context).unfocus();
                               context.read<LoginCubit>().login(
                                 _emailController.text,
                                 _passwordController.text,

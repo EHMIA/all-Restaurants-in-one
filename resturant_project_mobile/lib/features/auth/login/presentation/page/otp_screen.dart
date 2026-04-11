@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
 import 'package:resturant_project/core/api/api_consumer.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/login/data/repository/otp_repo.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/otp_cubit.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/otp_state.dart';
@@ -35,7 +36,6 @@ class _OtpScreenState extends State<OtpScreen> {
     _otpCubit = OtpCubit(
       otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
     );
-    _pinController.text = widget.otp;
   }
 
   @override
@@ -48,11 +48,10 @@ class _OtpScreenState extends State<OtpScreen> {
   void _handleVerifyOtp() {
     String otp = _pinController.text;
     if (otp.length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('OTP must be 6 digits'),
-          backgroundColor: Colors.red,
-        ),
+      CustomSnackBar.show(
+        context,
+        message: "Please enter a valid 6-digit OTP",
+        backgroundColor: Colors.red,
       );
       return;
     }
@@ -62,7 +61,9 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => OtpCubit(otpRepo: OtpRepo(api: DioConsumer(dio: Dio()))),
+      create: (context) => OtpCubit(
+        otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
+      ),
       child: Scaffold(
         backgroundColor: const Color(0xffFFF8F0),
         appBar: AppBar(
@@ -77,19 +78,17 @@ class _OtpScreenState extends State<OtpScreen> {
           bloc: _otpCubit,
           listener: (context, state) {
             if (state is OtpFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage),
-                  backgroundColor: Colors.red,
-                ),
+              CustomSnackBar.show(
+                context,
+                message: state.errorMessage,
+                backgroundColor: AppColors.primaryColor,
               );
             }
             if (state is OtpSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.green,
-                ),
+              CustomSnackBar.show(
+                context,
+                message: state.message,
+                backgroundColor: Colors.green,
               );
               GoRouter.of(context).goNamed(RouteName.resetPasswordPage);
             }
@@ -124,12 +123,19 @@ class _OtpScreenState extends State<OtpScreen> {
     return Pinput(
       controller: _pinController,
       length: 6,
+      keyboardType: TextInputType.number,
       defaultPinTheme: PinTheme(
+        textStyle: TextStyle(
+          fontSize: 20.sp,
+          fontFamily: "Poppins",
+          color: AppColors.grayColor,
+          fontWeight: FontWeight.bold,
+        ),
         width: 50.w,
         height: 50.h,
         decoration: BoxDecoration(
           color: const Color(0xffF8FAFC),
-          border: Border.all(color: const Color(0xff94A3B8)),
+          border: Border.all(color: const Color(0xff94A3B8), width: 2),
           borderRadius: BorderRadius.circular(12.r),
         ),
       ),
@@ -147,7 +153,7 @@ class _OtpScreenState extends State<OtpScreen> {
             height: 56.h,
             decoration: BoxDecoration(
               color: state is OtpLoading
-                  ? AppColors.primaryColor.withValues(alpha:0.6)
+                  ? AppColors.primaryColor.withValues(alpha: 0.6)
                   : AppColors.primaryColor,
               borderRadius: BorderRadius.circular(12.r),
             ),

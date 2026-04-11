@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_footer_signup.dart';
 import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_terms_and_privacy.dart';
 import 'package:resturant_project/core/constants/constant_validate.dart';
@@ -37,22 +39,19 @@ class _SignUpPageState extends State<SignUpPage> {
     _phoneController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpFailure) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
-        }else if(state is SignUpSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Account Created Successfully")),
-          );
+          CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.primaryColor);
+        }
+        if (state is SignUpSuccess) {
+          CustomSnackBar.show(context, message: "Account Created Successfully", backgroundColor: Colors.green);
 
           context.read<AuthRouteCubit>().selectLoginTab();
         }
-
       },
       child: Form(
         key: _formKey,
@@ -237,8 +236,7 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             const HeightSpace(height: 16),
 
-            const CustomTermsAndPrivacy(),
-
+            //const CustomTermsAndPrivacy(),
             const HeightSpace(height: 20),
 
             /// Create Account Button
@@ -254,10 +252,11 @@ class _SignUpPageState extends State<SignUpPage> {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: state is SignUpLoading 
+                    onPressed: state is SignUpLoading
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
+                              FocusScope.of(context).unfocus();
                               context.read<SignUpCubit>().signUp(
                                 _emailController.text,
                                 _fullNameController.text,
@@ -267,7 +266,7 @@ class _SignUpPageState extends State<SignUpPage> {
                               );
                             }
                           },
-                    child: state is SignUpLoading 
+                    child: state is SignUpLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             "Create Account",
