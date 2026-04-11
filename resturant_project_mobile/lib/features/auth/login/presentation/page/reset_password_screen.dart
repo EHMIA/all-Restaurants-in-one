@@ -10,8 +10,8 @@ import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../bloc/reset_password_cubit.dart';
-import '../bloc/reset_password_state.dart';
+import '../cubit/reset_password_cubit.dart';
+import '../cubit/reset_password_state.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key});

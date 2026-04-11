@@ -1,5 +1,12 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:resturant_project/core/api/api_consumer.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/auth_route_screen.dart';
+import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
+import 'package:resturant_project/features/auth/login/data/repository/otp_repo.dart';
+import 'package:resturant_project/features/auth/login/presentation/cubit/otp_cubit.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/forgot_password_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/otp_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
@@ -10,11 +17,12 @@ import 'package:resturant_project/features/splash_screen/splash_screen.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/page/layout_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/restaurant_page_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/write_review_screen.dart';
+import '../../features/auth/login/presentation/cubit/forget_password_cubit.dart';
 import '../../features/home_screen/presentation/page/home_screen.dart';
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
-    initialLocation: RouteName.layOutScreen,
+    initialLocation: RouteName.authRouteScreen,
     routes: [
       GoRoute(
         path: RouteName.onBoardingScreen,
@@ -67,14 +75,25 @@ class AppRouter {
       GoRoute(
         path: RouteName.forgotPasswordPage,
         name: RouteName.forgotPasswordPage,
-        builder: (context, state) => ForgotPasswordScreen(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => ForgotPasswordCubit(
+            forgetRepo: ForgetPasswordRepo(api: DioConsumer(dio: Dio())),
+          ),
+          child: ForgotPasswordScreen(),
+        ),
       ),
       GoRoute(
         path: RouteName.otpPage,
         name: RouteName.otpPage,
         builder: (context, state) {
-          final email = state.extra as String? ?? '';
-          return OtpScreen(email: email);
+          final data = state.extra as Map<String, dynamic>;
+
+          return BlocProvider(
+            create: (context) => OtpCubit(
+              otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
+            ),
+            child: OtpScreen(email: data["email"], otp: data["otp"]),
+          );
         },
       ),
       GoRoute(

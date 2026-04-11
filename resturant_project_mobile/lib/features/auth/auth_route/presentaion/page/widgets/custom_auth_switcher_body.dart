@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:resturant_project/features/auth/login/presentation/bloc/login_cubit.dart';
+import 'package:resturant_project/core/api/api_consumer.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/features/auth/login/data/repository/login_repo.dart';
+import 'package:resturant_project/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/login_screen.dart';
-import '../../../../signup/presentation/bloc/signup_cubit.dart';
+import 'package:resturant_project/features/auth/signup/data/repository/sign_up_repo.dart';
+import '../../../../signup/presentation/cubit/signup_cubit.dart';
 import '../../bloc/auth_route_cubit.dart';
 import '../../bloc/auth_route_state.dart';
 import '../../../../signup/presentation/page/sign_up_page.dart';
@@ -37,7 +42,7 @@ class CustomAuthSwitcherBody extends StatelessWidget {
             child: state.selectedIndex == 0
                 ? BlocProvider(
                     key: const ValueKey("login"),
-                    create: (context) => LoginCubit(),
+                    create: (context) => LoginCubit(loginRepo: LoginRepository(api:DioConsumer(dio: Dio()) )),
                     child: LoginScreen(
                       onSignUpClicked: () =>
                           context.read<AuthRouteCubit>().selectSignUpTab(),
@@ -45,7 +50,7 @@ class CustomAuthSwitcherBody extends StatelessWidget {
                   )
                 : BlocProvider(
                     key: const ValueKey("signup"),
-                    create: (context) => SignUpCubit(),
+                    create: (context) => SignUpCubit(signUpRepo: SignUpRepo(api: DioConsumer(dio: Dio()))),
                     child: SignUpPage(
                       onLoginClicked: () =>
                           context.read<AuthRouteCubit>().selectLoginTab(),

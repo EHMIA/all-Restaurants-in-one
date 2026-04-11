@@ -1,18 +1,21 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/features/auth/login/presentation/bloc/login_state.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
+import 'package:resturant_project/features/auth/login/presentation/cubit/forget_password_cubit.dart';
+import 'package:resturant_project/features/auth/login/presentation/cubit/login_state.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_footer_login.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_login_forget_password.dart';
 import 'package:resturant_project/core/constants/constant_validate.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../bloc/login_cubit.dart';
+import '../cubit/login_cubit.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, required this.onSignUpClicked});
@@ -26,20 +29,22 @@ class _LoginPageState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  Future<void> saveLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
-        if (state.error != null) {
+        if (state is LoginFailure) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.error!)));
-        } else if (!state.isLoading) {
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+        } else if (state is LoginSuccess) {
           GoRouter.of(context).goNamed(RouteName.layOutScreen);
         }
       },
@@ -121,7 +126,12 @@ class _LoginPageState extends State<LoginScreen> {
             const HeightSpace(height: 15),
 
             /// Remember me
-            const CustomLoginForgetPassword(),
+            BlocProvider(
+              create: (context) => ForgotPasswordCubit(
+                forgetRepo: ForgetPasswordRepo(api: DioConsumer(dio: Dio())),
+              ),
+              child: const CustomLoginForgetPassword(),
+            ),
 
             const HeightSpace(height: 20),
 
@@ -138,7 +148,7 @@ class _LoginPageState extends State<LoginScreen> {
                         borderRadius: BorderRadius.circular(14.r),
                       ),
                     ),
-                    onPressed: state.isLoading
+                    onPressed: state is LoginLoading
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
@@ -148,7 +158,7 @@ class _LoginPageState extends State<LoginScreen> {
                               );
                             }
                           },
-                    child: state.isLoading
+                    child: state is LoginLoading
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             "Login",

@@ -1,17 +1,18 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_footer_forgot_password.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_logo_title_subtitle_forgot_password.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-import '../bloc/forget_password_cubit.dart';
-import '../bloc/forget_password_state.dart';
+import '../../data/repository/forget_password_repo.dart';
+import '../cubit/forget_password_cubit.dart';
+import '../cubit/forget_password_state.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -21,18 +22,16 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailPhoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String? validateEmailOrPhone(String emailOrPhone) {
-    if (emailOrPhone.isEmpty) return 'Email or phone number cannot be empty';
+  String? validateEmail(String email) {
+    if (email.isEmpty) return 'Email can not be empty';
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
-    final phoneRegex = RegExp(r'^[0-9\+\-\s\(\)]{10,}$');
-    if (!emailRegex.hasMatch(emailOrPhone) &&
-        !phoneRegex.hasMatch(emailOrPhone)) {
-      return 'Please enter a valid email or phone number';
+    if (!emailRegex.hasMatch(email)) {
+      return 'Please enter a valid email address';
     }
     return null;
   }
@@ -40,7 +39,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ForgotPasswordCubit(),
+      create: (context) => ForgotPasswordCubit(
+        forgetRepo: ForgetPasswordRepo(api: DioConsumer(dio: Dio())),
+      ),
       child: Scaffold(
         backgroundColor: const Color(0xffFFF8F0),
         appBar: AppBar(
@@ -59,9 +60,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   backgroundColor: Colors.green,
                 ),
               );
-              GoRouter.of(
-                context,
-              ).pushNamed(RouteName.otpPage, extra: _emailPhoneController.text);
+              GoRouter.of(context).pushNamed(
+                RouteName.otpPage,
+                extra: {"email": _emailController.text, "otp": state.otp},
+              );
             } else if (state is ForgotPasswordFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -100,10 +102,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         children: [
                           CustomLogoTitleSubtitleForgotPassword(),
                           CustomTextField(
-                            controller: _emailPhoneController,
-                            validator: (value) =>
-                                validateEmailOrPhone(value ?? ''),
-                            textFieldTitle: "Email or Phone Number",
+                            controller: _emailController,
+                            validator: (value) => validateEmail(value ?? ''),
+                            textFieldTitle: "Email",
                             hintText: "e.g. name@email.com",
                             prefixIcon: Icon(
                               Icons.email_outlined,
@@ -122,9 +123,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                       if (_formKey.currentState!.validate()) {
                                         context
                                             .read<ForgotPasswordCubit>()
-                                            .sendOtp(
-                                              _emailPhoneController.text,
-                                            );
+                                            .sendOtp(_emailController.text);
                                       }
                                     },
                               style: ElevatedButton.styleFrom(
@@ -177,7 +176,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   void dispose() {
-    _emailPhoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 }

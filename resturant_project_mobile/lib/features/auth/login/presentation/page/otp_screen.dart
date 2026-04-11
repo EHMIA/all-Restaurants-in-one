@@ -1,11 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
-import 'package:resturant_project/features/auth/login/presentation/bloc/otp_cubit.dart';
-import 'package:resturant_project/features/auth/login/presentation/bloc/otp_state.dart';
+import 'package:resturant_project/core/api/api_consumer.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/features/auth/login/data/repository/otp_repo.dart';
+import 'package:resturant_project/features/auth/login/presentation/cubit/otp_cubit.dart';
+import 'package:resturant_project/features/auth/login/presentation/cubit/otp_state.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
@@ -13,8 +17,9 @@ import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
+  final String otp;
 
-  const OtpScreen({super.key, required this.email});
+  const OtpScreen({super.key, required this.email, required this.otp});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -27,7 +32,10 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     super.initState();
-    _otpCubit = OtpCubit();
+    _otpCubit = OtpCubit(
+      otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
+    );
+    _pinController.text = widget.otp;
   }
 
   @override
@@ -39,338 +47,68 @@ class _OtpScreenState extends State<OtpScreen> {
 
   void _handleVerifyOtp() {
     String otp = _pinController.text;
-
-    if (otp.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter the OTP'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
-
     if (otp.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('OTP must be 6 digits'),
           backgroundColor: Colors.red,
         ),
       );
       return;
     }
-
-    _otpCubit.verifyOtp(otp, widget.email);
-  }
-
-  void _handleResendOtp() {
-    _pinController.clear();
-    _otpCubit.resendOtp(widget.email);
+    _otpCubit.verifyOtp(widget.email, otp);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black, size: 28.sp),
-          onPressed: () {
-            GoRouter.of(context).pop();
-          },
+    return BlocProvider(
+      create: (context) => OtpCubit(otpRepo: OtpRepo(api: DioConsumer(dio: Dio()))),
+      child: Scaffold(
+        backgroundColor: const Color(0xffFFF8F0),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.black, size: 28.sp),
+            onPressed: () => GoRouter.of(context).pop(),
+          ),
         ),
-      ),
-      backgroundColor: Color(0xffFFF8F0),
-      body: BlocListener<OtpCubit, OtpState>(
-        bloc: _otpCubit,
-        listener: (context, state) {
-          if (state.error != null && state.error!.isNotEmpty) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error!),
-                backgroundColor: Colors.red,
-                duration: Duration(seconds: 3),
-              ),
-            );
-          }
-
-          if (state.isOtpVerified) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('OTP verified successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-
-            // Navigate to reset password after a short delay
-            Future.delayed(Duration(seconds: 1), () {
-              if (mounted) {
-                GoRouter.of(context).goNamed(RouteName.resetPasswordPage);
-              }
-            });
-          }
-        },
-        child: SingleChildScrollView(
-          child: SafeArea(
-            bottom: false,
+        body: BlocListener<OtpCubit, OtpState>(
+          bloc: _otpCubit,
+          listener: (context, state) {
+            if (state is OtpFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+            if (state is OtpSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              GoRouter.of(context).goNamed(RouteName.resetPasswordPage);
+            }
+          },
+          child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
               child: Container(
                 padding: EdgeInsets.all(24.sp),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30.r),
-                  boxShadow: [
-                    BoxShadow(
-                      spreadRadius: 5.r,
-                      blurRadius: 15.r,
-                      color: Colors.black.withValues(alpha: 0.1),
-                    ),
-                  ],
-                ),
+                decoration: _buildBoxDecoration(),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    /// Logo Section
-                    const HeightSpace(height: 40),
-
-                    /// Logo Icon
-                    Container(
-                      width: 70.w,
-                      height: 70.h,
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
-                      child: SvgPicture.asset(AppAssets.logo),
-                    ),
-
-                    const HeightSpace(height: 16),
-
-                    /// App Name
-                    Text(
-                      "Akiel",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Poppins",
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-
-                    const HeightSpace(height: 24),
-
-                    /// Title
-                    Text(
-                      "Verify OTP",
-                      style: TextStyle(
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Poppins",
-                        color: AppColors.primaryColor,
-                      ),
-                    ),
-
-                    const HeightSpace(height: 16),
-
-                    /// Description
-                    SizedBox(
-                      width: 280.w,
-                      child: Text(
-                        'We\'ve sent a 6-digit code to ${widget.email}\nEnter the code below to verify your identity.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "Poppins",
-                          color: Color(0xff64748B),
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-
+                    _buildHeader(),
                     const HeightSpace(height: 48),
-
-                    /// OTP Input Field
-                    BlocBuilder<OtpCubit, OtpState>(
-                      bloc: _otpCubit,
-                      builder: (context, state) {
-                        return Pinput(
-                          controller: _pinController,
-                          length: 6,
-                          showCursor: true,
-                          onCompleted: (pin) {},
-                          defaultPinTheme: PinTheme(
-                            width: 50.w,
-                            height: 50.h,
-                            textStyle: TextStyle(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "Poppins",
-                              color: AppColors.primaryColor,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xffF8FAFC),
-                              border: Border.all(
-                                color: Color(0xff94A3B8),
-                                width: 1.5,
-                              ),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                          focusedPinTheme: PinTheme(
-                            width: 50.w,
-                            height: 50.h,
-                            textStyle: TextStyle(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "Poppins",
-                              color: AppColors.primaryColor,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                          submittedPinTheme: PinTheme(
-                            width: 50.w,
-                            height: 50.h,
-                            textStyle: TextStyle(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "Poppins",
-                              color: AppColors.primaryColor,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryColor.withValues(
-                                alpha: 0.1,
-                              ),
-                              border: Border.all(
-                                color: AppColors.primaryColor,
-                                width: 2,
-                              ),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                          errorPinTheme: PinTheme(
-                            width: 50.w,
-                            height: 50.h,
-                            textStyle: TextStyle(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "Poppins",
-                              color: Colors.red,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withValues(alpha: 0.1),
-                              border: Border.all(color: Colors.red, width: 2),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-
+                    _buildOtpInput(),
                     const HeightSpace(height: 40),
-
-                    /// Verify Button
-                    BlocBuilder<OtpCubit, OtpState>(
-                      bloc: _otpCubit,
-                      builder: (context, state) {
-                        return GestureDetector(
-                          onTap: state.isLoading ? null : _handleVerifyOtp,
-                          child: Container(
-                            width: double.infinity,
-                            height: 56.h,
-                            decoration: BoxDecoration(
-                              color: state.isLoading
-                                  ? AppColors.primaryColor.withValues(
-                                      alpha: 0.6,
-                                    )
-                                  : AppColors.primaryColor,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Center(
-                              child: state.isLoading
-                                  ? SizedBox(
-                                      width: 24.sp,
-                                      height: 24.sp,
-                                      child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
-                                        strokeWidth: 2.sp,
-                                      ),
-                                    )
-                                  : Text(
-                                      "Verify OTP",
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: "Poppins",
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-
+                    _buildVerifyButton(),
                     const HeightSpace(height: 20),
-
-                    /// Resend OTP Section
-                    BlocBuilder<OtpCubit, OtpState>(
-                      bloc: _otpCubit,
-                      builder: (context, state) {
-                        return Column(
-                          children: [
-                            Text(
-                              "Didn't receive the code?",
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: "Poppins",
-                                color: Color(0xff64748B),
-                              ),
-                            ),
-                            const HeightSpace(height: 8),
-                            if (state.canResend)
-                              GestureDetector(
-                                onTap: _handleResendOtp,
-                                child: Text(
-                                  "Resend OTP",
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: "Poppins",
-                                    color: AppColors.primaryColor,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              )
-                            else
-                              Text(
-                                "Resend in ${state.resendCountdown}s",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: "Poppins",
-                                  color: Color(0xff94A3B8),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-
-                    const HeightSpace(height: 30),
+                    _buildResendSection(),
                   ],
                 ),
               ),
@@ -378,6 +116,120 @@ class _OtpScreenState extends State<OtpScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  //!============================================================================
+  Widget _buildOtpInput() {
+    return Pinput(
+      controller: _pinController,
+      length: 6,
+      defaultPinTheme: PinTheme(
+        width: 50.w,
+        height: 50.h,
+        decoration: BoxDecoration(
+          color: const Color(0xffF8FAFC),
+          border: Border.all(color: const Color(0xff94A3B8)),
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerifyButton() {
+    return BlocBuilder<OtpCubit, OtpState>(
+      bloc: _otpCubit,
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: state is OtpLoading ? null : _handleVerifyOtp,
+          child: Container(
+            width: double.infinity,
+            height: 56.h,
+            decoration: BoxDecoration(
+              color: state is OtpLoading
+                  ? AppColors.primaryColor.withValues(alpha:0.6)
+                  : AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Center(
+              child: state is OtpLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : Text(
+                      "Verify OTP",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildResendSection() {
+    return Column(
+      children: [
+        Text(
+          "Didn't receive the code?",
+          style: TextStyle(color: const Color(0xff64748B), fontSize: 14.sp),
+        ),
+        const HeightSpace(height: 8),
+        GestureDetector(
+          onTap: () {},
+          child: Text(
+            "Resend OTP",
+            style: TextStyle(
+              color: AppColors.primaryColor,
+              fontWeight: FontWeight.bold,
+              decoration: TextDecoration.underline,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  BoxDecoration _buildBoxDecoration() {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(30.r),
+      boxShadow: [
+        BoxShadow(
+          spreadRadius: 5,
+          blurRadius: 15,
+          color: Colors.black.withValues(alpha: 0.1),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Column(
+      children: [
+        const HeightSpace(height: 40),
+        SvgPicture.asset(AppAssets.logo, width: 70.w, height: 70.h),
+        const HeightSpace(height: 16),
+        Text(
+          "Akiel",
+          style: TextStyle(
+            fontSize: 18.sp,
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const HeightSpace(height: 24),
+        Text(
+          "Verify OTP",
+          style: TextStyle(
+            fontSize: 28.sp,
+            color: AppColors.primaryColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }

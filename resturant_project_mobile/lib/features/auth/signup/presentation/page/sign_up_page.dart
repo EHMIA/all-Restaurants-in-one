@@ -7,8 +7,9 @@ import 'package:resturant_project/core/constants/constant_validate.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../bloc/signup_cubit.dart';
-import '../bloc/signup_state.dart';
+import '../../../auth_route/presentaion/bloc/auth_route_cubit.dart';
+import '../cubit/signup_cubit.dart';
+import '../cubit/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.onLoginClicked});
@@ -26,23 +27,32 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _confirmPasswordController.dispose();
+    _fullNameController.dispose();
+    _passwordController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
-        if (state.error != null) {
+        if (state is SignUpFailure) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(state.error!)));
-        }
-
-        if (state.isSuccess) {
+          ).showSnackBar(SnackBar(content: Text(state.errorMessage!)));
+        }else if(state is SignUpSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Account Created Successfully")),
           );
 
-          widget.onLoginClicked();
+          context.read<AuthRouteCubit>().selectLoginTab();
         }
+
       },
       child: Form(
         key: _formKey,
@@ -244,19 +254,20 @@ class _SignUpPageState extends State<SignUpPage> {
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    onPressed: state.isLoading
+                    onPressed: state is SignUpLoading 
                         ? null
                         : () {
                             if (_formKey.currentState!.validate()) {
                               context.read<SignUpCubit>().signUp(
-                                fullName: _fullNameController.text,
-                                email: _emailController.text,
-                                phone: _phoneController.text,
-                                password: _passwordController.text,
+                                _emailController.text,
+                                _fullNameController.text,
+                                _passwordController.text,
+                                _confirmPasswordController.text,
+                                _phoneController.text,
                               );
                             }
                           },
-                    child: state.isLoading
+                    child: state is SignUpLoading 
                         ? const CircularProgressIndicator(color: Colors.white)
                         : Text(
                             "Create Account",
