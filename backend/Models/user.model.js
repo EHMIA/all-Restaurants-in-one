@@ -39,18 +39,15 @@ const userSchema = new Schema({
     address: {
         governorate: {
             type: String,
-            required: true,
             trim: true
         },
         city: {
             type: String,
-            required: true,
             trim: true
         },
         street: {
             type: String,
             trim: true,
-            required: true
         },
         details: {
             type: String,
