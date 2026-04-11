@@ -37,9 +37,11 @@ const editUserProfile = asyncHandler(async (req, res) => {
         throw new Error("User not found");
     }
 
+    const { password: _password, ...userWithoutPassword } = user.toObject();
+
     res.status(200).json({
         message: "Profile updated successfully",
-        user
+        user: userWithoutPassword
     });
 });
 
