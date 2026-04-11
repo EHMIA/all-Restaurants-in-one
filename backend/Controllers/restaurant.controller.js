@@ -67,7 +67,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     }
 
 
-    const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort);
+    const UserId= req.user ? req.user._id : null;
+    const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort, UserId);
 
     if (!result)
         return res.status(200).json({
@@ -83,7 +84,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     const [restaurants, totalResNumber] = result;
 
     const resData = restaurants.map(res => ({
-        ...res.toObject(),
+        ...res,
         isOpen: CalculateOpenNow(res),
         serverTime: new Date().toISOString()
     }));
@@ -101,32 +102,30 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
 
 const getOneRestaurant = asyncHandler(async (req, res) => {
-    const Query = req.query;
     const restaurantId = req.params.id;
-    let returnQuery;
-    if (Query == null) {
-        returnQuery = null;
-    } else if (Query = "Gallery") {
-        returnQuery = "Gallery";
-    } else if (Query = "reviews") {
-        returnQuery = "reviews";
-    } else if (Query = "menu") {
-        returnQuery = "menu";
-    } else if (Query == "all") {
-        returnQuery == "all"
-    } else {
-        return res.status(404).json({ message: "Invalid Query" });
-    }
-    const Restaurant = await getOneRestaurantService(restaurantId, returnQuery);
-    if (!Restaurant)
-        return res.status(404).json({ message: "Restaurant not found" });
-    console.log(Restaurant);
+    const Restaurant = await getOneRestaurantService(restaurantId);
+    
+    if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
-    res.status(200).json(({
-        ...Restaurant.toObject(),
-        isOpen: CalculateOpenNow(Restaurant),
-        serverTime: timeNow.toISOString() // YYYY-MM-DDTHH:mm:ss.sssz
-    }));
+    res.status(200).json({
+        data: {
+            ...Restaurant,
+            isOpen: CalculateOpenNow(Restaurant),
+            serverTime: new Date().toISOString()
+        }
+    });
+});
+
+const getSelectionRestaurant = asyncHandler(async (req, res) => {
+    const restaurantId = req.params.id;
+    const selection = req.query.select;
+
+    if (!selection) return res.status(400).json({ message: "Selection query is required" });
+
+    const Restaurant = await getOneRestaurantService(restaurantId, selection);
+    if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
+
+    res.status(200).json({ data: Restaurant });
 });
 
 
@@ -278,14 +277,6 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
 
 
 
-// Edit Restaurant Data
-
-const editRestaurantMainData = asyncHandler(async (req, res) => {
-
-})
-
-
-
 
 
 export {
@@ -293,5 +284,5 @@ export {
     getAllRestaurants,
     getOneRestaurant,
     acceptRejectRequest,
-    editRestaurantMainData
+    getSelectionRestaurant
 }

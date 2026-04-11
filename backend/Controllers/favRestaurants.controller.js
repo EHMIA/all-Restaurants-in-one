@@ -8,8 +8,12 @@ const getMyFavRestaurants=asyncHandler(async(req,res)=>{
     const restaurants= await getMyFavRestaurantsService(req.user.id);
     if(!restaurants)
         return res.status(404).json({message:"No favorite Restaurants Found"});
-    res.status(200).json(restaurants);
-})
+    res.status(200).json({
+        Data:restaurants
+    });
+});
+
+
 
 const addRestaurantToFav=asyncHandler(async(req,res)=>{
     const restaurantId=req.params.id;
@@ -26,7 +30,11 @@ const addRestaurantToFav=asyncHandler(async(req,res)=>{
         return res.status(400).json({message:"Restaurant already in your favorites"});
     
     const newFavRestaurant=await addRestaurantToFavService(restaurantId,userId);
-    res.status(200).json(newFavRestaurant);
+    
+    res.status(200).json({
+        message:"Restaurant added to favorites successfully",
+        favoriteRestaurant:newFavRestaurant
+    });
 })
 
 const removeRestaurantFromFav=asyncHandler(async(req,res)=>{
@@ -44,7 +52,12 @@ const removeRestaurantFromFav=asyncHandler(async(req,res)=>{
         return res.status(400).json({message:"Restaurant not in your favorites"});
     
     const deletedFavRestaurant=await removeRestaurantFromFavService(restaurantId,userId);
-    res.status(200).json(deletedFavRestaurant);
+    if(!deletedFavRestaurant)
+        return res.status(500).json({message:"Failed to remove restaurant from favorites"});
+    
+    res.status(200).json({
+        message:"Restaurant removed from favorites successfully",
+    });
 })
 export{
     getMyFavRestaurants,

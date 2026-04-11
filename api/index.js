@@ -6,7 +6,10 @@ import userRoutes from "../backend/Routes/user.route.js";
 import RestaurantsRoutes from "../backend/Routes/restaurant.route.js";
 import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundErrorHandler.middleware.js";
 import SettingsRoutes from "../backend/Routes/adminSettings.route.js";   
+import favRestaurantsRoutes from "../backend/Routes/favRestaurants.route.js";
+
 import cors from "cors";
+
 
 configDotenv();
 const app = express();
@@ -23,14 +26,18 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/restaurants", RestaurantsRoutes);
 app.use("/admin", SettingsRoutes);
+app.use("/favorites", favRestaurantsRoutes);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
 // temporary route for check back response on vercel
 app.get("/", (req, res) => {
     res.status(200).json({ message: "API is running smoothly on Vercel" });
 });
 
 // Error Handling Middlewares
-app.use(notFoundHandler);
-app.use(errorHandler);
+
 
 
 const PORT = process.env.PORT || 5000;

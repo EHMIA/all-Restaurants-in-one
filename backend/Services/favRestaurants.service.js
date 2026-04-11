@@ -1,17 +1,32 @@
 import { favResModel } from "../Models/FavoriteRestaurants.model.js"
+import { CalculateOpenNow } from "../Validators/restaurant.validator.js";
 
 // just users
 // get all favs
 const getMyFavRestaurantsService= async(userID)=>{
-    const favRestauranst= await favResModel.find({user:userID});
-    if(favRestauranst.length===0)return null;
-    return favRestauranst;
+    const favRestauransts= await favResModel.find({user:userID}).
+    populate("restaurant","name coverPhoto rating delivery cusineType priceRange openingHours");
+
+    if (favRestauransts.length === 0) return null;
+
+    const processedFavorites = favRestauransts.map(fav => {
+        
+        const favObj = fav.toObject();
+        
+        if (favObj.restaurant) {
+            favObj.restaurant.isOpen = CalculateOpenNow(favObj.restaurant);
+            favObj.restaurant.serverTime = new Date().toISOString();
+        }
+        
+        return favObj;
+    });
+
+    return processedFavorites;
 }
 
 
 // add to fav
 const addRestaurantToFavService=async(restaurantID,userID)=>{
-
     const favRestaurant= new favResModel(
         {
             restaurant:restaurantID,
