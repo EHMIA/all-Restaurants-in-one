@@ -6,10 +6,12 @@ import userRoutes from "../backend/Routes/user.route.js";
 import RestaurantsRoutes from "../backend/Routes/restaurant.route.js";
 import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundErrorHandler.middleware.js";
 import SettingsRoutes from "../backend/Routes/adminSettings.route.js";   
+import cors from "cors";
 
 configDotenv();
 const app = express();
 
+app.use(cors());
 
 ConnectDB();
 

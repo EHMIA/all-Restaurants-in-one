@@ -36,7 +36,7 @@ const userSchema = new Schema({
         default: 'user',
         required: true
     },
-    address: [{
+    address: {
         governorate: {
             type: String,
             required: true,
@@ -57,7 +57,7 @@ const userSchema = new Schema({
             trim: true,
             default: ""
         }
-    }],
+    },
     otp: String,
     otpExpire: Date
 }, { timestamps: true });
