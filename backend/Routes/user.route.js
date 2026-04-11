@@ -8,7 +8,8 @@ import { editUserProfile } from "../Controllers/EditUser.js";
 
 router.get('/getUserProfile', Protect, getUserProfile);
 router.post('/uploadPhoto', Protect, uploadSingleImage, uploadPhoto);
-router.post('/editUserProfile', Protect, editUserProfile);
+router.post('/editUserProfile/:id', Protect, editUserProfile);
+
 
 
 
