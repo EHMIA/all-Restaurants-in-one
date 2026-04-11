@@ -4,7 +4,7 @@ import asyncHandler from "express-async-handler";
 
 const editUserProfile = asyncHandler(async (req, res) => {
     
-    const targetId = req.user.role === "admin" ? req.params.userId : req.user.id;
+    const targetId = req.user.role === "admin" ? req.params.id : req.user.id;
 
     const { fullname, email, phone, address, role } = req.body;
 
@@ -14,9 +14,7 @@ const editUserProfile = asyncHandler(async (req, res) => {
     if (phone)    updateData.phone = phone;
     
     if (req.user.role === "admin" && role) {
-        if(role) {
            updateData.role = role;
-        }
     }
 
     if (address) {
