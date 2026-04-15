@@ -1,5 +1,5 @@
 import {Router} from "express"
-import { addReview, addReview, getMyReviews } from "../Controllers/reviews.controller.js";
+import { addReview, getMyReviews } from "../Controllers/reviews.controller.js";
 import { Protect, restrictToAccountOwner } from "../Middlewares/auth.middleware.js";
 
 const router= Router();
