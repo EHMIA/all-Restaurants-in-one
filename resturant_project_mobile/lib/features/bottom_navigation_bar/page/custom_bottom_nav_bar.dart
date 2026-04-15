@@ -120,7 +120,6 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
   }
 }
 
-/// Custom widget to achieve opacity clipping for smooth fade effect
 class ClipOpacity extends StatelessWidget {
   final double opacity;
   final Widget child;

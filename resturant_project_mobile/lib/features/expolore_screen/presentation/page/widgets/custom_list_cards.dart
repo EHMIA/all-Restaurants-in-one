@@ -13,7 +13,7 @@ class CustomListCards extends StatefulWidget {
     this.resName,
     this.resRate,
     this.numReviews,
-    this.resSpace,
+    this.categories,
     this.onTap,
     required this.isFavorite,
     this.isOpen,
@@ -25,7 +25,7 @@ class CustomListCards extends StatefulWidget {
   final String? resName;
   final String? resRate;
   final String? numReviews;
-  final String? resSpace;
+final List<String>? categories;
   final void Function()? onTap;
   final bool isFavorite;
   final bool? isOpen;
@@ -55,7 +55,7 @@ class _CustomListCardsState extends State<CustomListCards> {
               height: 128.h,
               child: Stack(
                 children: [
-                  Image.asset(
+                  Image.network(
                     widget.image ?? AppAssets.image,
                     width: double.infinity,
                     height: double.infinity,
@@ -64,8 +64,6 @@ class _CustomListCardsState extends State<CustomListCards> {
                   Positioned(
                     top: 8.h,
                     right: 8.w,
-                    // Show heart button (red or gray) when in favorite screen,
-                    // otherwise show open/closed status badge.
                     child: widget.onFavoriteToggle != null
                         ? GestureDetector(
                             onTap: widget.onFavoriteToggle,
@@ -79,7 +77,6 @@ class _CustomListCardsState extends State<CustomListCards> {
                               ),
                               child: Icon(
                                 CupertinoIcons.heart_fill,
-                                // Red when favorited, gray when pending removal
                                 color: widget.isFavorite
                                     ? AppColors.primaryColor
                                     : Colors.grey,
@@ -121,7 +118,7 @@ class _CustomListCardsState extends State<CustomListCards> {
                       Icon(Icons.star, color: Colors.amber, size: 18.sp),
                       WidthSpace(width: 4),
                       Text(
-                        widget.resRate ?? '0.0',
+                        widget.resRate ?? '0',
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontFamily: 'Poppins',
@@ -139,15 +136,29 @@ class _CustomListCardsState extends State<CustomListCards> {
                     ],
                   ),
                   HeightSpace(height: 4.h),
-                  Text(
-                    '${widget.category} • ${widget.resSpace}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Color(0xff64748B),
-                      fontFamily: 'Poppins',
+                  SizedBox(
+                    height: 20.h,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: (widget.categories?.length ?? 0) > 4
+                          ? 4
+                          : (widget.categories?.length ?? 0),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.only(right: 8.w),
+                          child: Text(
+                            widget.categories![index],
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: AppColors.grayColor,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  
                 ],
               ),
             ),

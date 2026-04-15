@@ -8,74 +8,68 @@ import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_text_bottom.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_cubit.dart';
-import 'package:resturant_project/features/expolore_screen/presentation/bloc/explore_state.dart';
+import 'package:resturant_project/features/expolore_screen/presentation/cubit/explore_cubit.dart';
+import 'package:resturant_project/features/expolore_screen/presentation/cubit/explore_state.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/custom_list_cards.dart';
 import 'package:resturant_project/core/widgets/custom_category_item.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_icon_button.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_bottom_sheet.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/active_filter_chip.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/explore_empty_state.dart';
-
 import '../../../home_screen/presentation/page/widgets/search_text_field_widget.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key, this.searchText, this.category});
+
   final String? searchText;
   final String? category;
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<ExploreCubit>();
-    if (searchText != null && searchText!.isNotEmpty) {
-      cubit.setSearch(searchText!);
-    }
-    if (category != null) {
-      final idx = ConstantData.category.indexWhere(
-        (c) => c['title'] == category,
-      );
-      if (idx != -1) {
-        cubit.changeCategory(idx);
-      }
-    }
-
-    return const _ExploreScreenContent();
+    return _ExploreScreenContent(
+      initialSearch: searchText,
+      initialCategory: category,
+    );
   }
 }
 
 class _ExploreScreenContent extends StatefulWidget {
-  const _ExploreScreenContent();
+  const _ExploreScreenContent({this.initialSearch, this.initialCategory});
+
+  final String? initialSearch;
+  final String? initialCategory;
 
   @override
   State<_ExploreScreenContent> createState() => _ExploreScreenContentState();
 }
 
 class _ExploreScreenContentState extends State<_ExploreScreenContent> {
-  final TextEditingController searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     final cubit = context.read<ExploreCubit>();
-    searchController.text = cubit.state.search;
-    searchController.addListener(() {
-      cubit.setSearch(searchController.text);
-    });
-  }
 
-  @override
-  void didUpdateWidget(covariant _ExploreScreenContent oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final cubit = context.read<ExploreCubit>();
-    // Update controller if cubit search state changed
-    if (searchController.text != cubit.state.search) {
-      searchController.text = cubit.state.search;
+    if (widget.initialSearch != null && widget.initialSearch!.isNotEmpty) {
+      cubit.setSearch(widget.initialSearch!);
     }
+    if (widget.initialCategory != null) {
+      final idx = ConstantData.category.indexWhere(
+        (c) => c['title'] == widget.initialCategory,
+      );
+      if (idx != -1) cubit.changeCategory(idx);
+    }
+    _searchController.text = cubit.state.search;
+    _searchController.addListener(() {
+      context.read<ExploreCubit>().setSearch(_searchController.text);
+    });
+    cubit.getHomeFeature();
   }
 
   @override
   void dispose() {
-    searchController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -103,9 +97,51 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
       builder: (context, state) {
         final cubit = context.read<ExploreCubit>();
 
-        // Update search controller if state search changed
-        if (searchController.text != state.search) {
-          searchController.text = state.search;
+        if (_searchController.text != state.search) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && _searchController.text != state.search) {
+              _searchController.text = state.search;
+              _searchController.selection = TextSelection.fromPosition(
+                TextPosition(offset: _searchController.text.length),
+              );
+            }
+          });
+        }
+
+        if (state is ExploreLoading) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: _buildAppBar(),
+            body: const Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (state is ExploreError) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: _buildAppBar(),
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48.sp,
+                    color: AppColors.primaryColor,
+                  ),
+                  HeightSpace(height: 12),
+                  Text(
+                    'Something went wrong',
+                    style: TextStyle(fontSize: 16.sp, fontFamily: 'Poppins'),
+                  ),
+                  HeightSpace(height: 8),
+                  TextButton(
+                    onPressed: () => cubit.getHomeFeature(),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          );
         }
 
         final results = cubit.getFilteredRestaurants();
@@ -113,17 +149,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
 
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Text(
-              "Restaurants",
-              style: TextStyle(
-                color: AppColors.primaryColor,
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
+          appBar: _buildAppBar(),
           body: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.sp),
@@ -132,12 +158,12 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                 children: [
                   HeightSpace(height: 16),
 
-                  // Search + Filter button row
+                  // Search + Filter row
                   Row(
                     children: [
                       Expanded(
                         child: SearchTextFieldWidget(
-                          controller: searchController,
+                          controller: _searchController,
                           hintText: 'Search restaurants, cuisines...',
                         ),
                       ),
@@ -150,7 +176,6 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                   ),
                   HeightSpace(height: 16),
 
-                  // Active filter chips
                   if (hasActiveFilter) ...[
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -172,7 +197,6 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                     HeightSpace(height: 8),
                   ],
 
-                  // Category chips
                   SizedBox(
                     height: 50.h,
                     child: ListView.builder(
@@ -191,7 +215,6 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                   ),
                   HeightSpace(height: 8),
 
-                  // Result count
                   Text(
                     '${results.length} restaurant${results.length == 1 ? '' : 's'} found',
                     style: TextStyle(
@@ -202,12 +225,11 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                   ),
                   HeightSpace(height: 8),
 
-                  // Grid or empty state
                   results.isEmpty
                       ? const ExploreEmptyState()
                       : GridView.builder(
                           shrinkWrap: true,
-                          physics: const BouncingScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemCount: results.length > state.visibleCount
                               ? state.visibleCount
                               : results.length,
@@ -219,34 +241,32 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                                 childAspectRatio: 0.75,
                               ),
                           itemBuilder: (context, index) {
-                            final r = results[index];
+                            final res = results[index];
                             return CustomListCards(
                               onTap: () {
                                 GoRouter.of(context).pushNamed(
                                   RouteName.restaurantPageScreen,
-                                  extra: {
-                                    "image": r['image'],
-                                    "resName": r['resName'],
-                                    "resPeopleRate": r['resPeopleRate'],
-                                    "resRate": r['resRate'],
-                                    "resSpace": r['resSpace'],
-                                    "category": r['category'],
-                                    "isOpen": r['isOpen'],
-                                  },
+                                  extra: res,
                                 );
                               },
-                              isFavorite: r['isFavorite'],
-                              isOpen: r['isOpen'],
-                              image: AppAssets.image,
-                              resName: r['resName'],
-                              numReviews: r['resPeopleRate'],
-                              resRate: r['resRate'],
-                              resSpace: r['resSpace'],
-                              category: r['category'],
+                              isFavorite: res.isFavorite,
+                              isOpen: res.isOpen,
+                              image: res.coverPhoto.isNotEmpty
+                                  ? res.coverPhoto
+                                  : AppAssets.image,
+                              resName: res.name,
+                              numReviews: res.reviewsCount.toString(),
+                              resRate: res.rating.toString(),
+                              categories: res.cuisineType.isNotEmpty
+                                  ? res.cuisineType
+                                  : ['No Category'],
                             );
                           },
                         ),
-                  HeightSpace(height: 60),
+
+                  HeightSpace(height: 16),
+
+                  // Load More button
                   if (state.visibleCount < results.length)
                     Align(
                       alignment: Alignment.bottomRight,
@@ -259,6 +279,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                         onTap: () => cubit.loadMore(),
                       ),
                     ),
+
                   HeightSpace(height: 32),
                 ],
               ),
@@ -266,6 +287,20 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
           ),
         );
       },
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      title: Text(
+        "Restaurants",
+        style: TextStyle(
+          color: AppColors.primaryColor,
+          fontSize: 24.sp,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 }

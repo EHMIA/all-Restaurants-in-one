@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import '../../../../../../core/styles/app_colors.dart';
-import '../../bloc/auth_route_cubit.dart';
-import '../../bloc/auth_route_state.dart';
+import '../../cubit/auth_route_cubit.dart';
+import '../../cubit/auth_route_state.dart';
 
 class CustomLoginSignupToggle extends StatelessWidget {
   const CustomLoginSignupToggle({super.key});

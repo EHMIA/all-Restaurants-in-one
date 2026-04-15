@@ -10,13 +10,16 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
     this.image,
     this.titleText,
     this.restaurantRate,
-    this.spaceToRestaurant, this.onTap, required this.isFavorite, required this.isOpen, this.category, this.onFavoriteToggle,
+    this.categories,
+    this.onTap,
+    required this.isFavorite,
+    required this.isOpen,
+    this.onFavoriteToggle,
   });
   final String? image;
   final String? titleText;
   final String? restaurantRate;
-  final String? spaceToRestaurant;
-  final String? category;
+  final List<String>? categories;
   final void Function()? onTap;
   final bool isFavorite;
   final bool isOpen;
@@ -41,13 +44,13 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                 height: 160.h,
                 child: Stack(
                   children: [
-                    Image.asset(
+                    Image.network(
                       image ?? AppAssets.homeImage,
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
                     ),
-      
+
                     Positioned(
                       top: 12.h,
                       right: 12.w,
@@ -57,7 +60,7 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                           vertical: 4.h,
                         ),
                         decoration: BoxDecoration(
-                          color: isOpen?  Colors.green:Colors.grey,
+                          color: isOpen ? Colors.green : Colors.grey,
                           borderRadius: BorderRadius.circular(20.r),
                         ),
                         child: Text(
@@ -74,9 +77,9 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                   ],
                 ),
               ),
-      
+
               SizedBox(height: 16.h),
-      
+
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 child: Row(
@@ -84,7 +87,7 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        titleText ?? 'Kebda & Sogoq House',
+                        titleText ?? 'Un Titled Restaurant',
                         style: TextStyle(
                           fontSize: 15.sp,
                           fontWeight: FontWeight.bold,
@@ -98,7 +101,7 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                         Icon(Icons.star, color: Colors.amber, size: 18.sp),
                         SizedBox(width: 4.w),
                         Text(
-                          restaurantRate ?? '5',
+                          restaurantRate ?? '0.0',
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontFamily: 'Poppins',
@@ -110,18 +113,31 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                   ],
                 ),
               ),
-      
+
               HeightSpace(height: 4.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Text(
-                  '${category?? 'No Category'} • ${spaceToRestaurant??'0.0 km'}',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.grayColor,
-                    fontFamily: 'Poppins',
+                child: SizedBox(
+                  height: 20.h,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: (categories?.length ?? 0) > 4
+                        ? 4
+                        : (categories?.length ?? 0),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.only(right: 8.w),
+                        child: Text(
+                          categories![index],
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: AppColors.grayColor,
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               HeightSpace(height: 16),

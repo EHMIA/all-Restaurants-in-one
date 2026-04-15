@@ -5,7 +5,7 @@ import 'package:resturant_project/features/auth/auth_route/presentaion/page/widg
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/cutom_logo_title_subtitle.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../bloc/auth_route_cubit.dart';
+import '../cubit/auth_route_cubit.dart';
 import 'widgets/custom_auth_switcher_body.dart';
 
 class AuthRouteScreen extends StatefulWidget {

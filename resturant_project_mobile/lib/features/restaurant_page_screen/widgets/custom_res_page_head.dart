@@ -4,16 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
-import 'package:resturant_project/core/manager/favorite_repository.dart';
+import 'package:resturant_project/core/models/restaurant_data_model.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_bloc.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_event.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_state.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit_state.dart';
 import 'package:resturant_project/features/restaurant_page_screen/widgets/custom_button_res_page.dart';
 
 class CustomResPageHead extends StatefulWidget {
   const CustomResPageHead({
     super.key,
+    this.restaurant,
     this.image,
     this.numReviews,
     this.category,
@@ -22,6 +22,7 @@ class CustomResPageHead extends StatefulWidget {
     this.resRate,
     this.resSpace,
   });
+  final RestaurantModel? restaurant;
   final String? image;
   final String? resName;
   final String? resRate;
@@ -42,6 +43,22 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
 
   @override
   Widget build(BuildContext context) {
+    // Get display values from restaurant or legacy parameters
+    final image =
+        widget.restaurant?.coverPhoto ?? widget.image ?? AppAssets.image;
+    final resName = widget.restaurant?.name ?? widget.resName ?? "Without Name";
+    final resRate =
+        widget.restaurant?.rating.toString() ?? widget.resRate ?? "0.0";
+    final numReviews =
+        widget.restaurant?.reviewsCount.toString() ?? widget.numReviews ?? "0";
+    final isOpen = widget.restaurant?.isOpen ?? widget.isOpen ?? false;
+    final cuisineTypes = widget.restaurant?.cuisineType ?? [];
+    final category =
+        (cuisineTypes.isNotEmpty ? cuisineTypes.first : null) ??
+        widget.category ??
+        "Unknown";
+    final resSpace = widget.resSpace ?? "0 km";
+
     return SizedBox(
       height: 380.h,
       width: double.infinity,
@@ -49,7 +66,13 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
         fit: StackFit.expand,
         children: [
           /// Background Image
-          Image.asset(widget.image ?? AppAssets.image, fit: BoxFit.cover),
+          Image.network(
+            image,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Image.asset(AppAssets.image, fit: BoxFit.cover);
+            },
+          ),
 
           /// Gradient Overlay
           Container(
@@ -80,26 +103,21 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
           Positioned(
             top: 48.h,
             right: 16.w,
-            child: BlocBuilder<FavoriteBloc, FavoriteState>(
+            child: BlocBuilder<FavoriteCubit, FavoriteCubitState>(
               builder: (context, state) {
-                final isFavorite = state.favorites.any(
-                  (element) => element['resName'] == widget.resName,
-                );
+                final isFavorite = widget.restaurant != null
+                    ? state.favorites.any(
+                        (element) => element.id == widget.restaurant!.id,
+                      )
+                    : state.favorites.any((element) => element.name == resName);
 
                 return CustomButtonResPage(
                   onTap: () {
-                    final restaurant = {
-                      "resName": widget.resName,
-                      "image": widget.image,
-                      "resRate": widget.resRate,
-                      "resSpace": widget.resSpace,
-                      "resPeopleRate": widget.numReviews,
-                      "isOpen": widget.isOpen,
-                    };
-
-                    context.read<FavoriteBloc>().add(
-                      ToggleFavoriteRestaurant(restaurant),
-                    );
+                    if (widget.restaurant != null) {
+                      context.read<FavoriteCubit>().toggleFavoriteRestaurant(
+                        widget.restaurant!,
+                      );
+                    }
                   },
                   icon: isFavorite ? Icons.favorite : Icons.favorite_border,
                 );
@@ -122,13 +140,11 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: widget.isOpen == true
-                        ? Color(0xff22C55E)
-                        : Color(0xff64748B),
+                    color: isOpen ? Color(0xff22C55E) : Color(0xff64748B),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    widget.isOpen == true ? 'OPEN NOW' : 'CLOSED',
+                    isOpen ? 'OPEN NOW' : 'CLOSED',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12.sp,
@@ -141,7 +157,7 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
 
                 /// Title
                 Text(
-                  widget.resName ?? "Without Name",
+                  resName,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32.sp,
@@ -162,7 +178,7 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                     SizedBox(width: 6.w),
 
                     Text(
-                      widget.resRate ?? "0.0",
+                      resRate,
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -173,7 +189,7 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                     SizedBox(width: 6.w),
 
                     Text(
-                      "(${widget.numReviews ?? '0'} reviews)",
+                      "($numReviews reviews)",
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
 
@@ -182,7 +198,7 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                     SizedBox(width: 8.w),
 
                     Text(
-                      widget.category ?? "Unknown",
+                      category,
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
 
@@ -191,7 +207,7 @@ class _CustomResPageHeadState extends State<CustomResPageHead> {
                     SizedBox(width: 8.w),
 
                     Text(
-                      widget.resSpace ?? "0 km",
+                      resSpace,
                       style: TextStyle(color: Colors.white70, fontSize: 12.sp),
                     ),
                   ],

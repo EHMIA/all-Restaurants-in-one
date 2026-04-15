@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/core/api/api_consumer.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/core/models/restaurant_data_model.dart';
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/auth_route_screen.dart';
 import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
 import 'package:resturant_project/features/auth/login/data/repository/otp_repo.dart';
@@ -22,7 +22,7 @@ import '../../features/home_screen/presentation/page/home_screen.dart';
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
-    initialLocation: RouteName.authRouteScreen,
+    initialLocation: RouteName.layOutScreen,
     routes: [
       GoRoute(
         path: RouteName.onBoardingScreen,
@@ -57,15 +57,25 @@ class AppRouter {
       GoRoute(
         path: RouteName.restaurantPageScreen,
         name: RouteName.restaurantPageScreen,
-        builder: (context, state) => RestaurantPageScreen(
-          image: (state.extra as Map<String, dynamic>)['image'],
-          resName: (state.extra as Map<String, dynamic>)['resName'],
-          resPeopleRate: (state.extra as Map<String, dynamic>)['resPeopleRate'],
-          resRate: (state.extra as Map<String, dynamic>)['resRate'],
-          resSpace: (state.extra as Map<String, dynamic>)['resSpace'],
-          category: (state.extra as Map<String, dynamic>)['category'],
-          isOpen: (state.extra as Map<String, dynamic>)['isOpen'],
-        ),
+        builder: (context, state) {
+          // Handle both RestaurantModel and legacy Map parameters
+          if (state.extra is RestaurantModel) {
+            final restaurant = state.extra as RestaurantModel;
+            return RestaurantPageScreen(restaurant: restaurant);
+          } else if (state.extra is Map<String, dynamic>) {
+            final data = state.extra as Map<String, dynamic>;
+            return RestaurantPageScreen(
+              image: data['image'],
+              resName: data['resName'],
+              resPeopleRate: data['resPeopleRate'],
+              resRate: data['resRate'],
+              resSpace: data['resSpace'],
+              category: data['category'],
+              isOpen: data['isOpen'],
+            );
+          }
+          return const RestaurantPageScreen();
+        },
       ),
       GoRoute(
         path: RouteName.myReviewPgeScreen,

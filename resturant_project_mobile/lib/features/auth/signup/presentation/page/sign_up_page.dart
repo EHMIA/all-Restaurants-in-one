@@ -9,7 +9,7 @@ import 'package:resturant_project/core/constants/constant_validate.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-import '../../../auth_route/presentaion/bloc/auth_route_cubit.dart';
+import '../../../auth_route/presentaion/cubit/auth_route_cubit.dart';
 import '../cubit/signup_cubit.dart';
 import '../cubit/signup_state.dart';
 

@@ -8,9 +8,8 @@ import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/custom_list_cards.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/favorite_empty_screen.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_bloc.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_event.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/bloc/favorite_state.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit_state.dart';
 
 class FavoriteScreen extends StatelessWidget {
   const FavoriteScreen({super.key});
@@ -18,7 +17,7 @@ class FavoriteScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => FavoriteBloc(FavoriteRepository())..add(LoadFavorites()),
+      create: (context) => FavoriteCubit(FavoriteRepository())..loadFavorites(),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -39,7 +38,7 @@ class FavoriteScreen extends StatelessWidget {
           ],
         ),
 
-        body: BlocBuilder<FavoriteBloc, FavoriteState>(
+        body: BlocBuilder<FavoriteCubit, FavoriteCubitState>(
           builder: (context, state) {
             if (state.favorites.isEmpty) {
               return const FavoriteEmptyScreen();
@@ -135,9 +134,7 @@ class FavoriteScreen extends StatelessWidget {
 
                         return CustomListCards(
                           onFavoriteToggle: () {
-                            context.read<FavoriteBloc>().add(
-                              ToggleFavorite(index),
-                            );
+                            context.read<FavoriteCubit>().toggleFavorite(index);
                           },
 
                           onTap: () {
@@ -148,11 +145,12 @@ class FavoriteScreen extends StatelessWidget {
                           },
 
                           isFavorite: !isPendingRemoval,
-                          image: item['image'],
-                          resName: item['resName'],
-                          numReviews: item['resPeopleRate'],
-                          resRate: item['resRate'],
-                          resSpace: item['resSpace'],
+                          image: item.coverPhoto,
+                          resName: item.name,
+                          numReviews: item.reviewsCount.toString(),
+                          resRate: item.rating.toString(),
+                          categories: item.cuisineType,
+                          isOpen: item.isOpen,
                         );
                       },
                     ),

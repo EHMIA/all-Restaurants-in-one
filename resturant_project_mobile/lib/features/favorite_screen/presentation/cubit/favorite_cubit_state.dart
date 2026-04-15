@@ -1,19 +1,20 @@
 import 'package:equatable/equatable.dart';
+import 'package:resturant_project/core/models/restaurant_data_model.dart';
 
-class FavoriteState extends Equatable {
-  final List<Map<String, dynamic>> favorites;
+class FavoriteCubitState extends Equatable {
+  final List<RestaurantModel> favorites;
   final List<int> pendingRemoval;
 
-  const FavoriteState({
+  const FavoriteCubitState({
     required this.favorites,
     this.pendingRemoval = const [],
   });
 
-  FavoriteState copyWith({
-    List<Map<String, dynamic>>? favorites,
+  FavoriteCubitState copyWith({
+    List<RestaurantModel>? favorites,
     List<int>? pendingRemoval,
   }) {
-    return FavoriteState(
+    return FavoriteCubitState(
       favorites: favorites ?? this.favorites,
       pendingRemoval: pendingRemoval ?? this.pendingRemoval,
     );
