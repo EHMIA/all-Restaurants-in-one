@@ -23,8 +23,10 @@ const userSchema = new Schema({
     },
     profile_pic: {
         type: String,
-        required: true,
-        default: "https://avatars.hsoubcdn.com/725a4674fbb20a98fc72f205e9c359f8?s=256",
+        //default: "https://avatars.hsoubcdn.com/725a4674fbb20a98fc72f205e9c359f8?s=256",
+    },
+    profile_pic_public_id:{
+        type: String
     },
     password: {
         type: String,
