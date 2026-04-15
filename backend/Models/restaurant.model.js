@@ -45,6 +45,12 @@ const restaurantSchema = new Schema(
             min: 0,
             max: 5,
             default: 0,
+            set: val => Math.round(val * 10) / 10
+        },
+        numberOfReviews: {
+            type: Number,
+            min: 0,
+            default: 0,
         },
 
         delivery: {

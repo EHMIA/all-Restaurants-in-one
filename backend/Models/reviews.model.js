@@ -16,9 +16,10 @@ const reviewSchema=new Schema({
     },
     rating: {
         type: Number,
-        required: true,
+        default: 0,
         min: 0,
-        max: 5
+        max: 5,
+        required: true
     },
     restaurant:{
         type:Schema.Types.ObjectId,
@@ -34,6 +35,8 @@ const reviewSchema=new Schema({
 {
     timestamps:true
 });
+
+reviewSchema.index({ restaurant: 1, user: 1 }, { unique: true });
 
 
 export const reviewModel=model("Review",reviewSchema);

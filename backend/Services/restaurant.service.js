@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import { restaurantModel } from "../Models/restaurant.model.js";
-import { getRestaurantReviewsService } from "./reviews.service.js";
 
 /**
  * @param {*} 

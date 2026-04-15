@@ -72,7 +72,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
     if (!result)
         return res.status(200).json({
-            data: [],
+            message: "No Restaurants Found",
+            Data: [],
             meta: {
                 totalResNumber: 0,
                 pagesCount: 0,
@@ -90,7 +91,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     }));
 
     res.status(200).json({
-        data: resData,
+        message: "Restaurants retrieved successfully",
+        Data: resData,
         meta: {
             totalResNumber: totalResNumber,
             pagesCount: Math.ceil(totalResNumber / Limit),
@@ -108,7 +110,8 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
     res.status(200).json({
-        data: {
+        message: "Restaurant retrieved successfully",
+        Data: {
             ...Restaurant,
             isOpen: CalculateOpenNow(Restaurant),
             serverTime: new Date().toISOString()
@@ -125,7 +128,10 @@ const getSelectionRestaurant = asyncHandler(async (req, res) => {
     const Restaurant = await getOneRestaurantService(restaurantId, selection);
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
-    res.status(200).json({ data: Restaurant });
+    res.status(200).json({ 
+        message: "Restaurant retrieved successfully",
+        Data: Restaurant }
+    );
 });
 
 
@@ -168,7 +174,9 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
             return res.status(400).json(
                 {
                     message: "Your previous request was rejected. Please review and update your existing data instead of creating a new one",
-                    resturantId: existingOwner._id
+                    Data:{
+                        resturantId: existingOwner._id
+                    }
                 }
             );
         }

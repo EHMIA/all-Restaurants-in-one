@@ -1,14 +1,10 @@
 import joi from "joi";
-import { emailField, phoneNumberField, facebookLinkField, hoursField, invalidPhoneMsg } from "../Utils/Schema-patterns.js";
-import { Days, CuisineTypes, MenuCategories, PriceRanges, LIMITS } from "../Utils/Constants.js";
+import { emailField, phoneNumberField } from "../Utils/Schema-patterns.js";
+import { Days, CuisineTypes, LIMITS } from "../Utils/Constants.js";
 
 
 
-const requiredString = (fieldName) => ({
-    "any.required": `${fieldName} is required`,
-    "string.empty": `${fieldName} cannot be empty`,
-    "string.base": `${fieldName} must be a string`,
-});
+
 
 const createRestaurantValidation = (obj) => {
     const schema = joi.object({
@@ -45,7 +41,8 @@ const createRestaurantValidation = (obj) => {
     });
 
     return schema.validate(obj, { convert: true });
-};const CalculateOpenNow = (restaurant) => {
+};
+const CalculateOpenNow = (restaurant) => {
     
     const dateNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Africa/Cairo"}));
     
@@ -78,8 +75,19 @@ const createRestaurantValidation = (obj) => {
 
     return TimeNow >= openingTime && TimeNow < closingTime;
 }
+
+
+const addReviewValidation= async(obj)=>{
+    const schema = joi.object({
+        title: joi.string().trim().min(3).max(30).default("Review for restaurant"),
+        content: joi.string().trim().min(5).max(100).required(),
+        rating: joi.number().min(1).max(5).default(0),
+    });
+    return schema.validate(obj);
+}
 export  { 
     createRestaurantValidation ,
-    CalculateOpenNow
+    CalculateOpenNow,
+    addReviewValidation
 };
 

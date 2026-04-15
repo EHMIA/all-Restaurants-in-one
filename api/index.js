@@ -7,7 +7,7 @@ import RestaurantsRoutes from "../backend/Routes/restaurant.route.js";
 import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundErrorHandler.middleware.js";
 import SettingsRoutes from "../backend/Routes/adminSettings.route.js";   
 import favRestaurantsRoutes from "../backend/Routes/favRestaurants.route.js";
-
+import ReviewsRoutes from "../backend/Routes/reviews.route.js";
 import cors from "cors";
 
 
@@ -27,6 +27,7 @@ app.use("/user", userRoutes);
 app.use("/restaurants", RestaurantsRoutes);
 app.use("/admin", SettingsRoutes);
 app.use("/favorites", favRestaurantsRoutes);
+app.use("/reviews",ReviewsRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

@@ -9,6 +9,7 @@ const getMyFavRestaurants=asyncHandler(async(req,res)=>{
     if(!restaurants)
         return res.status(404).json({message:"No favorite Restaurants Found"});
     res.status(200).json({
+        message:"Favorite Restaurants retrieved successfully",
         Data:restaurants
     });
 });
@@ -33,7 +34,7 @@ const addRestaurantToFav=asyncHandler(async(req,res)=>{
     
     res.status(200).json({
         message:"Restaurant added to favorites successfully",
-        favoriteRestaurant:newFavRestaurant
+        Data:newFavRestaurant
     });
 })
 
