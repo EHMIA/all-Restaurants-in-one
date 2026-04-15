@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { restaurantModel } from "../Models/restaurant.model.js";
 import { reviewModel } from "../Models/reviews.model.js"
 
@@ -22,7 +23,7 @@ const getOneReviewService= async({userId,restaurantId})=>{
         { 
             $set:{
                 title: data.title,
-                Content: data.content,
+                Content: data.Content,
                 rating: data.rating
             },
             $setOnInsert: { user: userId, restaurant: restaurantId } 
@@ -32,9 +33,8 @@ const getOneReviewService= async({userId,restaurantId})=>{
 
     if (!newReview) return null;
 
-    
     const stats = await reviewModel.aggregate([
-        { $match: { restaurant: restaurantId } },
+        { $match: { restaurant: new mongoose.Types.ObjectId(restaurantId) } },
         { 
             $group: { 
                 _id: "$restaurant", 
@@ -43,6 +43,8 @@ const getOneReviewService= async({userId,restaurantId})=>{
             } 
         }
     ]);
+    console.log(stats);
+    
 
     if (stats.length > 0) {
         await restaurantModel.findByIdAndUpdate(restaurantId, {

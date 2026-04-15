@@ -7,6 +7,6 @@ const router= Router();
 
 router.get("/my-reviews",Protect,restrictToAccountOwner ,getMyReviews);
 
-router.post("/add-review",Protect,restrictToAccountOwner, addReview);
+router.post("/add-review/:id",Protect,restrictToAccountOwner, addReview);
 
 export default router;

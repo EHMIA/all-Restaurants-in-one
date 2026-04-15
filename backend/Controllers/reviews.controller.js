@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler"
 import {  addReviewService, getMyReviewsService, getOneReviewService } from "../Services/reviews.service.js";
 import { addReviewValidation } from "../Validators/restaurant.validator.js";
+import { getOneRestaurantService } from "../Services/restaurant.service.js";
 
 // account_owner 
 const getMyReviews= asyncHandler(async(req,res)=>{
@@ -25,6 +26,13 @@ const getOneReview= asyncHandler(async(req,res)=>{
 });
 
 const addReview= asyncHandler(async(req,res)=>{
+    if (!req.params.id) 
+        return res.status(400).json({ message: "Restaurant ID is required" });
+    const restaurant= await getOneRestaurantService(req.params.id);
+    if(!restaurant)
+        return res.status(404).json({message:"No such Restaurant Found"});
+    console.log(restaurant);
+    
     const {error}= addReviewValidation(req.body);
     if(error)
         return res.status(400).json({message:error.details[0].message});

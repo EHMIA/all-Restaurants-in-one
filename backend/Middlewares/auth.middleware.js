@@ -56,7 +56,6 @@ const restrictToAccountOwner= (req,res,next)=>{
     if(!req.user){
         return res.status(401).json({message: "Please Login first"});
     }
-
     if(req.user.role==="user"){
         return next();
     }
@@ -67,7 +66,6 @@ const restrictToAdminOrAccountOwner= (req,res,next)=>{
     if(!req.user){
         return res.status(401).json({message: "Please Login first"});
     }
-
     const isAccOwner= req.params.id && req.params.id=== req.user.id;
 
     if(isAccOwner || req.user.role=="admin"){
