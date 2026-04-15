@@ -1,17 +1,30 @@
-import { Users } from "../Models/user.model.js";
 import asyncHandler from "express-async-handler";
+import { Users } from "../Models/user.model.js";
+import { uploadToCloudinary } from "../Utils/cloudinary.js";
 
-const uploadPhoto = asyncHandler(async (req, res) => {
+
+const uploadProfilePicController = asyncHandler(async (req, res) => {
+    
     if (!req.file) {
-        return res.status(400).json({ error: "No file uploaded" });
-    }   
-    const user = await Users.findById(req.user.id);
-    if (!user) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(400).json({ message: "Please upload an image" });
     }
-    user.photo = req.file.path;
-    await user.save();
-    res.status(200).json({ message: "Photo uploaded successfully", photoPath: req.file.path });
+
+    const imageUrl = await uploadToCloudinary(req.file.buffer);
+
+    const updatedUser = await Users.findByIdAndUpdate(
+        req.user.id, 
+        { profile_pic: imageUrl }, 
+        { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+        message: "Profile picture updated successfully",
+        profile_pic: updatedUser.profile_pic
+    });
 });
 
-export { uploadPhoto };
+export { uploadProfilePicController };
