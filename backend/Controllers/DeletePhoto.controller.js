@@ -24,3 +24,5 @@ const deleteProfilePicController = asyncHandler(async(req,res)=>{
     await user.save();
     res.status(200).json({message:"Profile picture deleted successfully"});
 })
+
+export {deleteProfilePicController}
