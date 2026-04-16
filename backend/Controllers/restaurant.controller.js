@@ -67,7 +67,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
     }
 
 
-    const UserId= req.user ? req.user._id : null;
+    const UserId = req.user ? req.user._id : null;
     const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort, UserId);
 
     if (!result)
@@ -84,11 +84,13 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
     const [restaurants, totalResNumber] = result;
 
+    const now = new Date().toISOString();
     const resData = restaurants.map(res => ({
         ...res,
         isOpen: CalculateOpenNow(res),
-        serverTime: new Date().toISOString()
+        serverTime: now
     }));
+
 
     res.status(200).json({
         message: "Restaurants retrieved successfully",
@@ -106,7 +108,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 const getOneRestaurant = asyncHandler(async (req, res) => {
     const restaurantId = req.params.id;
     const Restaurant = await getOneRestaurantService(restaurantId);
-    
+
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
     res.status(200).json({
@@ -128,9 +130,10 @@ const getSelectionRestaurant = asyncHandler(async (req, res) => {
     const Restaurant = await getOneRestaurantService(restaurantId, selection);
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
-    res.status(200).json({ 
+    res.status(200).json({
         message: "Restaurant retrieved successfully",
-        Data: Restaurant }
+        Data: Restaurant
+    }
     );
 });
 
@@ -144,8 +147,8 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     }
 
     const coverFile = req.file;
-    const validationBody = { 
-        ...req.body, 
+    const validationBody = {
+        ...req.body,
         coverPhoto: coverFile,
     };
 
@@ -158,12 +161,12 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
 
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
     if (existingOwner) {
-        const msg = existingOwner.status === "pending" 
-            ? "You already have a pending restaurant request" 
-            : existingOwner.status === "approved" 
-            ? "You already have a restaurant" 
-            : "Your previous request was rejected. Please review and update your existing data instead of creating a new one";
-        
+        const msg = existingOwner.status === "pending"
+            ? "You already have a pending restaurant request"
+            : existingOwner.status === "approved"
+                ? "You already have a restaurant"
+                : "Your previous request was rejected. Please review and update your existing data instead of creating a new one";
+
         return res.status(400).json({ message: msg, Data: { restaurantId: existingOwner._id } });
     }
 
