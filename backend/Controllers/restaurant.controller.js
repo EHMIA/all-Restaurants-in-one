@@ -107,7 +107,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
 const getOneRestaurant = asyncHandler(async (req, res) => {
     const restaurantId = req.params.id;
-    const Restaurant = await getOneRestaurantService(restaurantId);
+    const Restaurant = await getOneRestaurantService(restaurantId, "main");
 
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
@@ -128,13 +128,13 @@ const getSelectionRestaurant = asyncHandler(async (req, res) => {
     if (!selection) return res.status(400).json({ message: "Selection query is required" });
 
     const Restaurant = await getOneRestaurantService(restaurantId, selection);
+    
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
     res.status(200).json({
         message: "Restaurant retrieved successfully",
         Data: Restaurant
-    }
-    );
+    });
 });
 
 const createNewRestaurant = asyncHandler(async (req, res) => {
