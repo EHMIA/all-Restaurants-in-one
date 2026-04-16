@@ -36,8 +36,8 @@ const restaurantSchema = new Schema(
             maxlength: LIMITS.DESCRIPTION_MAX,
         },
         coverPhoto: {
-            type: String,
-            trim: true,
+            url: { type: String, trim: true },
+            publicId: { type: String, trim: true }
         },
 
         rating: {
@@ -120,9 +120,9 @@ const restaurantSchema = new Schema(
 
         Gallery: [
             {
-                type: String,
-                trim: true,
-            },
+                url: { type: String, required: true, trim: true },
+                publicId: { type: String, required: true, trim: true }
+            }
         ],
 
         menu: [
@@ -138,7 +138,6 @@ const restaurantSchema = new Schema(
                 category: { type: String, required: true, enum: MenuCategories },
             },
         ],
-
         openingHours: [
             {
                 day: { type: String, required: true, enum: Days, lowercase: true },
@@ -147,6 +146,7 @@ const restaurantSchema = new Schema(
                 isClosed: { type: Boolean, default: false },
             },
         ],
+
         Owner: {
             type: Schema.Types.ObjectId,
             required: true,
@@ -219,5 +219,12 @@ restaurantSchema.path("openingHours").validate((hours) => {
     }
     return true;
 });
+
+restaurantSchema
+    .path("Gallery")
+    .validate(
+        (gallery) => gallery.length <= LIMITS.Gallery_MAX, 
+        `Gallery cannot have more than ${LIMITS.Gallery_MAX} photos`,
+    );
 
 export const restaurantModel = model("Restaurant", restaurantSchema);

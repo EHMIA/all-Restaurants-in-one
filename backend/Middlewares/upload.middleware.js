@@ -8,7 +8,10 @@ const uploadRestaurantData = upload.fields([
     { name: "Gallery", maxCount: LIMITS.GALLERY_PHOTOS },
 ]);
 
+const uploadMultipleImages= upload.array("images",10);
+
 export{
     uploadSingleImage,
-    uploadRestaurantData
+    uploadRestaurantData,
+    uploadMultipleImages
 }

@@ -6,24 +6,12 @@ const router = Router();
 
 router.get("/",getAllRestaurants);
 
-
 router.get("/:id",getOneRestaurant);
 
 router.get('/:id/details', getSelectionRestaurant);
 
 router.post("/",Protect,uploadRestaurantData,createNewRestaurant)
         
-
-
-
-// edit restaurant 
-/**
- * delete , add photo (owner)
- * delete , add , edit menu (owner)
- * edit main data (owner)
- */
-
-
 
 export default router;
 

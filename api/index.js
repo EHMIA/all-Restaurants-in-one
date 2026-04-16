@@ -12,7 +12,7 @@ import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundEr
 import SettingsRoutes from "../backend/Routes/adminSettings.route.js";   
 import favRestaurantsRoutes from "../backend/Routes/favRestaurants.route.js";
 import ReviewsRoutes from "../backend/Routes/reviews.route.js";
-
+import restaurantDataRoutes from "../backend/Routes/restaurantData.route.js";
 
 const app = express();
 app.use(cors());
@@ -34,7 +34,7 @@ app.use("/restaurants", RestaurantsRoutes);
 app.use("/admin", SettingsRoutes);
 app.use("/favorites", favRestaurantsRoutes);
 app.use("/reviews",ReviewsRoutes);
-
+app.use("/restaurant-data",restaurantDataRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);

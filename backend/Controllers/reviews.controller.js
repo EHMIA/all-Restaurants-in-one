@@ -58,7 +58,6 @@ const deleteReview= asyncHandler(async(req,res)=>{
         return res.status(404).json({message:"No reviews Found"});
     return res.status(200).json({
         message:"Review deleted successfully",
-        Data:review
     });
 });
 
