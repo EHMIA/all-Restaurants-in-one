@@ -5,8 +5,8 @@ import { Protect, restrictToRestaurantOwner } from "../Middlewares/auth.middlewa
 
 const router= Router();
 
-router.post("coverImage/:id",Protect,restrictToRestaurantOwner,uploadSingleImage,uploadOrUpdateCoverImage)
+router.post("/coverImage/:id",Protect,restrictToRestaurantOwner,uploadSingleImage,uploadOrUpdateCoverImage)
 
-router.delete("coverImage/:id",Protect,restrictToRestaurantOwner,deleteCoverImage)
+router.delete("/coverImage/:id",Protect,restrictToRestaurantOwner,deleteCoverImage)
 
 export default router;
