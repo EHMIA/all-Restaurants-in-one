@@ -13,18 +13,11 @@ const createRestaurantValidation = (obj) => {
         phoneNumber: joi.string().trim().pattern(phoneNumberField).required(),
         cuisineType: joi.array().items(joi.string().valid(...CuisineTypes)).min(1).required(),
         delivery: joi.boolean().required(),
-        Gallery: joi.array().items(
-            joi.object({
-                url: joi.string().required(),
-                publicId: joi.string().required()
-            })
-        ).min(4).required()
-            .messages({
-                "array.min": "Gallery must have at least 4 photos",
-                "any.required": "Gallery is required",
-                "object.base": "Each item in Gallery must be an object with url and publicId"
-            }),
 
+
+        coverPhoto: joi.any().required().messages({
+            "any.required": "Cover image is required"
+        }),
         openingHours: joi.array().items(joi.object({
             day: joi.string().valid(...Days).required(),
             opens: joi.string().allow(null, ""),
@@ -40,13 +33,12 @@ const createRestaurantValidation = (obj) => {
         })).min(1).required(),
 
         description: joi.string().max(LIMITS.DESCRIPTION_MAX).allow(""),
-        coverPhoto: joi.string().allow(null, ""),
         facebookLink: joi.string().allow(null, ""),
         whatsappNumber: joi.string().allow(null, ""),
         menu: joi.array().items(joi.object()).default([]),
     });
 
-    return schema.validate(obj, { convert: true });
+    return schema.validate(obj, { convert: true, stripUnknown: true });
 };
 const CalculateOpenNow = (restaurant) => {
 
