@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const { connect, connection } = mongoose;
 export async function ConnectDB() {
+    mongoose.set('bufferCommands', false);
     if(connection.readyState === 1) return;
     if (connection.readyState===2) 
     {
