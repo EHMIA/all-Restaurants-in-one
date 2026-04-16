@@ -2,10 +2,6 @@ import joi from "joi";
 import { emailField, phoneNumberField } from "../Utils/Schema-patterns.js";
 import { Days, CuisineTypes, LIMITS } from "../Utils/Constants.js";
 
-
-
-
-
 const createRestaurantValidation = (obj) => {
     const schema = joi.object({
         email: joi.string().trim().pattern(emailField).required(),
