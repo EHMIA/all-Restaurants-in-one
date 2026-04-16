@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { restaurantModel } from "../Models/restaurant.model.js";
 
 /**
- * @param {*} 
+ * @param {*}
  * @returns all restaurant
  */
 
@@ -11,7 +11,13 @@ import { restaurantModel } from "../Models/restaurant.model.js";
  * handle return number of reviews
  * handle if fav or no for each restaurant
  */
-const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) => {
+const getAllRestaurantsService = async (
+    conditions,
+    skip,
+    limit,
+    sort,
+    UserId,
+) => {
     let pipeline = [
         { $match: conditions },
         { $sort: sort || { createdAt: -1 } },
@@ -22,9 +28,9 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
                 from: "reviews",
                 localField: "_id",
                 foreignField: "restaurant",
-                as: "reviewsData"
-            }
-        }
+                as: "reviewsData",
+            },
+        },
     ];
 
     if (UserId) {
@@ -38,17 +44,16 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
                             $expr: {
                                 $and: [
                                     { $eq: ["$restaurant", "$$resId"] },
-                                    { $eq: ["$user", new mongoose.Types.ObjectId(UserId)] }
-                                ]
-                            }
-                        }
-                    }
+                                    { $eq: ["$user", new mongoose.Types.ObjectId(UserId)] },
+                                ],
+                            },
+                        },
+                    },
                 ],
-                as: "userFavorite"
-            }
+                as: "userFavorite",
+            },
         });
     }
-
 
     pipeline.push({
         $project: {
@@ -65,8 +70,8 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
 
             isFavorite: UserId
                 ? { $gt: [{ $size: "$userFavorite" }, 0] }
-                : { $literal: false }
-        }
+                : { $literal: false },
+        },
     });
 
     const restaurants = await restaurantModel.aggregate(pipeline);
@@ -74,15 +79,14 @@ const getAllRestaurantsService = async (conditions, skip, limit, sort, UserId) =
     const totalResNumber = await restaurantModel.countDocuments(conditions);
     if (restaurants.length === 0) return null;
     return [restaurants, totalResNumber];
-}
+};
 
 /**
- * 
- * @param {*} restaurantId 
- * @param {*} returnQuery 
+ *
+ * @param {*} restaurantId
+ * @param {*} returnQuery
  * @returns restaurant
  */
-
 
 const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
     let rawFields = [];
@@ -90,9 +94,10 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
         rawFields = Array.isArray(returnQuery) ? returnQuery : [returnQuery];
     }
 
-    let queryFields = rawFields.map(f => f.toLowerCase());
+    let queryFields = rawFields.map((f) => f.toLowerCase());
     const isAll = queryFields.length === 0 || queryFields.includes("all");
-    const showMainInfo = isAll;
+    const isMain = queryFields.includes("main");
+    const showMainInfo = isAll || isMain;
 
     if (isAll) {
         queryFields = ["gallery", "menu", "reviews"];
@@ -102,16 +107,16 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(restaurantId),
-                status: "approved"
-            }
+                status: "approved",
+            },
         },
         {
             $lookup: {
                 from: "reviews",
                 localField: "_id",
                 foreignField: "restaurant",
-                as: "reviewsData"
-            }
+                as: "reviewsData",
+            },
         },
         {
             $project: {
@@ -126,16 +131,32 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                 facebookLink: { $cond: [showMainInfo, "$facebookLink", "$$REMOVE"] },
                 address: { $cond: [showMainInfo, "$address", "$$REMOVE"] },
                 phoneNumber: { $cond: [showMainInfo, "$phoneNumber", "$$REMOVE"] },
-                whatsappNumber: { $cond: [showMainInfo, "$whatsappNumber", "$$REMOVE"] },
+                whatsappNumber: {
+                    $cond: [showMainInfo, "$whatsappNumber", "$$REMOVE"],
+                },
                 cuisineType: { $cond: [showMainInfo, "$cuisineType", "$$REMOVE"] },
                 openingHours: { $cond: [showMainInfo, "$openingHours", "$$REMOVE"] },
                 status: { $cond: [showMainInfo, "$status", "$$REMOVE"] },
-                Gallery: { $cond: [{ $in: ["gallery", queryFields] }, "$Gallery", "$$REMOVE"] },
+                Gallery: {
+                    $cond: [{ $in: ["gallery", queryFields] }, "$Gallery", "$$REMOVE"],
+                },
                 menu: { $cond: [{ $in: ["menu", queryFields] }, "$menu", "$$REMOVE"] },
-                reviews: { $cond: [{ $in: ["reviews", queryFields] }, "$reviewsData", "$$REMOVE"] },
-                reviewsCount: { $cond: [showMainInfo, { $size: { $ifNull: ["$reviewsData", []] } }, "$$REMOVE"] }
-            }
-        }
+                reviews: {
+                    $cond: [
+                        { $in: ["reviews", queryFields] },
+                        "$reviewsData",
+                        "$$REMOVE",
+                    ],
+                },
+                reviewsCount: {
+                    $cond: [
+                        showMainInfo,
+                        { $size: { $ifNull: ["$reviewsData", []] } },
+                        "$$REMOVE",
+                    ],
+                },
+            },
+        },
     ]);
 
     return Restaurant.length > 0 ? Restaurant[0] : null;
@@ -147,27 +168,26 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     const updateData = {
         status,
         [`${status}At`]: new Date(),
-        [`${status}By`]: AdminId
+        [`${status}By`]: AdminId,
     };
     if (reason) updateData.rejectionReason = reason;
 
-    const Restaurant = await restaurantModel.findByIdAndUpdate(id,
+    const Restaurant = await restaurantModel.findByIdAndUpdate(
+        id,
         {
-            $set: updateData
-        }
-        ,
+            $set: updateData,
+        },
         {
             new: true,
-            runValidators: true
-        }
+            runValidators: true,
+        },
     );
     if (!Restaurant) return null;
     return Restaurant;
-}
-
+};
 
 export {
     getAllRestaurantsService,
     getOneRestaurantService,
     updateRestaurantStatus,
-}
+};

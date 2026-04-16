@@ -16,10 +16,13 @@ const uploadToCloudinary = (buffer) => {
             { folder: "Restaurant_Images" },
             (error, result) => {
                 if (error) reject(error);
-                else resolve(result.secure_url);
+                else resolve({
+                    url: result.secure_url,
+                    publicId: result.public_id
+                });
             }
         );
-        Readable.from(buffer).pipe(stream);
+        Readable.from(buffer).pipe(stream).on('error', reject);
     });
 };
 

@@ -22,11 +22,8 @@ const userSchema = new Schema({
         match: [phoneNumberField, invalidPhoneMsg]
     },
     profile_pic: {
-        type: String,
-        //default: "https://avatars.hsoubcdn.com/725a4674fbb20a98fc72f205e9c359f8?s=256",
-    },
-    profile_pic_public_id:{
-        type: String
+        url: { type: String, trim: true },
+        publicId: { type: String, trim: true }
     },
     password: {
         type: String,

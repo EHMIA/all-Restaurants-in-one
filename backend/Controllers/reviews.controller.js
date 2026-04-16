@@ -52,16 +52,12 @@ const deleteReview= asyncHandler(async(req,res)=>{
     if(!restaurant)
         return res.status(404).json({message:"No such Restaurant Found"});
 
-    const review = await deleteReviewService({
-        userId:req.user._id,
-        restaurantId:req.params.id
-    });
-    
+    const review = await deleteReviewService(req.user._id,req.params.id);
+
     if(!review)
         return res.status(404).json({message:"No reviews Found"});
     return res.status(200).json({
         message:"Review deleted successfully",
-        Data:review
     });
 });
 
