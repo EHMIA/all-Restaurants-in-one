@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler"
-import {  addReviewService, getMyReviewsService, getOneReviewService } from "../Services/reviews.service.js";
+import {  addReviewService, deleteReviewService, getMyReviewsService, getOneReviewService } from "../Services/reviews.service.js";
 import { addReviewValidation } from "../Validators/restaurant.validator.js";
 import { getOneRestaurantService } from "../Services/restaurant.service.js";
 
@@ -45,8 +45,30 @@ const addReview= asyncHandler(async(req,res)=>{
     });
 });
 
+const deleteReview= asyncHandler(async(req,res)=>{
+    if (!req.params.id) 
+        return res.status(400).json({ message: "Restaurant ID is required" });
+    const restaurant= await getOneRestaurantService(req.params.id);
+    if(!restaurant)
+        return res.status(404).json({message:"No such Restaurant Found"});
+
+    const review = await deleteReviewService({
+        userId:req.user._id,
+        restaurantId:req.params.id
+    });
+    
+    if(!review)
+        return res.status(404).json({message:"No reviews Found"});
+    return res.status(200).json({
+        message:"Review deleted successfully",
+        Data:review
+    });
+});
+
+
 export{
     getMyReviews,
     getOneReview,
-    addReview
+    addReview,
+    deleteReview
 }

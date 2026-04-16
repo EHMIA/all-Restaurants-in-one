@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { restaurantModel } from "../Models/restaurant.model.js";
 import { reviewModel } from "../Models/reviews.model.js"
+import { aggragateReviewStats } from "../Utils/reviews.util.js";
 
 
 const getMyReviewsService= async(userId)=>{
@@ -33,19 +34,8 @@ const getOneReviewService= async({userId,restaurantId})=>{
 
     if (!newReview) return null;
 
-    const stats = await reviewModel.aggregate([
-        { $match: { restaurant: new mongoose.Types.ObjectId(restaurantId) } },
-        { 
-            $group: { 
-                _id: "$restaurant", 
-                avgRating: { $avg: "$rating" },
-                nRating: { $sum: 1 } 
-            } 
-        }
-    ]);
-    console.log(stats);
+    const stats = await aggragateReviewStats(restaurantId);
     
-
     if (stats.length > 0) {
         await restaurantModel.findByIdAndUpdate(restaurantId, {
             rating: stats[0].avgRating,
@@ -56,9 +46,28 @@ const getOneReviewService= async({userId,restaurantId})=>{
 }
 
 
+const deleteReviewService= async(userId,restaurantId)=>{
+    const review= await reviewModel.findOneAndDelete({user:userId,restaurant:restaurantId});
+
+    if(!review)return null;
+
+    const stats = await aggragateReviewStats(restaurantId);
+    
+    if (stats.length > 0) {
+        const updatedRestaurant=await restaurantModel.findByIdAndUpdate(restaurantId, {
+            rating: stats[0].avgRating,
+            numberOfReviews: stats[0].nRating 
+        });
+
+        if(!updatedRestaurant)
+            console.log("Warning: Restaurant was not found during rating update.");
+    }
+    return review;
+}
 
 export {
     getMyReviewsService,
     addReviewService,
-    getOneReviewService
+    getOneReviewService,
+    deleteReviewService
 }
