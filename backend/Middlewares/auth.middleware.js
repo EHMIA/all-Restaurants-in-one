@@ -95,7 +95,8 @@ const restrictToRestaurantOwner = async (req, res, next) => {
     
     const restaurantId = req.params.id;
     try {
-        const restaurant = await restaurantModel.findById(restaurantId).select("Owner Gallery coverPhoto");
+        // data will be used in specific end points
+        const restaurant = await restaurantModel.findById(restaurantId).select("Owner Gallery coverPhoto menu");
         
         if (!restaurant) 
             return res.status(404).json({ message: "Restaurant not found" });

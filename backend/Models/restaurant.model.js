@@ -131,9 +131,8 @@ const restaurantSchema = new Schema(
                 price: { type: Number, min: 0, required: true },
                 description: { type: String, trim: true, default: null },
                 image: {
-                    type: String,
-                    trim: true,
-                    required: true,
+                    url: { type: String, required: true, trim: true },
+                    publicId: { type: String, required: true, trim: true }
                 },
                 category: { type: String, required: true, enum: MenuCategories },
             },

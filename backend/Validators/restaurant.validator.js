@@ -1,6 +1,6 @@
 import joi from "joi";
 import { emailField, phoneNumberField } from "../Utils/Schema-patterns.js";
-import { Days, CuisineTypes, LIMITS } from "../Utils/Constants.js";
+import { Days, CuisineTypes, LIMITS, MenuCategories } from "../Utils/Constants.js";
 
 const createRestaurantValidation = (obj) => {
     const schema = joi.object({
@@ -36,6 +36,36 @@ const createRestaurantValidation = (obj) => {
 
     return schema.validate(obj, { convert: true, stripUnknown: true });
 };
+
+
+const addDishsToMenuValidation= (obj)=>{
+    const schema= joi.object({
+        menu:joi.array().items(joi.object({
+            dishName:joi.string().trim().required(),
+            price:joi.number().min(0).required(),
+            description:joi.string().trim().allow(""),
+            image:joi.any().optional(),
+            category:joi.string().insensitive().valid(...MenuCategories).required().messages({
+                "any.only": "Category must be Food, Drink, or Dessert"
+            })
+        })).min(1).required()
+    })
+    return schema.validate(obj);
+}
+
+const editDishInMenuValidation = (obj) => {
+    const schema = joi.object({
+        dishName: joi.string().trim(),
+        price: joi.number().min(0),
+        description: joi.string().trim().allow(""),
+        image: joi.any().optional(),
+        category: joi.string().insensitive().valid(...MenuCategories).messages({
+            "any.only": "Category must be Food, Drink, or Dessert"
+        })
+    });
+    return schema.validate(obj);
+}
+
 const CalculateOpenNow = (restaurant) => {
 
     const dateNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Cairo" }));
@@ -79,9 +109,12 @@ const addReviewValidation = (obj) => {
     });
     return schema.validate(obj);
 }
+
 export {
     createRestaurantValidation,
     CalculateOpenNow,
-    addReviewValidation
+    addReviewValidation,
+    addDishsToMenuValidation,
+    editDishInMenuValidation
 };
 
