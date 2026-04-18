@@ -122,7 +122,7 @@ const deletePhotoFromGallery=asyncHandler(async(req,res)=>{
 
     const updatedRestaurant= await deletePhotoFromGalleryService(restaurant,imgId);
     if(!updatedRestaurant)
-        return res.status(500).json({message:"Failed to delete photo from gallery"});
+        return res.status(500).json({message:"Failed to delete photo from gallery , may be photo not found"});
     res.status(200).json({
         message:"Photo deleted from gallery successfully"
     });
