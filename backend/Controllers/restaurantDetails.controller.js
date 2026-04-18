@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { addDishsToMenuService, deleteCoverImageService, deleteDishFromMenuService, editDishInMenuService,  uploadOrUpdateCoverImageService } from "../Services/restaurantDetails.service.js";
+import { addDishsToMenuService, addPhotosToGalleryService, deleteCoverImageService, deleteDishFromMenuService, deletePhotoFromGalleryService, editDishInMenuService,  uploadOrUpdateCoverImageService } from "../Services/restaurantDetails.service.js";
 import { getOneRestaurantService } from "../Services/restaurant.service.js";
 import { addDishsToMenuValidation, editDishInMenuValidation } from "../Validators/restaurant.validator.js";
 
@@ -9,6 +9,7 @@ const uploadOrUpdateCoverImage = asyncHandler(async (req, res) => {
 
     if (!file) 
         return res.status(400).json({ message: "Cover image is required" });
+
     const updatedRestaurant = await uploadOrUpdateCoverImageService(restaurant, file.buffer);
 
     if (!updatedRestaurant) 
@@ -68,7 +69,7 @@ const deleteDishFromMenu= asyncHandler(async(req,res)=>{
     if(!dishId)
         return res.status(400).json({message:"Dish ID is required"});
 
-    const deletedDish= await deleteDishFromMenuService(restaurant,dishId);
+    const deletedDish= await deletePhotoFromGalleryService(restaurant,dishId);
     if(!deletedDish)
         return res.status(500).json({message:"Failed to delete dish from menu"});
     res.status(200).json({
@@ -96,10 +97,44 @@ const editDishInMenu= asyncHandler(async(req,res)=>{
     });
 })
 
+
+const addPhotosToGallery=asyncHandler(async(req,res)=>{
+    const restaurant= req.restaurant;
+    const files= req.files;
+    if(!files || files.length===0)
+        return res.status(400).json({message:"at least one image is required"});
+    
+    const updatedRestaurant= await addPhotosToGalleryService(restaurant,files);
+    if(!updatedRestaurant)
+        return res.status(500).json({message:"Failed to add photos to gallery"});
+    res.status(200).json({
+        message:"Photos added to gallery successfully",
+        gallery:updatedRestaurant.gallery
+    });
+})
+
+
+const deletePhotoFromGallery=asyncHandler(async(req,res)=>{
+    const restaurant= req.restaurant;
+    const imgId= req.params.imgId;
+    if(!imgId)
+        return res.status(400).json({message:"image Public ID is required"});
+
+    const updatedRestaurant= await deletePhotoFromGalleryService(restaurant,imgId);
+    if(!updatedRestaurant)
+        return res.status(500).json({message:"Failed to delete photo from gallery"});
+    res.status(200).json({
+        message:"Photo deleted from gallery successfully"
+    });
+});
+
+
 export{
     uploadOrUpdateCoverImage,
     deleteCoverImage,
     addDishsToMenu,
     deleteDishFromMenu,
-    editDishInMenu
+    editDishInMenu,
+    addPhotosToGallery,
+    deletePhotoFromGallery
 }

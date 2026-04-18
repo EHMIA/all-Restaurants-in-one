@@ -8,7 +8,20 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_CLOUD_API_SECRET_KEY
 });
 
-const upload = multer({ storage: multer.memoryStorage() });
+const multerFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+        cb(null, true);
+    } else {
+        cb(new Error("Only image files are allowed!"), false);
+    }
+};
+
+
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    fileFilter: multerFilter,
+    limits: { fileSize: 5 * 1024 * 1024 } 
+});
 
 const uploadToCloudinary = (buffer) => {
     return new Promise((resolve, reject) => {

@@ -1,6 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
 import { handleRestaurantPriceRange } from "../Utils/handleRestaurantData.util.js";
+import { LIMITS } from "../Utils/Constants.util.js";
 
 
 
@@ -49,7 +50,7 @@ const addDishsToMenuService = async (restaurant, menu, files) => {
             }
         });
     }
-    restaurant=await handleRestaurantPriceRange(restaurant);
+    restaurant = await handleRestaurantPriceRange(restaurant);
     return await restaurant.save();
 };
 
@@ -69,12 +70,11 @@ const deleteDishFromMenuService = async (restaurant, dishId) => {
 
 const editDishInMenuService = async (restaurant, body, dishId, file) => {
     const dish = restaurant.menu.id(dishId);
-    
+
     if (!dish)
         return null;
 
-    if(dish.dishName)
-    {
+    if (dish.dishName) {
         const existingDishNames = restaurant.menu.map(d => d.dishName.toLowerCase());
         if (existingDishNames.includes(dish.dishName.toLowerCase())) {
             throw new Error(`Dish "${dish.dishName}" Is already in the menu`);
@@ -83,27 +83,59 @@ const editDishInMenuService = async (restaurant, body, dishId, file) => {
 
     if (dish.image && dish.image.publicId)
         await cloudinary.uploader.destroy(dish.image.publicId);
-    if (file){
-    const uploadResult = await uploadToCloudinary(file.buffer);
-    dish.image = {
-        url: uploadResult.url,
-        publicId: uploadResult.publicId
-    }}
+    if (file) {
+        const uploadResult = await uploadToCloudinary(file.buffer);
+        dish.image = {
+            url: uploadResult.url,
+            publicId: uploadResult.publicId
+        }
+    }
     dish.price = body.price || dish.price;
     dish.dishName = body.dishName || dish.dishName;
     dish.description = body.description || dish.description;
     dish.category = body.category || dish.category;
-    
-    
-    restaurant=await handleRestaurantPriceRange(restaurant);
+
+
+    restaurant = await handleRestaurantPriceRange(restaurant);
     return await restaurant.save();
 }
 
+const addPhotosToGalleryService = async (restaurant, files) => {
+    const newCount = files.length;
+    const currentCount = restaurant.Gallery.length;
+
+    if (currentCount + newCount > LIMITS.Gallery_MAX)
+        throw new Error(`Adding ${newCount} photos will exceed the limit. You can only add ${LIMITS.Gallery_MAX - currentCount} more.`);
+
+    const uploadPromises = files.map(file => uploadToCloudinary(file.buffer));
+    const results = await Promise.all(uploadPromises);
+
+    results.forEach(result => {
+        restaurant.Gallery.push({
+            url: result.url,
+            publicId: result.publicId
+        });
+    });
+    return await restaurant.save();
+}
+
+const deletePhotoFromGalleryService = async (restaurant, imgId) => {
+    const photoExists = restaurant.Gallery.find(photo => photo._id.toString() === imgId);
+    if (!photoExists)
+        return null;
+
+    const publicId= photoExists.publicId;
+    await cloudinary.uploader.destroy(publicId);
+    restaurant.Gallery.pull({ publicId : publicId });
+    return await restaurant.save();
+}
 
 export {
     uploadOrUpdateCoverImageService,
     deleteCoverImageService,
     addDishsToMenuService,
     deleteDishFromMenuService,
-    editDishInMenuService
+    editDishInMenuService,
+    addPhotosToGalleryService,
+    deletePhotoFromGalleryService
 }

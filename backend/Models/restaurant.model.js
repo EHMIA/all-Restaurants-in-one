@@ -220,5 +220,4 @@ restaurantSchema
         (gallery) => gallery.length <= LIMITS.Gallery_MAX,
         `Gallery cannot have more than ${LIMITS.Gallery_MAX} photos`,
     );
-
 export const restaurantModel = model("Restaurant", restaurantSchema);

@@ -156,9 +156,6 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     const { error, value } = createRestaurantValidation(validationBody);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-    if (!coverFile || !coverFile.mimetype.startsWith("image/")) {
-        return res.status(400).json({ message: "Please upload a valid image file for the cover" });
-    }
 
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
     if (existingOwner) {
