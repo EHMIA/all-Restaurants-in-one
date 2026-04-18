@@ -1,8 +1,5 @@
 import { model, Schema } from "mongoose";
-import {
-    phoneNumberField,
-    invalidPhoneMsg,
-} from "../Utils/Schema-patterns.js";
+import { phoneNumberField, invalidPhoneMsg } from "../Utils/Schema-patterns.js";
 import {
     Days,
     CuisineTypes,
@@ -10,7 +7,7 @@ import {
     PriceRanges,
     RestaurantStatuses,
     LIMITS,
-} from "../Utils/Constants.js";
+} from "../Utils/Constants.util.js";
 
 const restaurantSchema = new Schema(
     {
@@ -37,7 +34,7 @@ const restaurantSchema = new Schema(
         },
         coverPhoto: {
             url: { type: String, trim: true },
-            publicId: { type: String, trim: true }
+            publicId: { type: String, trim: true },
         },
 
         rating: {
@@ -45,7 +42,7 @@ const restaurantSchema = new Schema(
             min: 0,
             max: 5,
             default: 0,
-            set: val => Math.round(val * 10) / 10
+            set: (val) => Math.round(val * 10) / 10,
         },
         numberOfReviews: {
             type: Number,
@@ -121,8 +118,8 @@ const restaurantSchema = new Schema(
         Gallery: [
             {
                 url: { type: String, required: true, trim: true },
-                publicId: { type: String, required: true, trim: true }
-            }
+                publicId: { type: String, required: true, trim: true },
+            },
         ],
 
         menu: [
@@ -132,7 +129,7 @@ const restaurantSchema = new Schema(
                 description: { type: String, trim: true, default: null },
                 image: {
                     url: { type: String, required: true, trim: true },
-                    publicId: { type: String, required: true, trim: true }
+                    publicId: { type: String, required: true, trim: true },
                 },
                 category: { type: String, required: true, enum: MenuCategories },
             },
@@ -149,26 +146,24 @@ const restaurantSchema = new Schema(
         Owner: {
             type: Schema.Types.ObjectId,
             required: true,
-            ref: "User"
+            ref: "User",
         },
         status: { type: String, enum: RestaurantStatuses, default: "pending" },
         approvedAt: Date,
         approvedBy: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: "User",
         },
 
         rejectedAt: Date,
         rejectedBy: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: "User",
         },
         rejectionReason: String,
     },
     { timestamps: true },
 );
-
-
 
 // custome validators
 
@@ -222,7 +217,7 @@ restaurantSchema.path("openingHours").validate((hours) => {
 restaurantSchema
     .path("Gallery")
     .validate(
-        (gallery) => gallery.length <= LIMITS.Gallery_MAX, 
+        (gallery) => gallery.length <= LIMITS.Gallery_MAX,
         `Gallery cannot have more than ${LIMITS.Gallery_MAX} photos`,
     );
 

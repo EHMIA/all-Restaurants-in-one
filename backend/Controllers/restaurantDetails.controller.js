@@ -64,7 +64,6 @@ const addDishsToMenu= asyncHandler(async(req,res)=>{
 
 const deleteDishFromMenu= asyncHandler(async(req,res)=>{
     const restaurant= req.restaurant;
-
     const dishId= req.params.dishId;
     if(!dishId)
         return res.status(400).json({message:"Dish ID is required"});
@@ -85,20 +84,16 @@ const editDishInMenu= asyncHandler(async(req,res)=>{
     if(!dishId)
         return res.status(400).json({message:"Dish ID is required"});
 
-    if (!file) {
-        return res.status(400).json({ message: "Dish image is required" });
-    }
     const {error}= editDishInMenuValidation(req.body);
     if(error)
         return res.status(400).json({message:error.details[0].message});
-
+    
     const updatedRestaurant= await editDishInMenuService(restaurant,req.body,dishId,file);
     if(!updatedRestaurant)
-        return res.status(500).json({message:"Failed to update dish in menu"});
+        return res.status(500).json({message:"Failed to update dish in menu , may be dish not found"});
     res.status(200).json({
         message:"Dish updated in menu successfully"
     });
-
 })
 
 export{

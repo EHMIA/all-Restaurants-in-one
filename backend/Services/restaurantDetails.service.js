@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
-import { uploadToCloudinary } from "../Utils/cloudinary.js";
-import { Settings } from "../Models/adminSettings.model.js";
+import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
+import { handleRestaurantPriceRange } from "../Utils/handleRestaurantData.util.js";
 
 
 
@@ -18,7 +18,7 @@ const uploadOrUpdateCoverImageService = async (restaurant, fileBuffer) => {
 const deleteCoverImageService = async (restaurant) => {
     if (restaurant.coverPhoto && restaurant.coverPhoto.publicId) {
         await cloudinary.uploader.destroy(restaurant.coverPhoto.publicId);
-    }else{
+    } else {
         return restaurant;
     }
     restaurant.coverPhoto = null;
@@ -30,11 +30,11 @@ const addDishsToMenuService = async (restaurant, menu, files) => {
     const existingDishNames = restaurant.menu.map(d => d.dishName.toLowerCase());
 
     let settings_ = await Settings.findOne();
-    
-    if(!settings_) 
+
+    if (!settings_)
         throw new Error("Admin settings not found");
-    
-    
+
+
     for (let i = 0; i < menu.length; i++) {
         const newDishName = menu[i].dishName.toLowerCase();
         if (existingDishNames.includes(newDishName)) {
@@ -49,57 +49,58 @@ const addDishsToMenuService = async (restaurant, menu, files) => {
             }
         });
     }
-
-    const totalDishs= restaurant.menu.length;
-    const totalPrice= restaurant.menu.reduce((total, dish) => total + dish.price, 0);
-
-    const avrPrice= totalPrice / totalDishs;
-
-    if(avrPrice <= settings_.lowMax)
-        restaurant.priceRange= "low";
-    else if(avrPrice <= settings_.mediumMax)
-        restaurant.priceRange= "medium";
-    else
-        restaurant.priceRange= "high";
+    restaurant=await handleRestaurantPriceRange(restaurant);
     return await restaurant.save();
 };
 
 
 const deleteDishFromMenuService = async (restaurant, dishId) => {
-    const dish= restaurant.menu.id(dishId);
-    if(!dish)
+
+    const dish = restaurant.menu.id(dishId);
+    if (!dish)
         return null;
 
-
-    if (dish.image && dish.image.publicId) 
+    if (dish.image && dish.image.publicId)
         await cloudinary.uploader.destroy(dish.image.publicId);
 
     restaurant.menu.pull(dishId);
     return await restaurant.save();
 }
 
-const editDishInMenuService = async (restaurant,body, dishId, file) => {
-    const dish= restaurant.menu.id(dishId);
-    if(!dish)
+const editDishInMenuService = async (restaurant, body, dishId, file) => {
+    const dish = restaurant.menu.id(dishId);
+    
+    if (!dish)
         return null;
 
-    if(dish.image && dish.image.publicId)
-        await cloudinary.uploader.destroy(dish.image.publicId);
+    if(dish.dishName)
+    {
+        const existingDishNames = restaurant.menu.map(d => d.dishName.toLowerCase());
+        if (existingDishNames.includes(dish.dishName.toLowerCase())) {
+            throw new Error(`Dish "${dish.dishName}" Is already in the menu`);
+        }
+    }
 
+    if (dish.image && dish.image.publicId)
+        await cloudinary.uploader.destroy(dish.image.publicId);
+    if (file){
     const uploadResult = await uploadToCloudinary(file.buffer);
-    dish.image= {
+    dish.image = {
         url: uploadResult.url,
         publicId: uploadResult.publicId
-    }
-    dish.price=dish.price || body.price;
-    dish.dishName=dish.dishName || body.dishName;
-    dish.description=dish.description || body.description;
-    dish.category=dish.category || body.category;
+    }}
+    dish.price = body.price || dish.price;
+    dish.dishName = body.dishName || dish.dishName;
+    dish.description = body.description || dish.description;
+    dish.category = body.category || dish.category;
+    
+    
+    restaurant=await handleRestaurantPriceRange(restaurant);
     return await restaurant.save();
 }
 
 
-export{
+export {
     uploadOrUpdateCoverImageService,
     deleteCoverImageService,
     addDishsToMenuService,

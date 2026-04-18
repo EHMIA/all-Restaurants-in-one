@@ -1,6 +1,6 @@
 import {Router} from "express"
 import {  uploadMultipleImages, uploadSingleImage } from "../Middlewares/upload.middleware.js";
-import { addDishsToMenu, deleteCoverImage, editDishInMenu, uploadOrUpdateCoverImage } from "../Controllers/restaurantDetails.controller.js";
+import { addDishsToMenu, deleteCoverImage, deleteDishFromMenu, editDishInMenu, uploadOrUpdateCoverImage } from "../Controllers/restaurantDetails.controller.js";
 import { Protect, restrictToRestaurantOwner } from "../Middlewares/auth.middleware.js";
 
 const router= Router();
@@ -13,7 +13,7 @@ router.delete("/coverImage/:id",Protect,restrictToRestaurantOwner,deleteCoverIma
 // Menu
 router.post("/menu/:id",Protect,restrictToRestaurantOwner,uploadMultipleImages,addDishsToMenu);
 
-router.delete("/menu/:id/:dishId",Protect,restrictToRestaurantOwner,addDishsToMenu);
+router.delete("/menu/:id/:dishId",Protect,restrictToRestaurantOwner,deleteDishFromMenu);
 
 router.put("/menu/:id/:dishId",Protect,restrictToRestaurantOwner,uploadSingleImage,editDishInMenu);
 

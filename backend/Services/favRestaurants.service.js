@@ -1,5 +1,5 @@
 import { favResModel } from "../Models/FavoriteRestaurants.model.js"
-import { CalculateOpenNow } from "../Validators/restaurant.validator.js";
+import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
 
 // just users
 // get all favs

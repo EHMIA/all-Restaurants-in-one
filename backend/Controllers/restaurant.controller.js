@@ -1,11 +1,12 @@
 import asyncHandler from "express-async-handler"
 import { restaurantModel } from "../Models/restaurant.model.js";
-import { CuisineTypes, DeliveryEnum, PriceRanges } from "../Utils/Constants.js";
-import { CalculateOpenNow, createRestaurantValidation } from "../Validators/restaurant.validator.js";
+import { CuisineTypes, DeliveryEnum, PriceRanges } from "../Utils/Constants.util.js";
+import {  createRestaurantValidation } from "../Validators/restaurant.validator.js";
 import { getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { getAllAdminService } from "../Services/user.service.js";
 import { notificationModel } from "../Models/notifications.model.js";
-import { uploadToCloudinary } from "../Utils/cloudinary.js";
+import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
+import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
 
 /**
  * @desc get all restaurants
