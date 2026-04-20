@@ -56,7 +56,6 @@ const addDishsToMenuService = async (restaurant, menu, files) => {
 
 
 const deleteDishFromMenuService = async (restaurant, dishId) => {
-
     const dish = restaurant.menu.id(dishId);
     if (!dish)
         return null;
@@ -74,27 +73,32 @@ const editDishInMenuService = async (restaurant, body, dishId, file) => {
     if (!dish)
         return null;
 
-    if (dish.dishName) {
-        const existingDishNames = restaurant.menu.map(d => d.dishName.toLowerCase());
-        if (existingDishNames.includes(dish.dishName.toLowerCase())) {
-            throw new Error(`Dish "${dish.dishName}" Is already in the menu`);
-        }
-    }
+    if (body.dishName && body.dishName.toLowerCase() !== dish.dishName.toLowerCase()) {
+        const isNameExists = restaurant.menu.some(
+            d => d.dishName.toLowerCase() === body.dishName.toLowerCase() && d._id.toString() !== dishId
+        );
 
-    if (dish.image && dish.image.publicId)
-        await cloudinary.uploader.destroy(dish.image.publicId);
-    if (file) {
-        const uploadResult = await uploadToCloudinary(file.buffer);
-        dish.image = {
-            url: uploadResult.url,
-            publicId: uploadResult.publicId
+        if (isNameExists) {
+            throw new Error(`Dish "${body.dishName}" is already in the menu`);
         }
     }
+    
     dish.price = body.price || dish.price;
     dish.dishName = body.dishName || dish.dishName;
     dish.description = body.description || dish.description;
     dish.category = body.category || dish.category;
 
+    if (file) {
+        const uploadResult = await uploadToCloudinary(file.buffer);
+        if (dish.image && dish.image.publicId) {
+            await cloudinary.uploader.destroy(dish.image.publicId);
+        }
+
+        dish.image = {
+            url: uploadResult.url,
+            publicId: uploadResult.publicId
+        };
+    }
 
     restaurant = await handleRestaurantPriceRange(restaurant);
     return await restaurant.save();
@@ -124,9 +128,9 @@ const deletePhotoFromGalleryService = async (restaurant, imgId) => {
     if (!photoExists)
         return null;
 
-    const publicId= photoExists.publicId;
+    const publicId = photoExists.publicId;
     await cloudinary.uploader.destroy(publicId);
-    restaurant.Gallery.pull({ publicId : publicId });
+    restaurant.Gallery.pull({ publicId: publicId });
     return await restaurant.save();
 }
 
