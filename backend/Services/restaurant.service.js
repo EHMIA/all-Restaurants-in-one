@@ -20,7 +20,7 @@ const getAllRestaurantsService = async (
 ) => {
     
     let pipeline = [
-        { $match: conditions },
+        { $match: conditions},
         { $sort: sort || { createdAt: -1 } },
         { $skip: skip },
         { $limit: limit },

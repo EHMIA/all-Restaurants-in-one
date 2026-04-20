@@ -14,7 +14,7 @@ const editUserProfile = asyncHandler(async (req, res) => {
     if (phone)    updateData.phone = phone;
     
     if (req.user.role === "admin" && role) {
-           updateData.role = role;
+        updateData.role = role;
     }
 
     if (address) {

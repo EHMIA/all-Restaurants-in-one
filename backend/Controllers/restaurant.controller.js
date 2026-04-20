@@ -16,7 +16,7 @@ import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
  */
 
 const getAllRestaurants = asyncHandler(async (req, res) => {
-    let { Page, Limit, priceRange, minRating, delivery, cuisineType, Top } = req.query;
+    let { Page, Limit, priceRange, minRating, delivery, cuisineType, Top , SearchText } = req.query;
 
     
     let Conditions = { status: "approved" };
@@ -35,7 +35,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
     const Skip = (Page - 1) * Limit;
 
-
+    Conditions.name = { $regex: SearchText, $options: "i" };
+    
     if (minRating) {
         const rating_av = parseFloat(minRating);
         if (isNaN(rating_av) || rating_av > 5 || rating_av < 0) {

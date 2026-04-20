@@ -8,6 +8,7 @@ import { uploadSingleImage } from "../Middlewares/upload.middleware.js";
 import { editUserProfile } from "../Controllers/EditUser.js";
 import { deleteProfilePicController } from "../Controllers/DeletePhoto.controller.js";
 
+
 router.get('/getUserProfile', Protect, getUserProfile);
 router.post('/uploadPhoto', Protect, uploadSingleImage, uploadProfilePicController);
 router.post('/editUserProfile/:id', Protect, restrictToAdminOrAccountOwner, editUserProfile);
