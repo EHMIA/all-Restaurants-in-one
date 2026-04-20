@@ -117,6 +117,34 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                 localField: "_id",
                 foreignField: "restaurant",
                 as: "reviewsData",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "user",
+                            foreignField: "_id",
+                            as: "userData",
+                        },
+                    },
+                    {
+                        $unwind: {
+                            path: "$userData",
+                            preserveNullAndEmptyArrays: true 
+                        }
+                    },
+                    {
+                        $addFields: {
+                            userName: "$userData.fullname",
+                            userImage: "$userData.profile_pic"
+                        }
+                    },
+                    {
+                        
+                        $project: {
+                            userData: 0
+                        }
+                    }
+                ]
             },
         },
         {
@@ -132,9 +160,7 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                 facebookLink: { $cond: [showMainInfo, "$facebookLink", "$$REMOVE"] },
                 address: { $cond: [showMainInfo, "$address", "$$REMOVE"] },
                 phoneNumber: { $cond: [showMainInfo, "$phoneNumber", "$$REMOVE"] },
-                whatsappNumber: {
-                    $cond: [showMainInfo, "$whatsappNumber", "$$REMOVE"],
-                },
+                whatsappNumber: { $cond: [showMainInfo, "$whatsappNumber", "$$REMOVE"] },
                 cuisineType: { $cond: [showMainInfo, "$cuisineType", "$$REMOVE"] },
                 openingHours: { $cond: [showMainInfo, "$openingHours", "$$REMOVE"] },
                 status: { $cond: [showMainInfo, "$status", "$$REMOVE"] },
