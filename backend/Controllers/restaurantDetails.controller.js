@@ -84,7 +84,7 @@ const editDishInMenu= asyncHandler(async(req,res)=>{
     const dishId= req.params.dishId;
     if(!dishId)
         return res.status(400).json({message:"Dish ID is required"});
-
+    
     const {error}= editDishInMenuValidation(req.body);
     if(error)
         return res.status(400).json({message:error.details[0].message});

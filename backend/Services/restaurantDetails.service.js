@@ -72,12 +72,13 @@ const editDishInMenuService = async (restaurant, body, dishId, file) => {
 
     if (!dish)
         return null;
-
+    
+    
     if (body.dishName && body.dishName.toLowerCase() !== dish.dishName.toLowerCase()) {
         const isNameExists = restaurant.menu.some(
             d => d.dishName.toLowerCase() === body.dishName.toLowerCase() && d._id.toString() !== dishId
         );
-
+        
         if (isNameExists) {
             throw new Error(`Dish "${body.dishName}" is already in the menu`);
         }
