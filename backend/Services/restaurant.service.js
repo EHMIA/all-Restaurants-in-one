@@ -18,6 +18,7 @@ const getAllRestaurantsService = async (
     sort,
     UserId,
 ) => {
+    
     let pipeline = [
         { $match: conditions },
         { $sort: sort || { createdAt: -1 } },

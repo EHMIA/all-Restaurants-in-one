@@ -1,12 +1,12 @@
 import { model, Schema } from "mongoose";
 import { phoneNumberField, invalidPhoneMsg } from "../Utils/Schema-patterns.js";
 import {
-    Days,
     CuisineTypes,
     MenuCategories,
     PriceRanges,
     RestaurantStatuses,
     LIMITS,
+    Days,
 } from "../Utils/Constants.util.js";
 
 const restaurantSchema = new Schema(

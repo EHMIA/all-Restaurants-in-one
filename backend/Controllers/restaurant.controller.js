@@ -18,6 +18,7 @@ import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
 const getAllRestaurants = asyncHandler(async (req, res) => {
     let { Page, Limit, priceRange, minRating, delivery, cuisineType, Top } = req.query;
 
+    
     let Conditions = { status: "approved" };
     let Sort = {};
 
@@ -43,7 +44,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
         Conditions.rating = { $gte: rating_av };
     }
 
-
+        
     if (delivery) {
         Conditions.delivery = delivery === "true";
     }
@@ -67,6 +68,9 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
         Conditions.priceRange = priceRange.toLowerCase();
     }
 
+    
+    
+    
 
     const UserId = req.user ? req.user._id : null;
     const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort, UserId);
@@ -82,7 +86,6 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
                 Limit: Limit
             }
         });
-
     const [restaurants, totalResNumber] = result;
 
     const now = new Date().toISOString();
@@ -91,6 +94,7 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
         isOpen: CalculateOpenNow(res),
         serverTime: now
     }));
+
 
 
     res.status(200).json({
