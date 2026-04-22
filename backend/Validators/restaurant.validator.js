@@ -55,11 +55,11 @@ const createRestaurantValidation = (obj) => {
             )
             .min(1)
             .required(),
-
-        description: joi.alternatives().try(
-                                        joi.string().valid(""), 
-                                        joi.string().min(LIMITS.DESCRIPTION_MIN) 
-    ),
+        description: joi.string()
+                        .trim()
+                        .min(LIMITS.DESCRIPTION_MIN)
+                        .allow("", null) 
+                        .optional(),
         facebookLink: joi.string().allow(null, ""),
         whatsappNumber: joi.string().allow(null, ""),
         menu: joi.array().items(joi.object()).default([]),
