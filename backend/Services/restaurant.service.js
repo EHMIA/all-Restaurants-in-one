@@ -66,6 +66,7 @@ const getAllRestaurantsService = async (
             priceRange: 1,
             cuisineType: 1,
             openingHours: 1,
+            description: 1,
             status: 1,
             reviewsCount: { $size: "$reviewsData" },
 
