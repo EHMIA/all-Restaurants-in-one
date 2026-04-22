@@ -2,6 +2,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
 import { handleRestaurantPriceRange } from "../Utils/handleRestaurantData.util.js";
 import { LIMITS } from "../Utils/Constants.util.js";
+import { Settings } from "../Models/adminSettings.model.js";
 
 
 
@@ -29,13 +30,7 @@ const deleteCoverImageService = async (restaurant) => {
 
 const addDishsToMenuService = async (restaurant, menu, files) => {
     const existingDishNames = restaurant.menu.map(d => d.dishName.toLowerCase());
-
-    let settings_ = await Settings.findOne();
-
-    if (!settings_)
-        throw new Error("Admin settings not found");
-
-
+    
     for (let i = 0; i < menu.length; i++) {
         const newDishName = menu[i].dishName.toLowerCase();
         if (existingDishNames.includes(newDishName)) {

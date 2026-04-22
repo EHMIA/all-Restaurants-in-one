@@ -18,9 +18,9 @@ const getAllRestaurantsService = async (
     sort,
     UserId,
 ) => {
-    
+
     let pipeline = [
-        { $match: conditions},
+        { $match: conditions },
         { $sort: sort || { createdAt: -1 } },
         { $skip: skip },
         { $limit: limit },
@@ -129,20 +129,26 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                     {
                         $unwind: {
                             path: "$userData",
-                            preserveNullAndEmptyArrays: true 
+                            preserveNullAndEmptyArrays: true
                         }
                     },
                     {
                         $addFields: {
                             user:{
-                                _id: "$user",
-                                name: "$userData.fullname",
-                                profile: "$userData.profile_pic"
+                                $cond: {
+                                if: { $not: ["$userData"] },
+                                then: { _id: "$user", name: "Deleted User", profile: null },
+                                else: {
+                                    _id: "$user",
+                                    name: "$userData.fullname",
+                                    profile: { $ifNull: ["$userData.profile_pic", null] }
+                                }
+                            }
                             }
                         }
                     },
                     {
-                        
+
                         $project: {
                             userData: 0
                         }

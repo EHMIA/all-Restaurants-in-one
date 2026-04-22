@@ -2,11 +2,20 @@ import { Settings } from "../Models/adminSettings.model.js";
 import { Days } from "./Constants.util.js";
 
 const handleRestaurantPriceRange=async(restaurant)=>{
-        const totalDishs = restaurant.menu.length;
-        const totalPrice = restaurant.menu.reduce((total, dish) => total + dish.price, 0);
-    
-        const avrPrice = totalPrice / totalDishs;
-        const settings_=await Settings.findOne();
+        const totalDishs = restaurant.menu ? restaurant.menu.length : 0;
+        if (totalDishs === 0) {
+            restaurant.priceRange = "low"; 
+            return restaurant;
+        }
+
+    const totalPrice = restaurant.menu.reduce((total, dish) => total + (dish.price || 0), 0);
+    const avrPrice = totalPrice / totalDishs;
+
+    let settings_ = await Settings.findOne();
+    if (!settings_) {
+        
+        settings_ = { lowMax: 150, mediumMax: 400 }; 
+    }
         if (avrPrice <= settings_.lowMax)
             restaurant.priceRange = "low";
         else if (avrPrice <= settings_.mediumMax)
