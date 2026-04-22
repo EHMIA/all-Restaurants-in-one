@@ -116,4 +116,20 @@ class ExploreCubit extends Cubit<ExploreState> {
       return matchesSearch && matchesCategory && matchesOpen && matchesRating;
     }).toList();
   }
+  // added for reset filters in explore screen
+  void resetFilters() {
+    if (state is ExploreSuccess) {
+      emit(
+        (state as ExploreSuccess).copyWith(
+          search: '',
+          selectedCategoryIndex: 0,
+          openOnly: false,
+          minRating: null,
+          visibleCount: 10,
+        ),
+      );
+    }
+  }
 }
+
+

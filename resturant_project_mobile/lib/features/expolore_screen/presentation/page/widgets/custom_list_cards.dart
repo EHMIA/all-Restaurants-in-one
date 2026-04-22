@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +6,7 @@ import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/core/widgets/restuarant_status.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomListCards extends StatefulWidget {
   const CustomListCards({
@@ -18,7 +20,6 @@ class CustomListCards extends StatefulWidget {
     required this.isFavorite,
     this.isOpen,
     this.onFavoriteToggle,
-    this.category,
   });
 
   final String? image;
@@ -30,7 +31,6 @@ final List<String>? categories;
   final bool isFavorite;
   final bool? isOpen;
   final void Function()? onFavoriteToggle;
-  final String? category;
 
   @override
   State<CustomListCards> createState() => _CustomListCardsState();
@@ -55,11 +55,26 @@ class _CustomListCardsState extends State<CustomListCards> {
               height: 128.h,
               child: Stack(
                 children: [
-                  Image.network(
-                    widget.image ?? AppAssets.image,
+                  CachedNetworkImage(
+                    imageUrl: widget.image ?? AppAssets.homeImage,
+
                     width: double.infinity,
                     height: double.infinity,
                     fit: BoxFit.cover,
+
+                    memCacheWidth: 600,
+                    memCacheHeight: 400,
+
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(color: Colors.white),
+                    ),
+
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey.shade200,
+                      child: Icon(Icons.broken_image_rounded, size: 40.sp),
+                    ),
                   ),
                   Positioned(
                     top: 8.h,
@@ -84,7 +99,7 @@ class _CustomListCardsState extends State<CustomListCards> {
                               ),
                             ),
                           )
-                        : widget.isOpen == true
+                        : widget.isOpen!
                         ? RestuarantStatus(
                             text: 'OPEN NOW',
                             color: Color(0xff22C55E),

@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomFeaturedRestaurantsCard extends StatelessWidget {
   const CustomFeaturedRestaurantsCard({
@@ -44,13 +46,29 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                 height: 160.h,
                 child: Stack(
                   children: [
-                    Image.network(
-                      image ?? AppAssets.homeImage,
+                    CachedNetworkImage(
+                      imageUrl: 
+                           image??
+                           AppAssets.homeImage,
+
                       width: double.infinity,
                       height: double.infinity,
                       fit: BoxFit.cover,
-                    ),
 
+                      memCacheWidth: 600,
+                      memCacheHeight: 400,
+
+                      placeholder: (context, url) => Shimmer.fromColors(
+                        baseColor: Colors.grey.shade300,
+                        highlightColor: Colors.grey.shade100,
+                        child: Container(color: Colors.white),
+                      ),
+
+                      errorWidget: (context, url, error) => Container(
+                        color: Colors.grey.shade200,
+                        child: Icon(Icons.broken_image_rounded, size: 40.sp),
+                      ),
+                    ),
                     Positioned(
                       top: 12.h,
                       right: 12.w,

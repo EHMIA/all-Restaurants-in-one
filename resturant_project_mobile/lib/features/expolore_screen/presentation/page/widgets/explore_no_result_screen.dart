@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
-class ExploreEmptyState extends StatelessWidget {
-  const ExploreEmptyState({super.key});
+class ExploreNoResultScreen extends StatelessWidget {
+  const ExploreNoResultScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

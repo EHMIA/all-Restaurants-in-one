@@ -145,7 +145,7 @@ class FavoriteScreen extends StatelessWidget {
                           },
 
                           isFavorite: !isPendingRemoval,
-                          image: item.coverPhoto,
+                          image: item.coverPhoto.url,
                           resName: item.name,
                           numReviews: item.reviewsCount.toString(),
                           resRate: item.rating.toString(),

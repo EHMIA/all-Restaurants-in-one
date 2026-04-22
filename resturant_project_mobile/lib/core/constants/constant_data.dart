@@ -1,156 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 
 class ConstantData {
-  //restaurant categories data
-  static List<Map<String, dynamic>> restaurants = [
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Zeba Restaurant",
-      "resPeopleRate": "800",
-      "resRate": "4.8",
-      "resSpace": "2.4 km",
-      "category": "Egyptian",
-    },
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Koshary El Tahrir",
-      "resPeopleRate": "1200",
-      "resRate": "4.6",
-      "resSpace": "1.8 km",
-      "category": "Koshary",
-    },
-
-    /// Pizza
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Roma Pizza",
-      "resPeopleRate": "650",
-      "resRate": "4.5",
-      "resSpace": "3.1 km",
-      "category": "Pizza",
-    },
-    {
-      "isFavorite": false,
-      "isOpen": false,
-      "image": AppAssets.image,
-      "resName": "Italiano Pizza",
-      "resPeopleRate": "540",
-      "resRate": "4.3",
-      "resSpace": "2.7 km",
-      "category": "Pizza",
-    },
-
-    /// Burger
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Burger House",
-      "resPeopleRate": "900",
-      "resRate": "4.7",
-      "resSpace": "2.2 km",
-      "category": "Burger",
-    },
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Smash Burger",
-      "resPeopleRate": "720",
-      "resRate": "4.4",
-      "resSpace": "3.6 km",
-      "category": "Burger",
-    },
-
-    /// Seafood
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Ocean Basket",
-      "resPeopleRate": "510",
-      "resRate": "4.5",
-      "resSpace": "5.1 km",
-      "category": "Seafood",
-    },
-
-    /// Cafe
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Cafe Latte",
-      "resPeopleRate": "330",
-      "resRate": "4.6",
-      "resSpace": "1.2 km",
-      "category": "Cafe",
-    },
-
-    /// Desserts
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Sweet Corner",
-      "resPeopleRate": "410",
-      "resRate": "4.5",
-      "resSpace": "2.0 km",
-      "category": "Desserts",
-    },
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Sugar Rush",
-      "resPeopleRate": "350",
-      "resRate": "4.4",
-      "resSpace": "2.3 km",
-      "category": "Desserts",
-    },
-
-    /// Grill
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Grill House",
-      "resPeopleRate": "690",
-      "resRate": "4.4",
-      "resSpace": "3.3 km",
-      "category": "Grill",
-    },
-
-    /// Healthy
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Green Bowl",
-      "resPeopleRate": "260",
-      "resRate": "4.3",
-      "resSpace": "2.5 km",
-      "category": "Healthy",
-    },
-
-    /// Asian
-    {
-      "isFavorite": false,
-      "isOpen": true,
-      "image": AppAssets.image,
-      "resName": "Tokyo Sushi",
-      "resPeopleRate": "540",
-      "resRate": "4.7",
-      "resSpace": "4.8 km",
-      "category": "Asian",
-    },
-  ];
   static List<Map<String, dynamic>> categories = [
     {
       'title': 'Egyptian',
@@ -203,6 +53,12 @@ class ConstantData {
     {
       'title': 'Assian',
       'icon': Icons.rice_bowl,
+      'color': Color(0xffE0E7FF),
+      'iconColor': Color(0xff4F46E5),
+    },
+    {
+      'title': 'less',
+      'icon': Icons.expand_less,
       'color': Color(0xffE0E7FF),
       'iconColor': Color(0xff4F46E5),
     },

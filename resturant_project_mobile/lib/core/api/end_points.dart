@@ -5,7 +5,7 @@ class EndPoints {
   static const String signUp = "auth/register";
   static const String forgetPassword = "auth/forgot-password";
   static const String resetPassword = "auth/reset-password";
-  static const String getAllRestuarant="restaurants";
+  static const String getAllRestuarant = "restaurants";
 }
 
 class ApiKey {

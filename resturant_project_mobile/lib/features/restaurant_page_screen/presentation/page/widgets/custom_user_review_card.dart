@@ -9,6 +9,7 @@ class CustomUserReviewCard extends StatelessWidget {
   final int rating;
   final String reviewText;
   final VoidCallback? onTap;
+  final String title;
 
   const CustomUserReviewCard({
     super.key,
@@ -18,13 +19,14 @@ class CustomUserReviewCard extends StatelessWidget {
     required this.rating,
     required this.reviewText,
     this.onTap,
+    required this.title,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      shadowColor: Colors.black.withValues(alpha: 0.6),
-      elevation: 5,
+      shadowColor: Colors.black.withValues(alpha: 0.7),
+      elevation: 6,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
       color: Colors.white,
       child: InkWell(
@@ -80,6 +82,15 @@ class CustomUserReviewCard extends StatelessWidget {
                     }),
                   ),
                 ],
+              ),
+              const HeightSpace(height: 12),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "Poppins",
+                ),
               ),
               const HeightSpace(height: 12),
               // Review text

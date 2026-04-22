@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CustomResMenuAppetizersCard extends StatelessWidget {
   const CustomResMenuAppetizersCard({super.key, this.image, this.title, this.description, this.price});
@@ -23,7 +25,27 @@ class CustomResMenuAppetizersCard extends StatelessWidget {
               height: 96.h,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(15.r),
-                child: Image.asset(AppAssets.image, fit: BoxFit.fill),
+                child:CachedNetworkImage(
+                    imageUrl: image ?? AppAssets.homeImage,
+
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
+
+                    memCacheWidth: 600,
+                    memCacheHeight: 400,
+
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(color: Colors.white),
+                    ),
+
+                    errorWidget: (context, url, error) => Container(
+                      color: Colors.grey.shade200,
+                      child: Icon(Icons.broken_image_rounded, size: 40.sp),
+                    ),
+                  ), 
               ),
             ),
             WidthSpace(width: 16),

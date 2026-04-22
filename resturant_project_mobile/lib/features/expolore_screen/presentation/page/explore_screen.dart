@@ -15,8 +15,9 @@ import 'package:resturant_project/core/widgets/custom_category_item.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_icon_button.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_bottom_sheet.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/active_filter_chip.dart';
-import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/explore_empty_state.dart';
+import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/explore_no_result_screen.dart';
 import '../../../home_screen/presentation/page/widgets/search_text_field_widget.dart';
+import 'widgets/custom_error_explore_screen.dart';
 
 class ExploreScreen extends StatelessWidget {
   const ExploreScreen({super.key, this.searchText, this.category});
@@ -85,7 +86,6 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
         initialMinRating: state.minRating,
         onApply: (openOnly, minRating) {
           context.read<ExploreCubit>().applyFilter(openOnly, minRating);
-          Navigator.pop(context);
         },
       ),
     );
@@ -112,36 +112,13 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: _buildAppBar(),
-            body: const Center(child: CircularProgressIndicator()),
+            body: const Center(
+              child: CircularProgressIndicator(color: AppColors.primaryColor,),
+            ),
           );
         }
         if (state is ExploreError) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: _buildAppBar(),
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 48.sp,
-                    color: AppColors.primaryColor,
-                  ),
-                  HeightSpace(height: 12),
-                  Text(
-                    'Something went wrong',
-                    style: TextStyle(fontSize: 16.sp, fontFamily: 'Poppins'),
-                  ),
-                  HeightSpace(height: 8),
-                  TextButton(
-                    onPressed: () => cubit.getHomeFeature(),
-                    child: const Text('Retry'),
-                  ),
-                ],
-              ),
-            ),
-          );
+          return const CustomErrorExploreScreen();
         }
 
         final results = cubit.getFilteredRestaurants();
@@ -226,7 +203,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                   HeightSpace(height: 8),
 
                   results.isEmpty
-                      ? const ExploreEmptyState()
+                      ? const ExploreNoResultScreen()
                       : GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
@@ -251,15 +228,11 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                               },
                               isFavorite: res.isFavorite,
                               isOpen: res.isOpen,
-                              image: res.coverPhoto.isNotEmpty
-                                  ? res.coverPhoto
-                                  : AppAssets.image,
+                              image: res.coverPhoto.url,                                  
                               resName: res.name,
                               numReviews: res.reviewsCount.toString(),
                               resRate: res.rating.toString(),
-                              categories: res.cuisineType.isNotEmpty
-                                  ? res.cuisineType
-                                  : ['No Category'],
+                              categories: res.cuisineType,
                             );
                           },
                         ),

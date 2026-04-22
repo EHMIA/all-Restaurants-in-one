@@ -73,6 +73,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
                   'Reset',
                   style: TextStyle(
                     color: AppColors.primaryColor,
+                    fontWeight: FontWeight.w600,
                     fontFamily: 'Poppins',
                   ),
                 ),

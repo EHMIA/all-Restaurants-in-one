@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,15 +24,6 @@ class ProfileScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              //print('clicked');
-            },
-            icon: Icon(Icons.edit_outlined, color: AppColors.primaryColor),
-          ),
-          WidthSpace(width: 16),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(

@@ -15,8 +15,8 @@ import 'package:resturant_project/features/expolore_screen/presentation/page/exp
 import 'package:resturant_project/features/review_page/review_page.dart';
 import 'package:resturant_project/features/splash_screen/splash_screen.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/page/layout_screen.dart';
-import 'package:resturant_project/features/restaurant_page_screen/restaurant_page_screen.dart';
-import 'package:resturant_project/features/restaurant_page_screen/write_review_screen.dart';
+import 'package:resturant_project/features/restaurant_page_screen/presentation/page/restaurant_page_screen.dart';
+import 'package:resturant_project/features/restaurant_page_screen/presentation/page/write_review_screen.dart';
 import '../../features/auth/login/presentation/cubit/forget_password_cubit.dart';
 import '../../features/home_screen/presentation/page/home_screen.dart';
 
@@ -58,23 +58,8 @@ class AppRouter {
         path: RouteName.restaurantPageScreen,
         name: RouteName.restaurantPageScreen,
         builder: (context, state) {
-          // Handle both RestaurantModel and legacy Map parameters
-          if (state.extra is RestaurantModel) {
-            final restaurant = state.extra as RestaurantModel;
-            return RestaurantPageScreen(restaurant: restaurant);
-          } else if (state.extra is Map<String, dynamic>) {
-            final data = state.extra as Map<String, dynamic>;
-            return RestaurantPageScreen(
-              image: data['image'],
-              resName: data['resName'],
-              resPeopleRate: data['resPeopleRate'],
-              resRate: data['resRate'],
-              resSpace: data['resSpace'],
-              category: data['category'],
-              isOpen: data['isOpen'],
-            );
-          }
-          return const RestaurantPageScreen();
+          final restaurant = state.extra as RestaurantModel;
+          return RestaurantPageScreen(restaurant: restaurant);
         },
       ),
       GoRoute(

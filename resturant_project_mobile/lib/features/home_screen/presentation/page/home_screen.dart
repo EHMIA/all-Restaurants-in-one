@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<HomeCubit>().getHomeFeature();
   }
 
+  bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                               context.read<LayoutCubit>().changeTab(1);
                               FocusScope.of(context).unfocus();
+                              searchController.clear();
                             },
                           ),
                         ],
@@ -152,7 +154,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      //context.read<ExploreCubit>().resetFilters(); // لو حبيت ترجع الفلاتر للوضع الافتراضي
                       context.read<LayoutCubit>().changeTab(1);
                     },
                     child: Text(
@@ -220,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             isFavorite: restaurant.isFavorite,
                             isOpen: isCurrentlyOpen,
                             titleText: restaurant.name,
-                            image: restaurant.coverPhoto,
+                            image: restaurant.coverPhoto.url,
                             restaurantRate: restaurant.rating.toString(),
                             categories: restaurant.cuisineType.isNotEmpty
                                 ? restaurant.cuisineType
@@ -279,47 +280,76 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             HeightSpace(height: 16),
-            GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-              ),
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: ConstantData.categories.length,
-              itemBuilder: (context, index) {
-                final cat = ConstantData.categories[index];
-
-                return Column(
-                  children: [
-                    GestureDetector(
+            AnimatedSize(
+              duration: Duration(milliseconds: 300),
+              child: GridView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: isExpanded ? ConstantData.categories.length : 4,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                ),
+                itemBuilder: (context, index) {
+                  if (!isExpanded && index == 3) {
+                    return _buildToggleItem(
+                      icon: Icons.more_horiz,
+                      label: "More",
                       onTap: () {
-                        GoRouter.of(context).pushNamed(
-                          RouteName.explorScreen,
-                          extra: cat['title'],
-                        );
+                        setState(() {
+                          isExpanded = true;
+                        });
                       },
-                      child: Container(
-                        width: 64.w,
-                        height: 64.h,
-                        decoration: BoxDecoration(
-                          color: cat['color'],
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          cat['icon'],
-                          color: cat['iconColor'],
-                          size: 30.sp,
+                    );
+                  }
+
+                  if (isExpanded &&
+                      index == ConstantData.categories.length - 1) {
+                    return _buildToggleItem(
+                      icon: Icons.expand_less,
+                      label: "Less",
+                      onTap: () {
+                        setState(() {
+                          isExpanded = false;
+                        });
+                      },
+                    );
+                  }
+
+                  final cat = ConstantData.categories[index];
+
+                  return Column(
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          context.read<ExploreCubit>().setSearch(cat['title']);
+                          context.read<LayoutCubit>().changeTab(1);
+                        },
+                        child: Container(
+                          width: 64.w,
+                          height: 64.h,
+                          decoration: BoxDecoration(
+                            color: cat['color'],
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            cat['icon'],
+                            color: cat['iconColor'],
+                            size: 30.sp,
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      cat['title'],
-                      style: TextStyle(fontSize: 12.sp, fontFamily: 'Poppins'),
-                    ),
-                  ],
-                );
-              },
+                      SizedBox(height: 8.h),
+                      Text(
+                        cat['title'],
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontFamily: "Poppins",
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             ),
             HeightSpace(height: 26),
           ],
@@ -327,4 +357,29 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+Widget _buildToggleItem({
+  required IconData icon,
+  required String label,
+  required VoidCallback onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Column(
+      children: [
+        Container(
+          width: 64.w,
+          height: 64.h,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 30.sp),
+        ),
+        SizedBox(height: 8.h),
+        Text(label),
+      ],
+    ),
+  );
 }

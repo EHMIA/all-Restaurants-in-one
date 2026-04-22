@@ -7,7 +7,7 @@ class RestaurantDataModel {
   factory RestaurantDataModel.fromJson(Map<String, dynamic> json) {
     return RestaurantDataModel(
       data: List<RestaurantModel>.from(
-        json['data'].map((x) => RestaurantModel.fromJson(x)),
+        json['Data'].map((x) => RestaurantModel.fromJson(x)),
       ),
       meta: MetaModel.fromJson(json['meta']),
     );
@@ -17,7 +17,7 @@ class RestaurantDataModel {
 class RestaurantModel {
   String id;
   String name;
-  String coverPhoto;
+  CoverPhoto coverPhoto;
   int rating;
   bool delivery;
   String priceRange;
@@ -28,6 +28,8 @@ class RestaurantModel {
   bool isFavorite;
   bool isOpen;
   String serverTime;
+  String phoneNumber;
+  String whatsappNumber;
 
   RestaurantModel({
     required this.id,
@@ -43,13 +45,17 @@ class RestaurantModel {
     required this.isFavorite,
     required this.isOpen,
     required this.serverTime,
+    required this.phoneNumber,
+    required this.whatsappNumber
   });
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
     return RestaurantModel(
+      whatsappNumber: json['whatsappNumber'],
+      phoneNumber: json['phoneNumber'],
       id: json['_id'],
       name: json['name'],
-      coverPhoto: json['coverPhoto'],
+      coverPhoto: CoverPhoto.fromJson(json['coverPhoto']),
       rating: json['rating'],
       delivery: json['delivery'],
       priceRange: json['priceRange'],
@@ -112,5 +118,17 @@ class MetaModel {
       page: json['Page'],
       limit: json['Limit'],
     );
+  }
+}
+
+
+class CoverPhoto {
+  final String url;
+  final String publicId;
+
+  CoverPhoto({required this.url, required this.publicId});
+
+  factory CoverPhoto.fromJson(Map<String, dynamic> json) {
+    return CoverPhoto(url: json['url'], publicId: json['publicId']);
   }
 }

@@ -68,7 +68,6 @@ class _LayoutScreenState extends State<LayoutScreen>
       ],
       child: BlocBuilder<LayoutCubit, int>(
         builder: (context, currentIndex) {
-          // Reload favorites when switching to favorite tab
           if (currentIndex == 2 && _previousIndex != 2) {
             Future.microtask(() => _favoriteCubit.loadFavorites());
           }
@@ -80,6 +79,9 @@ class _LayoutScreenState extends State<LayoutScreen>
               currentIndex: currentIndex,
               onTap: (index) {
                 context.read<LayoutCubit>().changeTab(index);
+                if (currentIndex == 1 && index != 1) {
+                  context.read<ExploreCubit>().resetFilters();
+                }
               },
             ),
           );
