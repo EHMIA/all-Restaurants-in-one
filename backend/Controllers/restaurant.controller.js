@@ -160,10 +160,14 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
         coverPhoto: coverFile,
     };
 
+    
     const { error, value } = createRestaurantValidation(validationBody);
+    
+    
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-
+    
+    
     const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
     if (existingOwner) {
         const msg = existingOwner.status === "pending"

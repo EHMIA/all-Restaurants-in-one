@@ -31,8 +31,7 @@ const LIMITS = {
     CUISINE_TYPES: 5,
     NAME_MIN: 3,
     NAME_MAX: 50,
-    DESCRIPTION_MIN: 10,
-    DESCRIPTION_MAX: 500
+    DESCRIPTION_MIN: 10
 };
 
 export { Days, CuisineTypes, MenuCategories, PriceRanges, RestaurantStatuses, LIMITS , DeliveryEnum };

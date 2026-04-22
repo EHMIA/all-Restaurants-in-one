@@ -31,7 +31,6 @@ const restaurantSchema = new Schema(
             trim: true,
             default:"",
             minlength: LIMITS.DESCRIPTION_MIN,
-            maxlength: LIMITS.DESCRIPTION_MAX,
         },
 
         coverPhoto: {

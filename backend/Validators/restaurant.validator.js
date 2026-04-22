@@ -56,12 +56,14 @@ const createRestaurantValidation = (obj) => {
             .min(1)
             .required(),
 
-        description: joi.string().max(LIMITS.DESCRIPTION_MAX).allow(""),
+        description: joi.alternatives().try(
+                                        joi.string().valid(""), 
+                                        joi.string().min(LIMITS.DESCRIPTION_MIN) 
+    ),
         facebookLink: joi.string().allow(null, ""),
         whatsappNumber: joi.string().allow(null, ""),
         menu: joi.array().items(joi.object()).default([]),
     });
-
     return schema.validate(obj, { convert: true, stripUnknown: true });
 };
 
