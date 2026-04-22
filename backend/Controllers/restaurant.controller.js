@@ -273,13 +273,13 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
 
 
 const editRestaurantMainData= asyncHandler(async (req, res) => {
-    const restaurant= req.restaurant;
-
-    const {error}= editRestaurantMainDataValidation(req.body);
+    const restaurant= req.restaurant;    
+    const {error,value}= editRestaurantMainDataValidation(req.body);
+    
     if(error)
         return res.status(400).json({message:error.details[0].message});
     
-    const updatedRestaurant= await editRestaurantMainDataService(restaurant,req.body);
+    const updatedRestaurant= await editRestaurantMainDataService(restaurant,value);
     if(!updatedRestaurant)
         return res.status(500).json({message:"Failed to update restaurant data"});
     res.status(200).json({

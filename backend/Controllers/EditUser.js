@@ -27,7 +27,7 @@ const editUserProfile = asyncHandler(async (req, res) => {
     const user = await Users.findByIdAndUpdate(
         targetId,
         { $set: updateData },
-        { new: true, runValidators: true }
+        { returnDocument: 'after', runValidators: true }
     );
 
     if (!user) {

@@ -95,7 +95,6 @@ const editDishInMenuService = async (restaurant, body, dishId, file) => {
             publicId: uploadResult.publicId
         };
     }
-
     restaurant = await handleRestaurantPriceRange(restaurant);
     return await restaurant.save();
 }

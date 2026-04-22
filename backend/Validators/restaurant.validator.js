@@ -117,6 +117,9 @@ const editRestaurantMainDataValidation= (obj) => {
                         .optional(),
         facebookLink: joi.string().allow(null, ""),
         whatsappNumber: joi.string().allow(null, ""),
+    }).min(1).required().messages({
+        "any.required": "At least one field is required",
+        "object.min": "At least one field is required",
     });
     return schema.validate(obj, { convert: true, stripUnknown: true });
 }
@@ -140,7 +143,6 @@ const addDishsToMenuValidation = (obj) => {
                         }),
                 }),
             )
-            .min(1)
             .required(),
     });
     return schema.validate(obj);
@@ -159,6 +161,10 @@ const editDishInMenuValidation = (obj) => {
             .messages({
                 "any.only": "Category must be Food, Drink, or Dessert",
             }),
+            
+    }).min(1).required().messages({
+        "any.required": "At least one field is required",
+        "object.min": "At least one field is required",
     });
     return schema.validate(obj);
 };
@@ -179,5 +185,5 @@ export {
     addDishsToMenuValidation,
     editDishInMenuValidation,
     editRestaurantMainDataValidation
-    
+
 };

@@ -205,7 +205,7 @@ const editRestaurantMainDataService= async (restaurant, data)=>{
             $set: data,
         },
         {
-            new: true,
+            returnDocument: 'after',
             runValidators: true,
         },
     );
@@ -228,7 +228,7 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
             $set: updateData,
         },
         {
-            new: true,
+            returnDocument: 'after',
             runValidators: true,
         },
     );
