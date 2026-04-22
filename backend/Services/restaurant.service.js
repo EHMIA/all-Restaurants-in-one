@@ -88,7 +88,6 @@ const getAllRestaurantsService = async (
  * @param {*} returnQuery
  * @returns restaurant
  */
-
 const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
     let rawFields = [];
     if (returnQuery) {
@@ -134,8 +133,11 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                     },
                     {
                         $addFields: {
-                            userName: "$userData.fullname",
-                            userImage: "$userData.profile_pic"
+                            user:{
+                                _id: "$user",
+                                name: "$userData.fullname",
+                                profile: "$userData.profile_pic"
+                            }
                         }
                     },
                     {
@@ -185,9 +187,9 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
             },
         },
     ]);
-
     return Restaurant.length > 0 ? Restaurant[0] : null;
 };
+
 
 // just admins
 const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {

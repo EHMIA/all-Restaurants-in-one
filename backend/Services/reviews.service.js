@@ -7,13 +7,13 @@ import { aggragateReviewStats } from "../Utils/reviews.util.js";
 const getMyReviewsService = async (userId) => {
     const reviews = await reviewModel.find({ user: userId })
         .populate("restaurant", "name coverPhoto ")
-        .select("title Content rating createdAt _id updatedAt restaurant");
+        .select("Content rating createdAt _id");
     if (reviews.length === 0) return null;
     return reviews;
 }
 
 const getOneReviewService = async ({ userId, restaurantId }) => {
-    const review = await reviewModel.findOne({ user: userId, restaurant: restaurantId });
+    const review = await reviewModel.findOne({ user: userId, restaurant: restaurantId }).populate("restaurant", "name coverPhoto ").select("Content rating createdAt _id");
     if (!review) return null;
     return review
 }
@@ -23,14 +23,13 @@ const addReviewService = async (userId, restaurantId, data) => {
         { user: userId, restaurant: restaurantId },
         {
             $set: {
-                title: data.title,
                 Content: data.Content,
                 rating: data.rating
             },
             $setOnInsert: { user: userId, restaurant: restaurantId }
         },
         { new: true, upsert: true, runValidators: true }
-    );
+    ).populate("restaurant", "name coverPhoto").select("Content rating createdAt _id restaurant");
 
     if (!newReview) return null;
 

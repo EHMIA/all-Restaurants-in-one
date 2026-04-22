@@ -29,9 +29,11 @@ const restaurantSchema = new Schema(
         description: {
             type: String,
             trim: true,
+            default:"",
             minlength: LIMITS.DESCRIPTION_MIN,
             maxlength: LIMITS.DESCRIPTION_MAX,
         },
+
         coverPhoto: {
             url: { type: String, trim: true },
             publicId: { type: String, trim: true },
@@ -44,6 +46,7 @@ const restaurantSchema = new Schema(
             default: 0,
             set: (val) => Math.round(val * 10) / 10,
         },
+
         numberOfReviews: {
             type: Number,
             min: 0,
@@ -65,6 +68,7 @@ const restaurantSchema = new Schema(
         facebookLink: {
             type: String,
             trim: true,
+            default:null
         },
 
         cuisineType: [

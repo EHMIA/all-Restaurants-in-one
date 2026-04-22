@@ -1,12 +1,6 @@
 import {Schema,model} from "mongoose"
 
 const reviewSchema=new Schema({
-    title:{
-        type:String,
-        trim:true,
-        minlength:3,
-        maxlength:30
-    },
     Content:{
         type:String,
         trim:true,

@@ -112,7 +112,6 @@ const editDishInMenuValidation = (obj) => {
 
 const addReviewValidation = (obj) => {
     const schema = joi.object({
-        title: joi.string().trim().min(3).max(30).default("Review for restaurant"),
         Content: joi.string().trim().min(5).max(500).required(),
         rating: joi.number().min(1).max(5).required(),
     });

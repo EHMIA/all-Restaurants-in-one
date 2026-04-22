@@ -15,24 +15,6 @@ const getOneMsgService=async(notificationId)=>{
     return notification;
 }
 
-const markAsReadService=async(notificationId)=>{
-    const notification=await notificationModel.findById(notificationId);
-    if (!notification) return null;
-    notification.isRead=true;
-    await notification.save();
-    return notification;
-}
-
-
-const maskAllAsReadService=async(receiverId)=>{
-    const notifications=await notificationModel.find({receiver:receiverId});
-    if (notifications.length===0) return null;
-    notifications.forEach((notification)=>{
-        notification.isRead=true;
-        notification.save();
-    })
-    return notifications;
-}
 
 const deleteOneMsgService=async(notificationId)=>{
     const notification=await notificationModel.findByIdAndDelete(notificationId);
@@ -48,8 +30,6 @@ const deleteAllMsgService=async(receiverId)=>{
 export {
     getMyNotificationsService,
     getOneMsgService,
-    markAsReadService,
-    maskAllAsReadService,
     deleteOneMsgService,
     deleteAllMsgService
 }
