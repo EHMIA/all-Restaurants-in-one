@@ -198,6 +198,20 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
 };
 
 
+const editRestaurantMainDataService= async (restaurant, data)=>{
+    const updatedRestaurant = await restaurantModel.findByIdAndUpdate(
+        restaurant._id,
+        {
+            $set: data,
+        },
+        {
+            new: true,
+            runValidators: true,
+        },
+    );
+    if (!updatedRestaurant) return null;
+    return updatedRestaurant;
+}
 // just admins
 const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     //remember=>  here check if it is pedning if there are endPoint for change restaurant status
@@ -222,8 +236,10 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     return Restaurant;
 };
 
+
 export {
     getAllRestaurantsService,
     getOneRestaurantService,
     updateRestaurantStatus,
+    editRestaurantMainDataService
 };

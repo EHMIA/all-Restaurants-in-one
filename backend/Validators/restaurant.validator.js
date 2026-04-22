@@ -67,6 +67,59 @@ const createRestaurantValidation = (obj) => {
     return schema.validate(obj, { convert: true, stripUnknown: true });
 };
 
+const editRestaurantMainDataValidation= (obj) => {
+    const schema = joi.object({
+        name: joi
+            .string()
+            .trim()
+            .min(LIMITS.NAME_MIN)
+            .max(LIMITS.NAME_MAX)
+            .optional(),
+        phoneNumber: joi.string().trim().pattern(phoneNumberField).optional(),
+        cuisineType: joi
+            .array()
+            .items(joi.string().valid(...CuisineTypes))
+            .min(1)
+            .optional(),
+        delivery: joi.boolean().optional(),
+        openingHours: joi
+            .array()
+            .items(
+                joi.object({
+                    day: joi
+                        .string()
+                        .valid(...Days)
+                        .required(),
+                    opens: joi.string().allow(null, ""),
+                    closes: joi.string().allow(null, ""),
+                    isClosed: joi.boolean().default(false),
+                }),
+            )
+            .min(1)
+            .optional(),
+
+        address: joi
+            .array()
+            .items(
+                joi.object({
+                    governorate: joi.string().required(),
+                    city: joi.string().required(),
+                    street: joi.string().required(),
+                    details: joi.string().allow("").default(""),
+                }),
+            )
+            .min(1)
+            .optional(),
+        description: joi.string()
+                        .trim()
+                        .min(LIMITS.DESCRIPTION_MIN)
+                        .allow("", null) 
+                        .optional(),
+        facebookLink: joi.string().allow(null, ""),
+        whatsappNumber: joi.string().allow(null, ""),
+    });
+    return schema.validate(obj, { convert: true, stripUnknown: true });
+}
 const addDishsToMenuValidation = (obj) => {
     const schema = joi.object({
         menu: joi
@@ -125,4 +178,6 @@ export {
     addReviewValidation,
     addDishsToMenuValidation,
     editDishInMenuValidation,
+    editRestaurantMainDataValidation
+    
 };
