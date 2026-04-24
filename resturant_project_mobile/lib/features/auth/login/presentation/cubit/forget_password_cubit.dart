@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_project/core/errors/exceptions.dart';
-import 'package:resturant_project/features/auth/login/data/models/forget_password_model.dart';
 import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
 import 'forget_password_state.dart';
 

@@ -6,6 +6,7 @@ class EndPoints {
   static const String forgetPassword = "auth/forgot-password";
   static const String resetPassword = "auth/reset-password";
   static const String getAllRestuarant = "restaurants";
+  static const String favorites = "favorites";
 }
 
 class ApiKey {
@@ -24,4 +25,22 @@ class ApiKey {
 
   //! otp
   static const String otpMessage = 'message';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //==========================================
+  final String token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZThkNjRlZGJjNjZjZGJkNTllMDAwYiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2ODgzNTUzLCJleHAiOjE3NzY4ODcxNTN9.e50dlp3TFSInNHn_SOiIJT0mOv4KXJnR3B2VJK0K9uI";
 }

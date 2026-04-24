@@ -10,7 +10,7 @@ class ProfileCard extends StatelessWidget {
   final Color iconColor;
   final Color bgColor;
   final bool isLogout;
-  final void Function()? onTap;
+  final void Function() onTap;
 
   const ProfileCard({
     super.key,
@@ -19,7 +19,7 @@ class ProfileCard extends StatelessWidget {
     required this.icon,
     required this.iconColor,
     required this.bgColor,
-    this.isLogout = false, this.onTap,
+    this.isLogout = false,required this.onTap,
   });
 
   @override

@@ -51,23 +51,23 @@ class RestaurantModel {
 
   factory RestaurantModel.fromJson(Map<String, dynamic> json) {
     return RestaurantModel(
-      whatsappNumber: json['whatsappNumber'],
-      phoneNumber: json['phoneNumber'],
-      id: json['_id'],
-      name: json['name'],
+      whatsappNumber: json['whatsappNumber']??'',
+      phoneNumber: json['phoneNumber']??'',
+      id: json['_id']??'',
+      name: json['name']??'',
       coverPhoto: CoverPhoto.fromJson(json['coverPhoto']),
-      rating: json['rating'],
-      delivery: json['delivery'],
-      priceRange: json['priceRange'],
+      rating: json['rating']??'',
+      delivery: json['delivery']??'',
+      priceRange: json['priceRange']??'',
       cuisineType: List<String>.from(json['cuisineType']),
       openingHours: List<OpeningHoursModel>.from(
         json['openingHours'].map((x) => OpeningHoursModel.fromJson(x)),
       ),
-      status: json['status'],
-      reviewsCount: json['reviewsCount'],
-      isFavorite: json['isFavorite'],
-      isOpen: json['isOpen'],
-      serverTime: json['serverTime'],
+      status: json['status']??'',
+      reviewsCount: json['reviewsCount']??'',
+      isFavorite: json['isFavorite']??'',
+      isOpen: json['isOpen']??'',
+      serverTime: json['serverTime']??'',
     );
   }
 }
@@ -89,11 +89,11 @@ class OpeningHoursModel {
 
   factory OpeningHoursModel.fromJson(Map<String, dynamic> json) {
     return OpeningHoursModel(
-      day: json['day'],
-      opens: json['opens'],
-      closes: json['closes'],
-      isClosed: json['isClosed'],
-      id: json['_id'],
+      day: json['day']??'',
+      opens: json['opens']??'',
+      closes: json['closes']??'',
+      isClosed: json['isClosed']??'',
+      id: json['_id']??'',
     );
   }
 }
@@ -113,10 +113,10 @@ class MetaModel {
 
   factory MetaModel.fromJson(Map<String, dynamic> json) {
     return MetaModel(
-      totalResNumber: json['totalResNumber'],
-      pagesCount: json['pagesCount'],
-      page: json['Page'],
-      limit: json['Limit'],
+      totalResNumber: json['totalResNumber']??'',
+      pagesCount: json['pagesCount']??'',
+      page: json['Page']??'',
+      limit: json['Limit']??'',
     );
   }
 }
@@ -129,6 +129,6 @@ class CoverPhoto {
   CoverPhoto({required this.url, required this.publicId});
 
   factory CoverPhoto.fromJson(Map<String, dynamic> json) {
-    return CoverPhoto(url: json['url'], publicId: json['publicId']);
+    return CoverPhoto(url: json['url']??'', publicId: json['publicId']??'');
   }
 }

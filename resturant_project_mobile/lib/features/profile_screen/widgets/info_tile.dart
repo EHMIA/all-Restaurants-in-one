@@ -7,7 +7,12 @@ class InfoTile extends StatelessWidget {
   final String value;
   final void Function()? onTap;
 
-  const InfoTile({super.key, required this.label, required this.value, this.onTap});
+  const InfoTile({
+    super.key,
+    required this.label,
+    required this.value,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,11 +44,6 @@ class InfoTile extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-
-          GestureDetector(
-            onTap: onTap,
-            child: Icon(Icons.edit_outlined, color: Colors.orange, size: 20),
           ),
         ],
       ),

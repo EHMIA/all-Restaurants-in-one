@@ -22,7 +22,7 @@ import '../../features/home_screen/presentation/page/home_screen.dart';
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
-    initialLocation: RouteName.layOutScreen,
+    initialLocation: RouteName.splashScreen,
     routes: [
       GoRoute(
         path: RouteName.onBoardingScreen,
@@ -100,6 +100,11 @@ class AppRouter {
         path: RouteName.writeReviewPage,
         name: RouteName.writeReviewPage,
         builder: (context, state) => WriteReviewScreen(),
+      ),
+      GoRoute(
+        path: RouteName.splashScreen,
+        name: RouteName.splashScreen,
+        builder: (context, state) => SplashScreen(),
       ),
     ],
   );

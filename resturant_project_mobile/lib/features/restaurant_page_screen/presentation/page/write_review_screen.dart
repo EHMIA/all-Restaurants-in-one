@@ -42,7 +42,6 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// RESTAURANT INFO
               Row(
                 children: [
                   Container(
@@ -98,16 +97,6 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                           ),
                         ],
                       ),
-
-                      HeightSpace(height: 4),
-
-                      Text(
-                        'Egyptian • 2.1 km away',
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: const Color(0xff94A3B8),
-                        ),
-                      ),
                     ],
                   ),
                 ],
@@ -115,7 +104,6 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
 
               HeightSpace(height: 24),
 
-              /// CARD
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24.r),
@@ -135,13 +123,14 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// EXPERIENCE TEXT
                       Center(
                         child: Text(
                           'How was your experience?',
                           style: TextStyle(
                             fontSize: 16.sp,
-                            color: const Color(0xff334155),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Poppins",
+                            color: const Color(0xff94A3B8),
                           ),
                         ),
                       ),
@@ -152,13 +141,13 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
 
                       HeightSpace(height: 28),
 
-                      /// REVIEW TITLE
                       Text(
                         "REVIEW TITLE (OPTIONAL)",
                         style: TextStyle(
                           fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Poppins",
                           color: const Color(0xff94A3B8),
-                          letterSpacing: 1,
                         ),
                       ),
 
@@ -167,6 +156,20 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                       CustomTextField(
                         controller: titleController,
                         hintText: "Summarize your visit",
+                        hintTextStyle: TextStyle(
+                          fontSize: 16.sp,
+                          color: const Color(0xff94A3B8),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "Poppins",
+                        ),
+                        textStyle: TextStyle(
+                          fontSize: 16.sp,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff94A3B8),
+                        ),
+                        fillColor: Color(0xffF8FAFC),
+                        borderColor: Color(0xff94A3B8),
                         radius: 16,
                       ),
 
@@ -177,8 +180,9 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                         "SHARE YOUR EXPERIENCE",
                         style: TextStyle(
                           fontSize: 12.sp,
+                          fontFamily: "Poppins",
                           color: const Color(0xff94A3B8),
-                          letterSpacing: 1,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
 
@@ -189,89 +193,37 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                         hintText:
                             "What did you love? How was the service and the atmosphere?",
                         maxLines: 6,
+                        hintTextStyle: TextStyle(
+                          fontSize: 16.sp,
+                          color: const Color(0xff94A3B8),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "Poppins",
+                        ),
+                        textStyle: TextStyle(
+                          fontSize: 16.sp,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xff94A3B8),
+                        ),
+                        fillColor: Color(0xffF8FAFC),
+                        borderColor: Color(0xff94A3B8),
                         radius: 16,
                       ),
 
                       HeightSpace(height: 24),
-
-                      /// ADD PHOTOS
-                      Text(
-                        "ADD PHOTOS",
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: const Color(0xff94A3B8),
-                          letterSpacing: 1,
-                        ),
-                      ),
-
-                      HeightSpace(height: 12),
-
-                      SizedBox(
-                        height: 100.h,
-
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            /// ADD PHOTO BUTTON
-                            Container(
-                              width: 100.w,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.r),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.camera_alt_outlined,
-                                    color: Colors.orange,
-                                  ),
-
-                                  HeightSpace(height: 6),
-
-                                  Text(
-                                    "ADD PHOTOS",
-                                    style: TextStyle(
-                                      fontSize: 10.sp,
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            WidthSpace(width: 12),
-
-                            /// PHOTOS
-                            ...images.map((image) {
-                              return Padding(
-                                padding: EdgeInsets.only(right: 12.w),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  child: Image.asset(
-                                    image,
-                                    width: 100.w,
-                                    height: 100.h,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              );
-                            }),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
                 ),
               ),
-              CustomTextButton(
-                backgroundColor: AppColors.primaryColor,
-                onTap: () {},
-                text: 'Post Review',
-                textColor: Colors.white,
-                isIcon: false,
+              HeightSpace(height: 20),
+              Center(
+                child: CustomTextButton(
+                  backgroundColor: AppColors.primaryColor,
+                  onTap: () {},
+                  text: 'Post Review',
+                  textColor: Colors.white,
+                  isIcon: false,
+                ),
               ),
             ],
           ),

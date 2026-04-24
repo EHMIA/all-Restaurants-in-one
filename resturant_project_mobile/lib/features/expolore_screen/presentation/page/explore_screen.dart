@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/constants/constant_data.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
@@ -16,6 +15,7 @@ import 'package:resturant_project/features/expolore_screen/presentation/page/wid
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_bottom_sheet.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/active_filter_chip.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/explore_no_result_screen.dart';
+import '../../../favorite_screen/presentation/cubit/favorite_cubit.dart';
 import '../../../home_screen/presentation/page/widgets/search_text_field_widget.dart';
 import 'widgets/custom_error_explore_screen.dart';
 
@@ -120,7 +120,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
         if (state is ExploreError) {
           return const CustomErrorExploreScreen();
         }
-
+        final favCubit = context.watch<FavoriteCubit>();
         final results = cubit.getFilteredRestaurants();
         final hasActiveFilter = state.openOnly || state.minRating != null;
 
@@ -226,7 +226,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                                   extra: res,
                                 );
                               },
-                              isFavorite: res.isFavorite,
+                              isFavorite: favCubit.isFavorite(res.id),
                               isOpen: res.isOpen,
                               image: res.coverPhoto.url,                                  
                               resName: res.name,

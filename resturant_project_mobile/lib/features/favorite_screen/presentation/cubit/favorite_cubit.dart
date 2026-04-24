@@ -1,44 +1,70 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:resturant_project/core/manager/favorite_repository.dart';
-import 'package:resturant_project/core/models/restaurant_data_model.dart';
-import 'favorite_cubit_state.dart';
+import 'package:resturant_project/features/favorite_screen/data/model/favorite_model.dart';
+import 'package:resturant_project/features/favorite_screen/data/repository/favorite_repo.dart';
+import 'favorite_state.dart';
 
-class FavoriteCubit extends Cubit<FavoriteCubitState> {
-  FavoriteCubit(this.repository)
-    : super(FavoriteCubitState(favorites: repository.getFavorites()));
+class FavoriteCubit extends Cubit<FavoriteState> {
+  FavoriteCubit({required this.repo}) : super(FavoriteInitial());
 
-  final FavoriteRepository repository;
+  final FavoriteRepo repo;
+  List<Datum> _allFavorites = [];
 
-  void loadFavorites() {
-    emit(state.copyWith(favorites: repository.getFavorites()));
-  }
+  Future<void> getAllFavoriteRestaurant() async {
+    try {
+      emit(FavoriteLoading());
+      final result = await repo.getRestaurantFav();
 
-  void toggleFavorite(int index) {
-    // Add index to pending removal list
-    final updatedPendingRemoval = List<int>.from(state.pendingRemoval);
-    if (updatedPendingRemoval.contains(index)) {
-      updatedPendingRemoval.remove(index);
-    } else {
-      updatedPendingRemoval.add(index);
+      _allFavorites = result.data;
+
+      emit(FavoriteSuccess(favorites: _allFavorites));
+    } catch (e) {
+      
+      emit(FavoriteError(message: e.toString()));
     }
-
-    emit(state.copyWith(pendingRemoval: updatedPendingRemoval));
-
-    // Remove the favorite from repository
-    final restaurant = state.favorites[index];
-    repository.toggleFavorite(restaurant);
-
-    // Update favorites list
-    emit(
-      state.copyWith(
-        favorites: repository.getFavorites(),
-        pendingRemoval: const [],
-      ),
-    );
   }
 
-  void toggleFavoriteRestaurant(RestaurantModel restaurant) {
-    repository.toggleFavorite(restaurant);
-    emit(state.copyWith(favorites: repository.getFavorites()));
+  // advanced remove
+  // Future<void> removeCardFromFav(String resId) async {
+  //   try {
+  //     final oldlist = List<Datum>.from(_allFavorites);
+
+  //     _allFavorites.removeWhere((e) => e.restaurant.id == resId);
+  //     emit(FavoriteSuccess(favorites: _allFavorites));
+
+  //     await repo.deleteResFromFavorites(resId);
+  //   } catch (e) {
+  //     // rollback
+  //     final oldlist = List<Datum>.from(_allFavorites);
+  //     _allFavorites = oldlist;
+  //     emit(FavoriteSuccess(favorites: _allFavorites));
+
+  //     emit(FavoriteError(message: e.toString()));
+  //   }
+  // }
+
+  Future<void> removeCardFromFav(String resId) async {
+    try {
+      await repo.deleteResFromFavorites(resId);
+
+      _allFavorites.removeWhere((e) => e.restaurant.id == resId);
+
+      emit(FavoriteSuccess(favorites: _allFavorites));
+    } catch (e) {
+      emit(FavoriteError(message: e.toString()));
+    }
+  }
+
+  Future<void> addResToFavorites(String resId) async {
+    try {
+      await repo.addResToFavorites(resId);
+
+      await getAllFavoriteRestaurant();
+    } catch (e) {
+      emit(FavoriteError(message: e.toString()));
+    }
+  }
+
+  bool isFavorite(String resId) {
+    return _allFavorites.any((e) => e.restaurant.id == resId);
   }
 }

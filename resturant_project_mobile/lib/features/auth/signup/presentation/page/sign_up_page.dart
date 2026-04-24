@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_footer_signup.dart';
-import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_terms_and_privacy.dart';
 import 'package:resturant_project/core/constants/constant_validate.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';

@@ -5,9 +5,9 @@ import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/repositories/restaurant_data_repo.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/page/custom_bottom_nav_bar.dart';
-import 'package:resturant_project/core/manager/favorite_repository.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/cubit/explore_cubit.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
+import 'package:resturant_project/features/favorite_screen/data/repository/favorite_repo.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/favorite_screen.dart';
 import 'package:resturant_project/features/home_screen/presentation/cubit/home_cubit.dart';
@@ -24,23 +24,12 @@ class LayoutScreen extends StatefulWidget {
 
 class _LayoutScreenState extends State<LayoutScreen>
     with WidgetsBindingObserver {
-  late final FavoriteCubit _favoriteCubit;
-  int _previousIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _favoriteCubit = FavoriteCubit(FavoriteRepository())..loadFavorites();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      // Reload favorites when app comes back into focus
-      _favoriteCubit.loadFavorites();
-    }
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addObserver(this);
+  //   _favoriteCubit = FavoriteCubit(FavoriteRepository())..loadFavorites();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -64,14 +53,13 @@ class _LayoutScreenState extends State<LayoutScreen>
             repo: RestaurantDataRepo(api: DioConsumer(dio: Dio())),
           ),
         ),
-        BlocProvider.value(value: _favoriteCubit),
       ],
       child: BlocBuilder<LayoutCubit, int>(
         builder: (context, currentIndex) {
-          if (currentIndex == 2 && _previousIndex != 2) {
-            Future.microtask(() => _favoriteCubit.loadFavorites());
-          }
-          _previousIndex = currentIndex;
+          // if (currentIndex == 2 && _previousIndex != 2) {
+          //   Future.microtask(() => _favoriteCubit.loadFavorites());
+          // }
+          // _previousIndex = currentIndex;
 
           return Scaffold(
             body: IndexedStack(index: currentIndex, children: screens),
@@ -81,6 +69,9 @@ class _LayoutScreenState extends State<LayoutScreen>
                 context.read<LayoutCubit>().changeTab(index);
                 if (currentIndex == 1 && index != 1) {
                   context.read<ExploreCubit>().resetFilters();
+                }
+                if (currentIndex == 2) {
+                  context.read<FavoriteCubit>().getAllFavoriteRestaurant();
                 }
               },
             ),
@@ -93,7 +84,6 @@ class _LayoutScreenState extends State<LayoutScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _favoriteCubit.close();
     super.dispose();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:resturant_project/core/api/api_consumer.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/features/auth/login/data/repository/login_repo.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/login_cubit.dart';

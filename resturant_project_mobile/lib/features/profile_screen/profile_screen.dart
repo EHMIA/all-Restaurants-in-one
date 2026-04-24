@@ -1,11 +1,19 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
+import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/utils/storage_helper.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/profile_screen/widgets/info_tile.dart';
 import 'package:resturant_project/features/profile_screen/widgets/profile_card.dart';
+
+import '../favorite_screen/presentation/cubit/favorite_state.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -128,14 +136,29 @@ class ProfileScreen extends StatelessWidget {
                             color: AppColors.primaryColor,
                           ),
                           WidthSpace(width: 5),
-                          Text(
-                            '12 Favorites',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Color(0xff212121),
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.bold,
-                            ),
+                          BlocBuilder<FavoriteCubit, FavoriteState>(
+                            builder: (context, state) {
+                              if (state is FavoriteSuccess) {
+                                return Text(
+                                  '${state.favorites.length} Favorites',
+                                  style: TextStyle(
+                                    fontSize: 12.sp,
+                                    color: Color(0xff212121),
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }
+                              return Text(
+                                'No Favorites',
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  color: Color(0xff212121),
+                                  fontFamily: "Poppins",
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              );
+                            },
                           ),
                           WidthSpace(width: 8),
                           Text(
@@ -263,15 +286,37 @@ class ProfileScreen extends StatelessWidget {
                     childAspectRatio: 1.05,
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    children: const [
-                      ProfileCard(
-                        title: "My Favorites",
-                        subtitle: "12 saved items",
-                        icon: Icons.favorite_border,
-                        iconColor: Colors.red,
-                        bgColor: Color(0xFFFDECEC),
+                    children: [
+                      BlocBuilder<FavoriteCubit, FavoriteState>(
+                        builder: (context, state) {
+                          if(state is FavoriteSuccess){
+                            return ProfileCard(
+                              onTap: () {
+                                context.read<LayoutCubit>().changeTab(2);
+                              },
+                              title: "My Favorites",
+                              subtitle: "${state.favorites.length} saved items",
+                              icon: Icons.favorite_border,
+                              iconColor: Colors.red,
+                              bgColor: Color(0xFFFDECEC),
+                            );
+                          }
+                          return ProfileCard(
+                            onTap: () {
+                              context.read<LayoutCubit>().changeTab(2);
+                            },
+                            title: "My Favorites",
+                            subtitle: "No saved items",
+                            icon: Icons.favorite_border,
+                            iconColor: Colors.red,
+                            bgColor: Color(0xFFFDECEC),
+                          );
+                        },
                       ),
                       ProfileCard(
+                        onTap: () {
+                          
+                        },
                         title: "My Reviews",
                         subtitle: "8 published",
                         icon: Icons.star_border,
@@ -279,6 +324,8 @@ class ProfileScreen extends StatelessWidget {
                         bgColor: Color(0xFFFFF4E5),
                       ),
                       ProfileCard(
+                        onTap: () {
+                        },
                         title: "Settings",
                         subtitle: "Security, privacy",
                         icon: Icons.settings,
@@ -292,6 +339,65 @@ class ProfileScreen extends StatelessWidget {
                         iconColor: Colors.red,
                         bgColor: Color(0xFFFDECEC),
                         isLogout: true,
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (dialogContext) => AlertDialog(
+                              backgroundColor: Colors.white,
+                              title: Center(
+                                child: Text(
+                                  "Logout",
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: "Poppins",
+                                  ),
+                                ),
+                              ),
+                              content: Text(
+                                "Are you sure you want to logout?",
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                  color: Color(0xff94A3B8),
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(dialogContext),
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Poppins",
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    await StorageHelper.removeToken();
+
+                                    Navigator.pop(dialogContext);
+
+                                    GoRouter.of(
+                                      context,
+                                    ).goNamed(RouteName.authRouteScreen);
+                                  },
+                                  child: Text(
+                                    "Logout",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: "Poppins",
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

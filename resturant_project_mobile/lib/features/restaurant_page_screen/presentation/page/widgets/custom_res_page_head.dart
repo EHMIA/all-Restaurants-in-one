@@ -7,7 +7,7 @@ import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/models/restaurant_data_model.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit_state.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_state.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_button_res_page.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -39,7 +39,7 @@ class CustomResPageHead extends StatelessWidget {
           Image.network(
             restaurant.coverPhoto.url,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
+            errorBuilder: (_, _, _) {
               return Image.asset(AppAssets.image, fit: BoxFit.cover);
             },
           ),
@@ -88,19 +88,20 @@ class CustomResPageHead extends StatelessWidget {
           Positioned(
             top: 48.h,
             right: 16.w,
-            child: BlocBuilder<FavoriteCubit, FavoriteCubitState>(
+            child: BlocBuilder<FavoriteCubit, FavoriteState>(
               builder: (context, state) {
-                final isFavorite = state.favorites.any(
-                  (e) => e.id == restaurant.id,
-                );
+                final cubit = context.read<FavoriteCubit>();
+                final isFav = cubit.isFavorite(restaurant.id);
 
                 return CustomButtonResPage(
                   onTap: () {
-                    context.read<FavoriteCubit>().toggleFavoriteRestaurant(
-                      restaurant,
-                    );
+                    if (isFav) {
+                      cubit.removeCardFromFav(restaurant.id);
+                    } else {
+                      cubit.addResToFavorites(restaurant.id);
+                    }
                   },
-                  icon: isFavorite ? Icons.favorite : Icons.favorite_border,
+                  icon: isFav ? Icons.favorite : Icons.favorite_border,
                 );
               },
             ),

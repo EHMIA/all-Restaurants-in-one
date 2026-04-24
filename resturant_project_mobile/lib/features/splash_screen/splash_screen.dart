@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../core/utils/storage_helper.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -74,36 +75,31 @@ class _SplashScreenState extends State<SplashScreen>
         curve: Curves.easeOutCubic,
       ),
     );
-
-    _startAnimations();
     checkLogin();
   }
 
 
-  // ======================================simulate checking login status====================================================
-  void checkLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+  Future<void> checkLogin() async {
+    final tokenFuture = StorageHelper.getToken();
+    final animationFuture = _startAnimations();
 
-    //await Future.delayed(Duration(seconds: 2));
+    final results = await Future.wait([tokenFuture, animationFuture]);
 
-    if (isLoggedIn) {
-     GoRouter.of(context).goNamed(RouteName.layOutScreen);
+    final token = results[0] as String?;
+
+    if (!mounted) return;
+
+    if (token != null && token.isNotEmpty) {
+      context.goNamed(RouteName.layOutScreen);
     } else {
-      GoRouter.of(context).goNamed(RouteName.signInPage);
+      context.goNamed(RouteName.authRouteScreen);
     }
   }
 
-  void _startAnimations() {
+  Future<void> _startAnimations()async {
     _containerAnimationController.forward();
-    _logoAnimationController.forward().then((_) {
+    await _logoAnimationController.forward().then((_) {
       _textAnimationController.forward();
-    });
-
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        context.goNamed(RouteName.layOutScreen);
-      }
     });
   }
 

@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
 
 class FavoriteEmptyScreen extends StatelessWidget {
   const FavoriteEmptyScreen({super.key});
@@ -49,7 +49,7 @@ class FavoriteEmptyScreen extends StatelessWidget {
                 HeightSpace(height: 32),
                 GestureDetector(
                   onTap: () {
-                    GoRouter.of(context).pushNamed(RouteName.explorScreen);
+                    context.read<LayoutCubit>().changeTab(1);
                   },
                   child: Container(
                     width: 267.w,

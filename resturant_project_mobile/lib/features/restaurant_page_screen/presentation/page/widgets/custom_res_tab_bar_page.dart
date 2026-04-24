@@ -1,17 +1,12 @@
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_page_cubit.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_res_info_page.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_res_menu_page.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_res_photo_page.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_res_reviews_page.dart';
 
-import '../../../../../core/repositories/restaurant_details_repo.dart';
 
 class CustomResTabBarPage extends StatelessWidget {
   const CustomResTabBarPage({super.key, this.rate, this.numOfReviews, required this.id});

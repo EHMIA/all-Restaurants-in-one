@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/utils/storage_helper.dart';
 import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/forget_password_cubit.dart';
@@ -36,7 +37,18 @@ class _LoginPageState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-
+// @override
+//   void initState() {
+//     WidgetsBinding.instance.addPostFrameCallback((_) async {
+//       final token = await StorageHelper.getToken();
+//       if (token != null && token.isNotEmpty) {
+//         if (mounted) {
+//           GoRouter.of(context).pushReplacementNamed(RouteName.layOutScreen);
+//         }
+//       }
+//     });
+//     super.initState();
+//   }
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
