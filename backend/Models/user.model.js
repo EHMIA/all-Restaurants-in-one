@@ -69,4 +69,12 @@ userSchema.methods.generateToken = function () {
     );
 }
 
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign(
+        { id: this._id },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: '7d' } 
+    );
+}
+
 export const Users = model('User', userSchema);
