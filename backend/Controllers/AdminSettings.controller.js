@@ -7,6 +7,8 @@ import { updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { notificationModel } from "../Models/notifications.model.js";
 import { Users } from "../Models/user.model.js";
 import { getSettingsService } from "../Services/adminSetting.service.js";
+import { reviewModel } from "../Models/reviews.model.js";
+import { favResModel } from "../Models/FavoriteRestaurants.model.js";
 
 const getSystemSettings = asyncHandler(async (req, res) => {
     let settings_ = await getSettingsService();
@@ -77,18 +79,21 @@ const getOneRequest = asyncHandler(async (req, res) => {
 });
 
 
+
 const acceptRejectRequest = asyncHandler(async (req, res) => {
-    const {error}= validateRequest(req.body);
-    if(error)
-        return res.status(400).json({message:error.details[0].message});
+    const { error } = validateRequest(req.body);
+    if (error)
+        return res.status(400).json({ message: error.details[0].message });
+
     const { action, reason } = req.body;
-    const restaurantId = req.params.restaurantId; 
+    const restaurantId = req.params.restaurantId;
     const AdminId = req.user.id;
 
     const restaurant = await restaurantModel.findById(restaurantId);
     if (!restaurant) {
         return res.status(404).json({ message: "Request not found" });
     }
+    const ownerId = restaurant.Owner;
 
     if (restaurant.status !== "pending") {
         return res.status(400).json({ message: "This request has already been processed." });
@@ -97,31 +102,42 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
     if (action === "approve") {
         await updateRestaurantStatus(restaurant._id, "approved", AdminId);
         await Users.findByIdAndUpdate(restaurant.Owner, { role: "owner" });
-        
+
         await notificationModel.create({
             sender: AdminId,
             message: `Your request has been approved and now you are Owner`,
-            receiver: restaurant.Owner,
+            receiver: ownerId,
             type: "approved",
             restaurant: restaurant._id
         });
 
-        
         return res.status(200).json({ message: "Restaurant accepted successfully" });
 
     } else if (action === "reject") {
         if (!reason || !reason.trim()) {
             return res.status(400).json({ message: "Please provide a reason for rejection" });
         }
-        
+
         const settings = await getSettingsService();
         const maxRejectionLimit = settings.maxRejectionLimit;
-        restaurant.rejectionCount = (restaurant.rejectionCount || 0) + 1;
+        
+        const currentRejectionCount = (restaurant.rejectionCount || 0) + 1;
 
-        if (restaurant.rejectionCount >= maxRejectionLimit) {
-            return res.status(403).json({ 
-                message: "This restaurant has reached the maximum limit of rejections and is permanently blocked." ,
-                rejectionCount: restaurant.rejectionCount
+        if (currentRejectionCount >= maxRejectionLimit) {
+            await reviewModel.deleteMany({ restaurant: restaurantId });
+            await favResModel.deleteMany({ restaurant: restaurantId });
+            
+            await restaurantModel.findByIdAndDelete(restaurantId);
+
+            await notificationModel.create({
+                sender: AdminId,
+                message: `Your restaurant request has been permanently deleted after ${maxRejectionLimit} failed attempts.`,
+                receiver: ownerId,
+                type: "rejected"
+            });
+
+            return res.status(200).json({ 
+                message: "Restaurant reached maximum rejection limit and has been deleted." 
             });
         }
 
@@ -132,7 +148,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
             sender: AdminId,
             message: `Your request has been rejected because: ${reason}. You have ${remainCounts} attempts left.`,
             restaurant: restaurant._id,
-            receiver: restaurant.Owner,
+            receiver: ownerId,
             type: "rejected"
         });
 
@@ -141,7 +157,6 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
             remainingAttempts: remainCounts,
             rejectionCount: updatedRestaurant.rejectionCount
         });
-        
     }
 });
 

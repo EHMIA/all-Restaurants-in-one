@@ -39,7 +39,8 @@ const addDishsToMenu= asyncHandler(async(req,res)=>{
 
     if(req.body.menu)
         req.body.menu= JSON.parse(req.body.menu);
-
+    
+    const validationBody= {...req.body.menu , dishNames:files };
     console.log(req.body.menu);
     const {error}= addDishsToMenuValidation(req.body);
     if(error)
