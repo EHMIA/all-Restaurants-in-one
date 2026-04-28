@@ -35,7 +35,7 @@ app.use("/restaurants", RestaurantsRoutes);
 app.use("/admin", SettingsRoutes);
 app.use("/favorites", favRestaurantsRoutes);
 app.use("/reviews",ReviewsRoutes);
-app.use("/restaurant-data",restaurantDataRoutes);
+app.use("/restaurant-data",restaurantDataRoutes);   
 
 app.use(notFoundHandler);
 app.use(errorHandler);
