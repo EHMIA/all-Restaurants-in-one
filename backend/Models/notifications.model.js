@@ -23,7 +23,7 @@ const notificationSchema=new Schema({
     },
     type: {
         type: String,
-        enum: ["pending", "accepted", "rejected"],
+        enum: ["pending", "approved", "rejected"],
         required: true
     },
     isRead: {

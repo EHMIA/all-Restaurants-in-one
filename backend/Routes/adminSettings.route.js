@@ -10,7 +10,7 @@ router.put("/settings",Protect,restrictToAdmin,updateSysSettings);
 
 router.get("/requests",Protect,restrictToAdmin,getRestaurantRequests);
 
-router.get("requests/:restaurantId",Protect,restrictToAdmin,getOneRequest);
+router.get("/requests/:restaurantId",Protect,restrictToAdmin,getOneRequest);
 
 router.post("/requests/:restaurantId/:decision",Protect,restrictToAdmin,acceptRejectRequest);
 

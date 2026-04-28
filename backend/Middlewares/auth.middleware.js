@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import  { Users } from "../Models/user.model.js"
 import { restaurantModel } from "../Models/restaurant.model.js";
+import mongoose from "mongoose";
 
 const optionalProtect= async(req,res,next)=>{
     const authHeader= req.headers.authorization;
@@ -89,12 +90,13 @@ const restrictToAdmin= (req,res,next)=>{
 
 
 const restrictToRestaurantOwner = async (req, res, next) => {
-    const restaurantId = req.params.restaurantId;
+    const restaurantId = new mongoose.Types.ObjectId(req.params.restaurantId);
     const restaurant = await restaurantModel.findById(restaurantId)
-        .select("Owner Gallery coverPhoto menu rejectionCount");
+        .select("_id status Owner Gallery coverPhoto menu rejectionCount");
 
     if (!restaurant) 
         return res.status(404).json({ message: "Restaurant not found" });
+        
     if (!restaurant.Owner.equals(req.user.id)) {
         return res.status(403).json({ message: "Only Restaurant Owner has access" });
     }
@@ -106,7 +108,7 @@ const restrictToRestaurantOwner = async (req, res, next) => {
     if (restaurant.status === "pending") {
         return res.status(400).json({ message: "Cannot edit while request is pending review." });
     }
-
+    
     req.restaurant = restaurant;
     next();
 };

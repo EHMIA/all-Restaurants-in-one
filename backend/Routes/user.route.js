@@ -4,8 +4,7 @@ import { getUserProfile , uploadProfilePicController , editUserProfile , deleteA
 import { Protect } from "../Middlewares/auth.middleware.js";
 import { restrictToAdminOrAccountOwner } from "../Middlewares/auth.middleware.js";
 import { uploadSingleImage } from "../Middlewares/upload.middleware.js";
-import { editUserProfile } from "../Controllers/EditUser.js";
-import { deleteProfilePicController } from "../Controllers/DeletePhoto.controller.js";
+import { getMyRestaurantDashboard } from "../Controllers/restaurant.controller.js";
 
 
 router.get('/getUserProfile', Protect, getUserProfile);

@@ -22,8 +22,11 @@ const userSchema = new Schema({
         match: [phoneNumberField, invalidPhoneMsg]
     },
     profile_pic: {
-        url: { type: String, trim: true },
-        publicId: { type: String, trim: true }
+        type:{
+                url: { type: String, trim: true },
+                publicId: { type: String, trim: true },
+            },
+            default: null
     },
     password: {
         type: String,

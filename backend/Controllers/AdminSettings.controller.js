@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler"
 import { Settings } from "../Models/adminSettings.model.js"
-import { settingsValidation } from "../Validators/adminSetting.validation.js";
+import { settingsValidation, validateRequest } from "../Validators/adminSetting.validation.js";
 import { addRecalculatePricesJob } from "../Jobs/restaurantQueue.job.js";
 import { restaurantModel } from "../Models/restaurant.model.js";
 import { updateRestaurantStatus } from "../Services/restaurant.service.js";
@@ -68,7 +68,7 @@ const getOneRequest = asyncHandler(async (req, res) => {
     const restaurantId= req.params.restaurantId;
     const request = await restaurantModel.findById(restaurantId)
         .select("_id name coverPhoto rejectionCount status createdAt Owner email name phoneNumber whatsappNumber address openingHours cuisineType delivery ")
-        .populate("Owner", "_id fullname profile_pic "); 
+        .populate("Owner", "_id fullname profile_pic"); 
 
     if (!request) {
         return res.status(404).json({ message: "Request not found" });
@@ -78,6 +78,9 @@ const getOneRequest = asyncHandler(async (req, res) => {
 
 
 const acceptRejectRequest = asyncHandler(async (req, res) => {
+    const {error}= validateRequest(req.body);
+    if(error)
+        return res.status(400).json({message:error.details[0].message});
     const { action, reason } = req.body;
     const restaurantId = req.params.restaurantId; 
     const AdminId = req.user.id;
@@ -93,6 +96,8 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
 
     if (action === "approve") {
         await updateRestaurantStatus(restaurant._id, "approved", AdminId);
+        await Users.findByIdAndUpdate(restaurant.Owner, { role: "owner" });
+        
         await notificationModel.create({
             sender: AdminId,
             message: `Your request has been approved and now you are Owner`,
@@ -101,7 +106,6 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
             restaurant: restaurant._id
         });
 
-        await Users.findByIdAndUpdate(restaurant.Owner, { role: "owner" });
         
         return res.status(200).json({ message: "Restaurant accepted successfully" });
 
@@ -112,6 +116,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
         
         const settings = await getSettingsService();
         const maxRejectionLimit = settings.maxRejectionLimit;
+        restaurant.rejectionCount = (restaurant.rejectionCount || 0) + 1;
 
         if (restaurant.rejectionCount >= maxRejectionLimit) {
             return res.status(403).json({ 

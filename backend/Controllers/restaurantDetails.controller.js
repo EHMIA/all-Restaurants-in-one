@@ -9,9 +9,7 @@ const uploadOrUpdateCoverImage = asyncHandler(async (req, res) => {
 
     if (!file) 
         return res.status(400).json({ message: "Cover image is required" });
-
     const updatedRestaurant = await uploadOrUpdateCoverImageService(restaurant, file.buffer);
-
     if (!updatedRestaurant) 
         return res.status(500).json({ message: "Failed to update cover image" });
 
@@ -82,7 +80,7 @@ const deleteDishFromMenu= asyncHandler(async(req,res)=>{
     if(!dishId)
         return res.status(400).json({message:"Dish ID is required"});
 
-    const deletedDish= await deletePhotoFromGalleryService(restaurant,dishId);
+    const deletedDish= await deleteDishFromMenuService(restaurant,dishId);
     if(!deletedDish)
         return res.status(500).json({message:"Failed to delete dish from menu"});
     res.status(200).json({
@@ -150,7 +148,7 @@ export{
     deleteDishFromMenu,
     editDishInMenu,
     getOneDishFromMenu,
-    
+
     addPhotosToGallery,
     deletePhotoFromGallery
 }

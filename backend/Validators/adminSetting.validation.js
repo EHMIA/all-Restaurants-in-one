@@ -19,4 +19,18 @@ const settingsValidation = (obj)=>{
     return schema.validate(obj);
 };
 
-export { settingsValidation };
+const validateRequest= (obj)=>{
+    const schema = joi.object({
+        action: joi.string().valid("approve", "reject").required(),
+        reason: joi.string().allow("").optional().when('action', {
+            is: 'approve',
+            then: joi.forbidden(), 
+            otherwise: joi.optional() 
+        }),
+    })
+    .messages({
+        "any.unknown": "Reason is not allowed when approving"
+    });
+    return schema.validate(obj);
+}
+export { settingsValidation, validateRequest };

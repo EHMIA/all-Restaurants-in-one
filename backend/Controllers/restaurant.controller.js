@@ -8,6 +8,7 @@ import { notificationModel } from "../Models/notifications.model.js";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
 import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
 
+
 /**
  * @desc get all restaurants
  * @Method GET
@@ -188,19 +189,24 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
 
 
 
-const editRestaurantMainData= asyncHandler(async (req, res) => {
-    const restaurant= req.restaurant;    
-    const {error,value}= editRestaurantMainDataValidation(req.body);
+const editRestaurantMainData = asyncHandler(async (req, res) => {
+    const restaurant = req.restaurant;     
+    const { error, value } = editRestaurantMainDataValidation(req.body);
     
-    if(error)
-        return res.status(400).json({message:error.details[0].message});
+    if (error) 
+        return res.status(400).json({ message: error.details[0].message });
+
+    console.log(restaurant.status);
     
-    const updatedRestaurant= await editRestaurantMainDataService(restaurant,value);
-    if(!updatedRestaurant)
-        return res.status(500).json({message:"Failed to update restaurant data"});
+    const updatedRestaurant = await editRestaurantMainDataService(restaurant, value);
+    
+    if (!updatedRestaurant) {
+        return res.status(500).json({ message: "Failed to update restaurant data" });
+    }
+
     res.status(200).json({
-        message:"Restaurant data updated successfully",
-        restaurant:updatedRestaurant
+        message: "Restaurant data updated successfully",
+        restaurant: updatedRestaurant
     });
 });
 

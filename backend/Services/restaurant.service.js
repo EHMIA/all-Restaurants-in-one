@@ -92,7 +92,7 @@ const getAllRestaurantsService = async (
  */
 
 const getOneRestaurantService = async (restaurantId, returnQuery = null, user) => {
-    const queryFields = (Array.isArray(returnQuery) ? returnQuery : [returnQuery])
+    let queryFields = (Array.isArray(returnQuery) ? returnQuery : [returnQuery])
         .filter(Boolean)
         .map(f => f.toLowerCase());
 
@@ -216,24 +216,25 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null, user) =
 };
 
 
-const editRestaurantMainDataService= async (restaurant, data)=>{
-    if (restaurant.status === "rejected") {
-        data.status = "pending"; 
+const editRestaurantMainDataService = async (restaurant, data) => {
+    const updatePayload = { ...data };
+    
+    if (restaurant.status && restaurant.status.trim().toLowerCase() === "rejected") {
+        updatePayload.status = "pending";
+        updatePayload.rejectionReason = null; 
+        updatePayload.rejectedBy = null;
     }
+
     const updatedRestaurant = await restaurantModel.findByIdAndUpdate(
         restaurant._id,
+        { $set: updatePayload }, 
         {
-            $set: data,
-        },
-        {
-            returnDocument: 'after',
+            new: true, 
             runValidators: true,
-        },
+        }
     );
-    if (!updatedRestaurant) return null;
     return updatedRestaurant;
-}
-
+};
 
 // just admins 
 const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
@@ -247,7 +248,7 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     
     const updateQuery = { $set: updateData };
 
-    if (status === "reject") {
+    if (status === "rejected") {
         updateQuery.$inc = { rejectionCount: 1 };
     }
 

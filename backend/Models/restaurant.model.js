@@ -33,8 +33,11 @@ const restaurantSchema = new Schema(
         },
 
         coverPhoto: {
-            url: { type: String, trim: true },
-            publicId: { type: String, trim: true },
+            type:{
+                url: { type: String, trim: true },
+                publicId: { type: String, trim: true },
+            },
+            default: null
         },
 
         rating: {
