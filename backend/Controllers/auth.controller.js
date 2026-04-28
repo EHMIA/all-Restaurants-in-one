@@ -1,16 +1,16 @@
+import express from 'express';
 import { compare } from 'bcrypt';
 import { Users } from '../Models/user.model.js';
 import { loginSchema } from '../Validators/login_validation.js';
 import { hash } from "bcrypt";
 import { registerSchema } from "../Validators/register_validation.js";
 import asyncHandler from "express-async-handler";
-import { config } from 'dotenv'; 
 import { createTransport } from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import { configDotenv } from "dotenv";
 configDotenv();
-import express from 'express';
-config();
+// import { config } from 'dotenv'; 
+// config();
 
 
 const register = asyncHandler(async (req, res) => {
@@ -205,6 +205,7 @@ const forgotPassword = asyncHandler (async (req, res) => {
 
         res.status(200).json({ 
             message: 'OTP sent to email successfully',
+            otp : otp,
             verificationToken : verificationToken
         });
 });
