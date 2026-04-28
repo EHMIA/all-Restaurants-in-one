@@ -4,6 +4,7 @@ import {restaurantModel} from "../Models/restaurant.model.js";
 import {favResModel } from "../Models/FavoriteRestaurants.model.js";
 import asyncHandler from "express-async-handler";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
+import { compare, hash } from 'bcrypt';
 import { v2 as cloudinary } from 'cloudinary'; 
 
 
@@ -166,4 +167,32 @@ const deleteAccountController = asyncHandler(async (req, res) => {
 });
 
 
-export { getUserProfile, uploadProfilePicController, editUserProfile, deleteProfilePicController, deleteAccountController };
+const changePasswordController = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword , confirmPassword} = req.body;  
+    const user = await Users.findById(req.user.id);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await compare(currentPassword, user.password);
+    // const isMatch = await checkPassword(currentPassword, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+    }
+    
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New passwords do not match" });
+    }
+
+    const hashedPassword = await hash(newPassword, 10);
+    
+    user.password = hashedPassword; // Ensure this will be hashed in the model's pre-save hook
+    await user.save();
+    res.status(200).json({ message: "Password changed successfully" });
+
+
+})
+
+
+export { getUserProfile, uploadProfilePicController, editUserProfile, deleteProfilePicController, deleteAccountController, changePasswordController };
