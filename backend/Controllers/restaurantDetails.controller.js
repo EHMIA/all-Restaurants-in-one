@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import { addDishsToMenuService, addPhotosToGalleryService, deleteCoverImageService, deleteDishFromMenuService, deletePhotoFromGalleryService, editDishInMenuService,  uploadOrUpdateCoverImageService } from "../Services/restaurantDetails.service.js";
+import { addDishsToMenuService, addPhotosToGalleryService, deleteCoverImageService, deleteDishFromMenuService, deletePhotoFromGalleryService, editDishInMenuService,  getOneDishFromMenuService,  uploadOrUpdateCoverImageService } from "../Services/restaurantDetails.service.js";
 import { getOneRestaurantService } from "../Services/restaurant.service.js";
 import { addDishsToMenuValidation, editDishInMenuValidation } from "../Validators/restaurant.validator.js";
 
@@ -62,6 +62,19 @@ const addDishsToMenu= asyncHandler(async(req,res)=>{
     });
 }) 
 
+const getOneDishFromMenu = asyncHandler(async (req, res) => {
+    const dishId = req.params.dishId;
+    const restaurant = req.restaurant;
+    const dish = await getOneDishFromMenuService(restaurant, dishId);
+
+    if (!dish)
+        return res.status(404).json({ message: "Dish not found" });
+
+    res.status(200).json({
+        message: "Dish retrieved successfully",
+        dish
+    });
+})
 
 const deleteDishFromMenu= asyncHandler(async(req,res)=>{
     const restaurant= req.restaurant;
@@ -132,9 +145,12 @@ const deletePhotoFromGallery=asyncHandler(async(req,res)=>{
 export{
     uploadOrUpdateCoverImage,
     deleteCoverImage,
+
     addDishsToMenu,
     deleteDishFromMenu,
     editDishInMenu,
+    getOneDishFromMenu,
+    
     addPhotosToGallery,
     deletePhotoFromGallery
 }

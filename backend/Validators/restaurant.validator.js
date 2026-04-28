@@ -143,6 +143,11 @@ const addDishsToMenuValidation = (obj) => {
                         }),
                 }),
             )
+            .min(1)
+            .unique((a, b) => a.dishName.toLowerCase() === b.dishName.toLowerCase()) 
+            .messages({
+                "array.unique": "There are repeated dish names",
+            })
             .required(),
     });
     return schema.validate(obj);

@@ -1,5 +1,6 @@
 import { configDotenv } from "dotenv";
 configDotenv();
+import redisOptions from "../backend/Config/redis.config.js";
 
 import express, { json } from "express";
 import cors from "cors";

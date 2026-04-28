@@ -7,6 +7,7 @@ import { restrictToAdminOrAccountOwner } from "../Middlewares/auth.middleware.js
 import { uploadSingleImage } from "../Middlewares/upload.middleware.js";
 import { editUserProfile } from "../Controllers/EditUser.js";
 import { deleteProfilePicController } from "../Controllers/DeletePhoto.controller.js";
+import { getMyRestaurantDashboard } from "../Controllers/restaurant.controller.js";
 
 
 router.get('/getUserProfile', Protect, getUserProfile);
@@ -14,6 +15,9 @@ router.post('/uploadPhoto', Protect, uploadSingleImage, uploadProfilePicControll
 router.post('/editUserProfile/:id', Protect, restrictToAdminOrAccountOwner, editUserProfile);
 router.delete('/deleteUserProfile/:id', Protect, restrictToAdminOrAccountOwner, deleteProfilePicController);
 
+
+// For Owner DashBoard
+router.get("/my/dashboard",Protect,getMyRestaurantDashboard);
 
 
 export default router;  

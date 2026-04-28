@@ -11,6 +11,7 @@ import { restaurantModel } from "../Models/restaurant.model.js";
  * handle return number of reviews
  * handle if fav or no for each restaurant
  */
+
 const getAllRestaurantsService = async (
     conditions,
     skip,
@@ -83,19 +84,18 @@ const getAllRestaurantsService = async (
     return [restaurants, totalResNumber];
 };
 
+
 /**
- *
  * @param {*} restaurantId
  * @param {*} returnQuery
  * @returns restaurant
  */
-const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
-    let rawFields = [];
-    if (returnQuery) {
-        rawFields = Array.isArray(returnQuery) ? returnQuery : [returnQuery];
-    }
 
-    let queryFields = rawFields.map((f) => f.toLowerCase());
+const getOneRestaurantService = async (restaurantId, returnQuery = null, user) => {
+    const queryFields = (Array.isArray(returnQuery) ? returnQuery : [returnQuery])
+        .filter(Boolean)
+        .map(f => f.toLowerCase());
+
     const isAll = queryFields.length === 0 || queryFields.includes("all");
     const isMain = queryFields.includes("main");
     const showMainInfo = isAll || isMain;
@@ -108,7 +108,7 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(restaurantId),
-                status: "approved",
+                status: "approved" 
             },
         },
         {
@@ -148,12 +148,29 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                         }
                     },
                     {
-
                         $project: {
                             userData: 0
                         }
                     }
                 ]
+            },
+        },{
+            $lookup: {
+                from: "favorites",
+                let: { resId: "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$restaurant", "$$resId"] },
+                                    { $eq: ["$user", user?.id ? new mongoose.Types.ObjectId(user.id) : null] },
+                                ],
+                            },
+                        },
+                    },
+                ],
+                as: "userFavorite",
             },
         },
         {
@@ -191,6 +208,7 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
                         "$$REMOVE",
                     ],
                 },
+                userFavoriteData: { $cond: [showMainInfo, "$userFavorite", "$$REMOVE"] },
             },
         },
     ]);
@@ -199,6 +217,9 @@ const getOneRestaurantService = async (restaurantId, returnQuery = null) => {
 
 
 const editRestaurantMainDataService= async (restaurant, data)=>{
+    if (restaurant.status === "rejected") {
+        data.status = "pending"; 
+    }
     const updatedRestaurant = await restaurantModel.findByIdAndUpdate(
         restaurant._id,
         {
@@ -212,9 +233,10 @@ const editRestaurantMainDataService= async (restaurant, data)=>{
     if (!updatedRestaurant) return null;
     return updatedRestaurant;
 }
-// just admins
+
+
+// just admins 
 const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
-    //remember=>  here check if it is pedning if there are endPoint for change restaurant status
     const updateData = {
         status,
         [`${status}At`]: new Date(),
@@ -222,19 +244,26 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     };
     if (reason) updateData.rejectionReason = reason;
 
+    
+    const updateQuery = { $set: updateData };
+
+    if (status === "reject") {
+        updateQuery.$inc = { rejectionCount: 1 };
+    }
+
     const Restaurant = await restaurantModel.findByIdAndUpdate(
         id,
+        updateQuery, 
         {
-            $set: updateData,
-        },
-        {
-            returnDocument: 'after',
+            returnDocument: 'after', 
             runValidators: true,
         },
     );
-    if (!Restaurant) return null;
     return Restaurant;
 };
+
+
+
 
 
 export {
@@ -243,3 +272,4 @@ export {
     updateRestaurantStatus,
     editRestaurantMainDataService
 };
+

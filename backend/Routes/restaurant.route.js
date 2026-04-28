@@ -1,16 +1,16 @@
 import { Router } from "express";
 import { createNewRestaurant, getAllRestaurants, getOneRestaurant, getSelectionRestaurant } from "../Controllers/restaurant.controller.js";
 import {  uploadSingleImage } from "../Middlewares/upload.middleware.js";
-import { Protect, restrictToAdminOrAccountOwner, restrictToRestaurantOwner } from "../Middlewares/auth.middleware.js";
+import { optionalProtect, Protect, restrictToAccountOwner  } from "../Middlewares/auth.middleware.js";
 const router = Router();
 
-router.get("/",getAllRestaurants);
+router.get("/",optionalProtect,getAllRestaurants);
 
-router.get("/:id",getOneRestaurant);
+router.get("/:restaurantId",optionalProtect,getOneRestaurant);
 
-router.get('/:id/details', getSelectionRestaurant);
+router.get('/:restaurantId/details',optionalProtect, getSelectionRestaurant);
 
-router.post("/",Protect,uploadSingleImage,createNewRestaurant)
+router.post("/",Protect,restrictToAccountOwner,uploadSingleImage,createNewRestaurant)
 
 export default router;
 

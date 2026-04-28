@@ -6,9 +6,9 @@ const notificationSchema=new Schema({
         required: true,
         ref: "User"
     },
-        sender: {
+    sender: {
         type: Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: "User"
     },
     restaurant: {
@@ -21,16 +21,15 @@ const notificationSchema=new Schema({
         trim: true,
         required: true
     },
-    isRead: {
-        type: Boolean,
-        default: false
-    },
     type: {
         type: String,
         enum: ["pending", "accepted", "rejected"],
         required: true
     },
-
+    isRead: {
+    type: Boolean,
+    default: false
+}
 },
 {
     timestamps: true

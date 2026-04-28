@@ -6,13 +6,11 @@ const router=Router();
 // get my fav restaurants
 router.get("/",Protect,restrictToAccountOwner,getMyFavRestaurants);
 
-
 // add restaurant to favorites
-router.get("/:id",Protect,restrictToAccountOwner,addRestaurantToFav);
+router.post("/:restaurantId",Protect,restrictToAccountOwner,addRestaurantToFav);
 
 // remove restaurant from fav
-router.delete("/:id",Protect,restrictToAccountOwner,removeRestaurantFromFav);
-
+router.delete("/:restaurantId",Protect,restrictToAccountOwner,removeRestaurantFromFav);
 
 
 export default router;
