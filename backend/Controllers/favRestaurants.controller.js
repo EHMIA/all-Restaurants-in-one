@@ -15,9 +15,8 @@ const getMyFavRestaurants=asyncHandler(async(req,res)=>{
 });
 
 
-
 const addRestaurantToFav=asyncHandler(async(req,res)=>{
-    const restaurantId=req.params.id;
+    const restaurantId=req.params.restaurantId;
     const userId=req.user.id;
     const restaurant=await getOneRestaurantService(restaurantId);
     if(!restaurant)
@@ -39,7 +38,7 @@ const addRestaurantToFav=asyncHandler(async(req,res)=>{
 })
 
 const removeRestaurantFromFav=asyncHandler(async(req,res)=>{
-    const restaurantId=req.params.id;
+    const restaurantId=req.params.restaurantId;
     const userId=req.user.id;
     const restaurant=await getOneRestaurantService(restaurantId);
     if(!restaurant)

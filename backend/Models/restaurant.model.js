@@ -33,8 +33,11 @@ const restaurantSchema = new Schema(
         },
 
         coverPhoto: {
-            url: { type: String, trim: true },
-            publicId: { type: String, trim: true },
+            type:{
+                url: { type: String, trim: true },
+                publicId: { type: String, trim: true },
+            },
+            default: null
         },
 
         rating: {
@@ -126,7 +129,7 @@ const restaurantSchema = new Schema(
 
         menu: [
             {
-                dishName: { type: String, required: true, trim: true },
+                dishName: { type: String, required: true, trim: true  , unique: true },
                 price: { type: Number, min: 0, required: true },
                 description: { type: String, trim: true, default: null },
                 image: {
@@ -157,6 +160,7 @@ const restaurantSchema = new Schema(
             ref: "User",
         },
 
+        rejectionCount: { type: Number, default: 0 },
         rejectedAt: Date,
         rejectedBy: {
             type: Schema.Types.ObjectId,
@@ -222,4 +226,17 @@ restaurantSchema
         (gallery) => gallery.length <= LIMITS.Gallery_MAX,
         `Gallery cannot have more than ${LIMITS.Gallery_MAX} photos`,
     );
+
+
+
+restaurantSchema.path("menu").validate(function (menu) {
+    const dishNames = menu.map(item => item.dishName.trim().toLowerCase());
+    
+    const isDuplicate = dishNames.some((name, index) => dishNames.indexOf(name) !== index);
+    
+    if (isDuplicate) {
+        throw new Error("Dish names must be unique");
+    }
+    return true;
+});
 export const restaurantModel = model("Restaurant", restaurantSchema);

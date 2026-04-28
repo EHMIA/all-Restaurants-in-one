@@ -5,10 +5,9 @@ import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
 // get all favs
 const getMyFavRestaurantsService= async(userID)=>{
     const favRestauransts= await favResModel.find({user:userID}).
-    populate("restaurant","name coverPhoto rating delivery cusineType priceRange openingHours");
+    populate("restaurant","name coverPhoto rating delivery cuisineType priceRange openingHours");
 
-    if (favRestauransts.length === 0) return null;
-
+    if (favRestauransts.length === 0) return null; 
     const processedFavorites = favRestauransts.map(fav => {
         
         const favObj = fav.toObject();
@@ -48,10 +47,6 @@ const removeRestaurantFromFavService=async(restaurantID,userID)=>{
     if(!favRestaurant)return null;
     return favRestaurant;
 }
-
-
-
-
 
 export{
     getMyFavRestaurantsService,

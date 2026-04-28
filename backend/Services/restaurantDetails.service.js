@@ -50,6 +50,13 @@ const addDishsToMenuService = async (restaurant, menu, files) => {
 };
 
 
+const getOneDishFromMenuService=async(restaurant,dishId)=>{
+    const dish=restaurant.menu.id(dishId);
+    if(!dish)
+        return null;
+    return dish;
+}
+
 const deleteDishFromMenuService = async (restaurant, dishId) => {
     const dish = restaurant.menu.id(dishId);
     if (!dish)
@@ -132,9 +139,12 @@ const deletePhotoFromGalleryService = async (restaurant, imgId) => {
 export {
     uploadOrUpdateCoverImageService,
     deleteCoverImageService,
+
     addDishsToMenuService,
     deleteDishFromMenuService,
+    getOneDishFromMenuService,
     editDishInMenuService,
+    
     addPhotosToGalleryService,
     deletePhotoFromGalleryService
 }

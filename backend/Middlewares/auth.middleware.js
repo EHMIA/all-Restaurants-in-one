@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken"
 import  { Users } from "../Models/user.model.js"
 import { restaurantModel } from "../Models/restaurant.model.js";
+import mongoose from "mongoose";
 
 const optionalProtect= async(req,res,next)=>{
     const authHeader= req.headers.authorization;
@@ -89,30 +90,40 @@ const restrictToAdmin= (req,res,next)=>{
 
 
 const restrictToRestaurantOwner = async (req, res, next) => {
-    if(!req.user){
-        return res.status(401).json({message: "Please Login first"});
+    const restaurantId = new mongoose.Types.ObjectId(req.params.restaurantId);
+    const restaurant = await restaurantModel.findById(restaurantId)
+        .select("_id status Owner Gallery coverPhoto menu rejectionCount");
+
+    if (!restaurant) 
+        return res.status(404).json({ message: "Restaurant not found" });
+        
+    if (!restaurant.Owner.equals(req.user.id)) {
+        return res.status(403).json({ message: "Only Restaurant Owner has access" });
+    }
+
+    if (restaurant.rejectionCount >= 5) {
+        return res.status(403).json({ message: "This restaurant is permanently blocked." });
+    }
+
+    if (restaurant.status === "pending") {
+        return res.status(400).json({ message: "Cannot edit while request is pending review." });
     }
     
-    const restaurantId = req.params.id;
-    try {
-        // data will be used in specific end points
-        const restaurant = await restaurantModel.findById(restaurantId).select("Owner Gallery coverPhoto menu");
-        
-        if (!restaurant) 
-            return res.status(404).json({ message: "Restaurant not found" });
+    req.restaurant = restaurant;
+    next();
+};
 
-        const isOwner = restaurant.Owner.equals(req.user.id); 
 
-        if (isOwner) {
-            req.restaurant = restaurant; 
-            return next();
-        }
-        return res.status(403).json({ message: "Only Restaurant Owner have this access" });
-        
-    } catch (error) {
-        return res.status(500).json({ message: "Server Error", error: error.message });
+const isApprovedOwner = (req, res, next) => {
+    const restaurant = req.restaurant; 
+
+    if (restaurant.status !== "approved") {
+        return res.status(403).json({ 
+            message: "Access denied. Your restaurant must be approved to manage Menu or Gallery." 
+        });
     }
-}
+    next();
+};
 
 export{
     optionalProtect,
@@ -120,5 +131,6 @@ export{
     restrictToAdminOrAccountOwner,
     restrictToAdmin,
     restrictToAccountOwner,
-    restrictToRestaurantOwner
+    restrictToRestaurantOwner,
+    isApprovedOwner
 }

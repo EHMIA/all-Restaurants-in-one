@@ -1,5 +1,7 @@
 import { configDotenv } from "dotenv";
 configDotenv();
+import redisOptions from "../backend/Config/redis.config.js";
+import { worker } from "../backend/Jobs/restaurantWorker.job.js";
 
 import express, { json } from "express";
 import cors from "cors";
@@ -19,7 +21,6 @@ app.use(cors());
 app.use(json());
 
 await ConnectDB();
-
 
 // temporary route for check back response on vercel
 app.get("/", (req, res) => {
@@ -44,4 +45,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`Server is running locally on http://localhost:${PORT}`);
 });
+
+
 export default app;

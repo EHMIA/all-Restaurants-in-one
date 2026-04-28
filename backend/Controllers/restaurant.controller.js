@@ -8,6 +8,7 @@ import { notificationModel } from "../Models/notifications.model.js";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
 import { CalculateOpenNow } from "../Utils/handleRestaurantData.util.js";
 
+
 /**
  * @desc get all restaurants
  * @Method GET
@@ -46,7 +47,6 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
         }
         Conditions.rating = { $gte: rating_av };
     }
-
         
     if (delivery) {
         Conditions.delivery = delivery === "true";
@@ -71,13 +71,9 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
         Conditions.priceRange = priceRange.toLowerCase();
     }
 
-    
-    
-    
-
-    const UserId = req.user ? req.user._id : null;
+    const UserId = req.user ? req.user.id : null;
     const result = await getAllRestaurantsService(Conditions, Skip, Limit, Sort, UserId);
-
+    
     if (!result)
         return res.status(200).json({
             message: "No Restaurants Found",
@@ -98,8 +94,6 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
         serverTime: now
     }));
 
-
-
     res.status(200).json({
         message: "Restaurants retrieved successfully",
         Data: resData,
@@ -114,8 +108,8 @@ const getAllRestaurants = asyncHandler(async (req, res) => {
 
 
 const getOneRestaurant = asyncHandler(async (req, res) => {
-    const restaurantId = req.params.id;
-    const Restaurant = await getOneRestaurantService(restaurantId, "main");
+    const restaurantId = req.params.restaurantId;
+    const Restaurant = await getOneRestaurantService(restaurantId, "main", req.user || null);
 
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
@@ -130,12 +124,12 @@ const getOneRestaurant = asyncHandler(async (req, res) => {
 });
 
 const getSelectionRestaurant = asyncHandler(async (req, res) => {
-    const restaurantId = req.params.id;
+    const restaurantId = req.params.restaurantId;
     const selection = req.query.select;
 
     if (!selection) return res.status(400).json({ message: "Selection query is required" });
 
-    const Restaurant = await getOneRestaurantService(restaurantId, selection);
+    const Restaurant = await getOneRestaurantService(restaurantId, selection, req.user || null);
     
     if (!Restaurant) return res.status(404).json({ message: "Restaurant not found" });
 
@@ -155,20 +149,14 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
     }
 
     const coverFile = req.file;
-    const validationBody = {
-        ...req.body,
-        coverPhoto: coverFile,
-    };
+    if (!coverFile) return res.status(400).json({ message: "Restaurant cover photo is required" });
 
-    
+    const validationBody = { ...req.body, coverPhoto: coverFile };
+
     const { error, value } = createRestaurantValidation(validationBody);
-    
-    
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-    
-    
-    const existingOwner = await restaurantModel.findOne({ Owner: req.user._id });
+    const existingOwner = await restaurantModel.findOne({ Owner: req.user.id });
     if (existingOwner) {
         const msg = existingOwner.status === "pending"
             ? "You already have a pending restaurant request"
@@ -179,121 +167,68 @@ const createNewRestaurant = asyncHandler(async (req, res) => {
         return res.status(400).json({ message: msg, Data: { restaurantId: existingOwner._id } });
     }
 
-    const existingRestaurant = await restaurantModel.findOne({ email: req.body.email });
-    if (existingRestaurant) return res.status(400).json({ message: "This Restaurant Already exists" });
+    const existingEmail = await restaurantModel.findOne({ email: req.body.email });
+    if (existingEmail) return res.status(400).json({ message: "This Restaurant Email Already exists" });
 
     const coverPhotoData = await uploadToCloudinary(coverFile.buffer);
 
     const newRestaurant = new restaurantModel({
         ...value,
         coverPhoto: coverPhotoData,
-        Gallery: [],
         Owner: req.user.id,
+        status: "pending"
     });
-
-    if (req.user.role === "admin") {
-        newRestaurant.status = "approved";
-        newRestaurant.approvedAt = new Date();
-        newRestaurant.approvedBy = req.user.id;
-    } else {
-        newRestaurant.status = "pending";
-    }
 
     const savedRestaurant = await newRestaurant.save();
 
-    if (req.user.role !== "admin") {
-        const admins = await getAllAdminService();
-        if (admins?.length > 0) {
-            const notifications = admins.map(admin => ({
-                sender: req.user.id,
-                message: `New restaurant request from ${req.user.fullname || req.user.name}`,
-                receiver: admin._id,
-                type: "pending",
-                restaurant: savedRestaurant._id
-            }));
-            await notificationModel.insertMany(notifications);
-        }
-    }
-
     res.status(201).json({
-        message: req.user.role === "admin"
-            ? "Restaurant created and approved successfully"
-            : "Your request has been sent successfully and is awaiting admin approval",
+        message: "Your request has been sent successfully and is awaiting admin approval",
         restaurant: savedRestaurant
     });
 });
 
 
-// admin accpet or reject a request
-// send sender id in the url
-const acceptRejectRequest = asyncHandler(async (req, res) => {
-    const { action, reason } = req.body;
-    const restaurantId = req.params.id;
-    const AdminId = req.user._id;
-    const restaurant = await getOneRestaurantService(restaurantId);
-    if (!restaurant)
-        return res.status(404).json({ message: "No restaurant found" });
 
-    if (action === "accept") {
-        await updateRestaurantStatus(restaurantId, "approved", AdminId);
-        await notificationModel.create({
-            sender: req.user._id, // admin
-            message: `Your request has been approved and now you are Owner`,
-            receiver: restaurant.Owner,
-            type: "approved"
-        });
+const editRestaurantMainData = asyncHandler(async (req, res) => {
+    const restaurant = req.restaurant;     
+    const { error, value } = editRestaurantMainDataValidation(req.body);
+    
+    if (error) 
+        return res.status(400).json({ message: error.details[0].message });
 
-        const restaurantOwner = await getOneUserService(restaurant.Owner);
-        if (!restaurantOwner)
-            return res.status(404).json({ message: "No user found" });
-
-        restaurantOwner.role = "owner";
-        await restaurantOwner.save();
-        res.status(200).json({ message: "Request accepted" });
-    } else if (action === "reject") {
-        if (!reason || !reason.trim()) {
-            return res.status(400).json({
-                message: "Reason is required and must not be empty"
-            });
-        }
-        await updateRestaurantStatus(restaurantId, "rejected", AdminId, reason);
-        await notificationModel.create({
-            sender: req.user._id, // admin
-            message: `Your request has been rejected Because ${reason}`,
-            restaurant: restaurantId,
-            receiver: restaurant.Owner,
-            type: "rejected"
-        });
-        res.status(200).json({ message: "Request rejected" });
-    } else if (action === "pending") {
-        return res.status(400).json({ message: "This request is already pending" });
+    console.log(restaurant.status);
+    
+    const updatedRestaurant = await editRestaurantMainDataService(restaurant, value);
+    
+    if (!updatedRestaurant) {
+        return res.status(500).json({ message: "Failed to update restaurant data" });
     }
-    // pending state ? 
-});
 
-
-const editRestaurantMainData= asyncHandler(async (req, res) => {
-    const restaurant= req.restaurant;    
-    const {error,value}= editRestaurantMainDataValidation(req.body);
-    
-    if(error)
-        return res.status(400).json({message:error.details[0].message});
-    
-    const updatedRestaurant= await editRestaurantMainDataService(restaurant,value);
-    if(!updatedRestaurant)
-        return res.status(500).json({message:"Failed to update restaurant data"});
     res.status(200).json({
-        message:"Restaurant data updated successfully",
-        restaurant:updatedRestaurant
+        message: "Restaurant data updated successfully",
+        restaurant: updatedRestaurant
     });
 });
 
+
+//FOR OWNER
+const getMyRestaurantDashboard = asyncHandler(async (req, res) => {
+    const restaurant = await restaurantModel.findOne({ Owner: req.user.id });
+    if (!restaurant) {
+        return res.status(404).json({ message: "You don't have a restaurant" });
+    }
+
+    return res.status(200).json({
+        message: "Restaurant retrieved successfully",
+        Data: restaurant 
+    });
+});
 
 export {
     createNewRestaurant,
     getAllRestaurants,
     getOneRestaurant,
-    acceptRejectRequest,
     getSelectionRestaurant,
-    editRestaurantMainData
+    editRestaurantMainData,
+    getMyRestaurantDashboard
 }

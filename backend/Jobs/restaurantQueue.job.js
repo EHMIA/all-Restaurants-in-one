@@ -6,7 +6,7 @@ const restaurantQueue = new Queue("restaurantQueue", {
 });
 
 const addRecalculatePricesJob=async(adminSetings)=>{
-        await restaurantQueue.add('recalculate-prices', settingsData);
+        await restaurantQueue.add('recalculate-prices', adminSetings);
 }
 
 export {

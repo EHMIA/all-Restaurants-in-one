@@ -7,8 +7,8 @@ const router= Router();
 
 router.get("/my-reviews",Protect,restrictToAccountOwner ,getMyReviews);
 
-router.post("/add-review/:id",Protect,restrictToAccountOwner, addReview);
+router.post("/add-review/:restaurantId",Protect,restrictToAccountOwner, addReview);
 
-router.delete("/delete-review/:id",Protect,restrictToAccountOwner, deleteReview);
+router.delete("/delete-review/:restaurantId",Protect,restrictToAccountOwner, deleteReview);
 
 export default router;

@@ -121,7 +121,7 @@ const editRestaurantMainDataValidation= (obj) => {
         "any.required": "At least one field is required",
         "object.min": "At least one field is required",
     });
-    return schema.validate(obj, { convert: true, stripUnknown: true });
+    return schema.validate(obj, { convert: true });
 }
 const addDishsToMenuValidation = (obj) => {
     const schema = joi.object({
@@ -143,6 +143,11 @@ const addDishsToMenuValidation = (obj) => {
                         }),
                 }),
             )
+            .min(1)
+            .unique((a, b) => a.dishName.toLowerCase() === b.dishName.toLowerCase()) 
+            .messages({
+                "array.unique": "There are repeated dish names",
+            })
             .required(),
     });
     return schema.validate(obj);
