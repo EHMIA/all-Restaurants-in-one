@@ -6,6 +6,9 @@ import { registerSchema } from "../Validators/register_validation.js";
 import asyncHandler from "express-async-handler";
 import { config } from 'dotenv'; 
 import { createTransport } from 'nodemailer';
+import jwt from 'jsonwebtoken';
+import { configDotenv } from "dotenv";
+configDotenv();
 import express from 'express';
 config();
 
