@@ -51,7 +51,7 @@ const addDishsToMenuService = async (restaurant, menu, files) => {
 
 
 const getOneDishFromMenuService=async(restaurant,dishId)=>{
-    const dish=restaurant.menu.id(dishId);
+    const dish = restaurant.menu.find(item => item._id.toString() === dishId.toString());
     if(!dish)
         return null;
     return dish;

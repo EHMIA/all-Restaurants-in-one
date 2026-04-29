@@ -167,9 +167,8 @@ const editDishInMenuValidation = (obj) => {
                 "any.only": "Category must be Food, Drink, or Dessert",
             }),
             
-    }).min(1).required().messages({
+    }).required().messages({
         "any.required": "At least one field is required",
-        "object.min": "At least one field is required",
     });
     return schema.validate(obj);
 };

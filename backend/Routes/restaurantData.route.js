@@ -19,7 +19,7 @@ router.delete("/menu/:restaurantId/:dishId",Protect,restrictToRestaurantOwner,is
 
 router.put("/menu/:restaurantId/:dishId",Protect,restrictToRestaurantOwner,isApprovedOwner,uploadSingleImage,editDishInMenu);
 
-router.get("/menu/restaurantId/dishId",Protect,restrictToRestaurantOwner,isApprovedOwner,getOneDishFromMenu);
+router.get("/menu/:restaurantId/:dishId",getOneDishFromMenu);
 
 // gallery
 router.post("/gallery/:restaurantId",Protect,restrictToRestaurantOwner,isApprovedOwner,uploadMultipleImages,addPhotosToGallery);

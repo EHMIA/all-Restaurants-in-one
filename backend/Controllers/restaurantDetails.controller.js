@@ -37,15 +37,14 @@ const addDishsToMenu= asyncHandler(async(req,res)=>{
     const restaurant= req.restaurant;
     const files= req.files;
 
-    if(req.body.menu)
-        req.body.menu= JSON.parse(req.body.menu);
-    
-    const validationBody= {...req.body.menu , dishNames:files };
-    console.log(req.body.menu);
-    const {error}= addDishsToMenuValidation(req.body);
-    if(error)
-        return res.status(400).json({message:error.details[0].message});
+    if (typeof req.body.menu === "string") {
+        req.body.menu = JSON.parse(req.body.menu);
+    }
 
+    const { error } = addDishsToMenuValidation(req.body); 
+    
+    if (error)
+        return res.status(400).json({ message: error.details[0].message });
     if(!files || files.length===0)
         return res.status(400).json({message:"Dish images are required"});
 
@@ -63,7 +62,11 @@ const addDishsToMenu= asyncHandler(async(req,res)=>{
 
 const getOneDishFromMenu = asyncHandler(async (req, res) => {
     const dishId = req.params.dishId;
-    const restaurant = req.restaurant;
+    const restaurantId = req.params.restaurantId;
+    const restaurant = await getOneRestaurantService(restaurantId, "menu", req.user || null);
+    
+    if(!restaurant)
+        return res.status(404).json({ message: "Restaurant not found" });
     const dish = await getOneDishFromMenuService(restaurant, dishId);
 
     if (!dish)
