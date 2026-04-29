@@ -20,6 +20,7 @@ import restaurantDataRoutes from "../backend/Routes/restaurantData.route.js";
 const app = express();
 app.use(cors());
 app.use(json());
+app.use(cookieParser());
 
 await ConnectDB();
 
