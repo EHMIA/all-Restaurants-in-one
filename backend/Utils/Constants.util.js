@@ -23,7 +23,7 @@ const RestaurantStatuses = ["pending", "approved", "rejected"];
 const DeliveryEnum = ["true", "false" , "1", "0"];
 
 const LIMITS = {
-    MENU_ITEMS: 10,
+    MENU_ITEMS: 30,
     GALLERY_PHOTOS: 40,
     Gallery_MIN: 4,
     Gallery_MAX: 40,

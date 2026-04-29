@@ -8,22 +8,47 @@ import { compare, hash } from 'bcrypt';
 import { v2 as cloudinary } from 'cloudinary'; 
 
 
+// عدد الريفيوز و الفافوريت بتاعته 
+// 
 
+// const getUserProfile = asyncHandler(async (req, res) => {
+//     const user = await Users.findOne({ _id: req.user.id }).select('-password');
+//     // const user = await Users.findOne({ _id: req.user.id }).select('-password');
+
+//     if (!user) {
+//         return res.status(404).json({ error: 'User not found' });
+//     }
+
+//     res.status(200).json({
+//         message: 'User profile retrieved successfully',
+//         user
+//     });
+// });
 
 const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await Users.findOne({ _id: req.user.id }).select('-password');
-    // const user = await Users.findOne({ _id: req.user.id }).select('-password');
+    const userId = req.user.id;
+
+    const [user, reviewsCount, favoritesCount, hasRestaurant] = await Promise.all([
+        Users.findById(userId).select('-password'),
+        reviewModel.countDocuments({ user: userId }),
+        favResModel.countDocuments({ user: userId }),
+        restaurantModel.exists({ Owner: userId }) 
+    ]);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
     }
 
     res.status(200).json({
-        message: 'User profile retrieved successfully',
-        user
+        success: true,
+        user: {
+            ...user._doc,
+            reviewsCount,
+            favoritesCount,
+            isRestaurantOwner: hasRestaurant ? true : false 
+        }
     });
 });
-
 
 //======================================================//
 
