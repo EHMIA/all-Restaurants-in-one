@@ -8,11 +8,11 @@ import { getMyRestaurantDashboard } from "../Controllers/restaurant.controller.j
 
 
 router.get('/getUserProfile', Protect, getUserProfile);
-router.post('/uploadPhoto', Protect, uploadSingleImage, uploadProfilePicController);
-router.post('/editUserProfile/:id', Protect, restrictToAdminOrAccountOwner, editUserProfile);
+router.patch('/editUserProfile/:id', Protect, restrictToAdminOrAccountOwner, editUserProfile);
+router.patch('/uploadProfilePhoto', Protect, uploadSingleImage, uploadProfilePicController);
+router.delete('/deleteProfilePhoto/:id', Protect, restrictToAdminOrAccountOwner, deleteProfilePicController);
 router.patch('/changePassword', Protect, restrictToAdminOrAccountOwner, changePasswordController);
 router.delete('/deleteAccount/:id', Protect, restrictToAdminOrAccountOwner, deleteAccountController);
-router.delete('/deleteUserProfile/:id', Protect, restrictToAdminOrAccountOwner, deleteProfilePicController);
 
 
 
