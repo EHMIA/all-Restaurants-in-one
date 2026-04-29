@@ -46,14 +46,21 @@ const editUserProfile = asyncHandler(async (req, res) => {
 
     let updateData = {};
     if (fullname) updateData.fullname = fullname;
-    if (email) updateData.email = email;
+    if (email) 
+    {
+        const existingUser = await Users.findOne({ email, _id: { $ne: targetId } });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email is already in use by another account" });
+        }
+        updateData.email = email;
+    }
     if (phone) updateData.phone = phone;
 
     if (req.user.role === "admin" && role) {
         updateData.role = role;
     }
 
-    if (address) {
+    if (address && typeof address === 'object') {
         if (address.governorate) updateData["address.governorate"] = address.governorate;
         if (address.city) updateData["address.city"] = address.city;
         if (address.street) updateData["address.street"] = address.street;
