@@ -214,48 +214,60 @@ const forgotPassword = asyncHandler (async (req, res) => {
                   //======================================================//
 
 
-const verifyOTP =asyncHandler (async (req, res) => {
+const verifyOTP = asyncHandler(async (req, res) => {
 
-        const { verificationToken, otp } = req.body;
+    const authHeader = req.headers.authorization;
+    const { otp } = req.body;
 
-        if (!verificationToken || !otp) {
-            return res.status(400).json({ message: 'Token and OTP are required' });
+    if (!authHeader) {
+        return res.status(400).json({ message: 'Token and are required' });
+
+    }
+
+    if (!otp) {
+        return res.status(400).json({ message: 'OTP are required' });
+    }
+
+    if (authHeader && !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "Invalid token format" });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (decoded.purpose !== 'OTP_VERIFICATION') {
+            return res.status(403).json({ message: 'Invalid token purpose' });
         }
+    } catch (err) {
+        return res.status(401).json({ message: 'Session expired, Invalid or expired token , please request a new OTP' });
+    }
 
-        let decoded;
-        try {
-            decoded = jwt.verify(verificationToken, process.env.JWT_SECRET);
-            
-            if (decoded.purpose !== 'OTP_VERIFICATION') {
-                return res.status(403).json({ message: 'Invalid token purpose' });
-            }
-        } catch (err) {
-            return res.status(401).json({ message: 'Session expired, Invalid or expired token , please request a new OTP' });
-        }
+    const user = await Users.findById(decoded.id);
+    if (!user) return res.status(400).json({ message: 'User not found' });
 
-        const user = await Users.findById(decoded.id);
-        if (!user) return res.status(400).json({ message: 'User not found' });
+    if (user.otp !== otp) return res.status(400).json({ message: 'Invalid OTP' });
+    if (user.otpExpire < Date.now()) return res.status(400).json({ message: 'OTP expired' });
 
-        if (user.otp !== otp) return res.status(400).json({ message: 'Invalid OTP' });
-        if (user.otpExpire < Date.now()) return res.status(400).json({ message: 'OTP expired' });
+    const resetToken = jwt.sign(
+        {
+            id: user._id,
+            purpose: 'PASSWORD_RESET'
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '15m' }
+    );
 
-        const resetToken = jwt.sign(
-            { 
-                id: user._id,
-                purpose: 'PASSWORD_RESET' 
-            },
-            process.env.JWT_SECRET, 
-            { expiresIn: '15m' } 
-        );
+    user.otp = null;
+    user.otpExpire = null;
+    await user.save();
 
-        user.otp = null;
-        user.otpExpire = null;
-        await user.save();
-
-        res.status(200).json({ 
-            message: 'OTP verified successfully', 
-            resetToken : resetToken
-        });
+    res.status(200).json({
+        message: 'OTP verified successfully',
+        resetToken: resetToken
+    });
 });
 
 
@@ -306,39 +318,51 @@ const verifyOTP =asyncHandler (async (req, res) => {
 //         }
 //     };
 const resetPassword = asyncHandler(async (req, res) => {
-    
-        const { resetToken, password, confirmPassword } = req.body;
 
-        if (!resetToken || !password || !confirmPassword) {
-            return res.status(400).json({ message: 'All fields are required' });
+    const { password, confirmPassword } = req.body;
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(400).json({ message: 'Token is required' });
+
+    }
+
+    if (authHeader && !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ message: "Invalid token format" });
+    }
+
+
+    if (!password || !confirmPassword) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (password !== confirmPassword) {
+        return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+    const token = authHeader.split(" ")[1];
+    let decoded;
+    try {
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        if (decoded.purpose !== 'PASSWORD_RESET') {
+            return res.status(403).json({ message: 'Unauthorized: This token cannot be used to reset password' });
         }
+    } catch (err) {
+        return res.status(401).json({ message: 'Invalid or expired reset token' });
+    }
 
-        if (password !== confirmPassword) {
-            return res.status(400).json({ message: 'Passwords do not match' });
-        }
+    const user = await Users.findById(decoded.id);
+    if (!user) return res.status(400).json({ message: 'User not found' });
 
-        let decoded;
-        try {
-            decoded = jwt.verify(resetToken, process.env.JWT_SECRET);
-            
-            if (decoded.purpose !== 'PASSWORD_RESET') {
-                return res.status(403).json({ message: 'Unauthorized: This token cannot be used to reset password' });
-            }
-        } catch (err) {
-            return res.status(401).json({ message: 'Invalid or expired reset token' });
-        }
+    const hashedPassword = await hash(password, 10);
+    user.password = hashedPassword;
 
-        const user = await Users.findById(decoded.id);
-        if (!user) return res.status(400).json({ message: 'User not found' });
+    await user.save();
 
-        const hashedPassword = await hash(password, 10);
-        user.password = hashedPassword;
-        
-        await user.save();
+    res.status(200).json({ message: 'Password reset successful' });
 
-        res.status(200).json({ message: 'Password reset successful' });
 
-    
 });
 
 
