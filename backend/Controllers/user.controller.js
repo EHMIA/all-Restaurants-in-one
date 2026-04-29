@@ -59,6 +59,9 @@ const editUserProfile = asyncHandler(async (req, res) => {
     if (req.user.role === "admin" && role) {
         updateData.role = role;
     }
+    else if (role) {
+        return res.status(403).json({ message: "Only admins can change user roles" });
+    }
 
     if (address && typeof address === 'object') {
         if (address.governorate) updateData["address.governorate"] = address.governorate;

@@ -11,7 +11,7 @@ router.get('/getUserProfile', Protect, getUserProfile);
 router.patch('/editUserProfile/:id', Protect, restrictToAdminOrAccountOwner, editUserProfile);
 router.patch('/uploadProfilePhoto', Protect, uploadSingleImage, uploadProfilePicController);
 router.delete('/deleteProfilePhoto/:id', Protect, restrictToAdminOrAccountOwner, deleteProfilePicController);
-router.patch('/changePassword', Protect, restrictToAdminOrAccountOwner, changePasswordController);
+router.patch('/changePassword', Protect,changePasswordController);
 router.delete('/deleteAccount/:id', Protect, restrictToAdminOrAccountOwner, deleteAccountController);
 
 
