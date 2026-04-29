@@ -1,10 +1,11 @@
 import jwt from 'jsonwebtoken';
 import User from '../Models/user.model.js';
+import asyncHandler from "express-async-handler";
 import { configDotenv } from "dotenv";
 configDotenv();
 
 // Route: GET /api/refresh
-const refreshTokenHandler = async (req, res) => {
+const refreshTokenHandler = asyncHandler(async (req, res) => {
     // هنجيب الـ Refresh Token من الكوكيز
     const cookies = req.cookies;
     if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' });
@@ -24,4 +25,6 @@ const refreshTokenHandler = async (req, res) => {
             res.json({ accessToken: token });
         }
     );
-};
+});
+
+export { refreshTokenHandler };
