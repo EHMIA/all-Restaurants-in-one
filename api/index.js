@@ -5,6 +5,7 @@ import { worker } from "../backend/Jobs/restaurantWorker.job.js";
 
 import express, { json } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 import { ConnectDB } from "../backend/Config/Connectdb.js";
 import authRoutes from "../backend/Routes/auth.route.js";

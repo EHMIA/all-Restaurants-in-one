@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../Models/user.model.js';
+import {Users} from '../Models/user.model.js';
 import asyncHandler from "express-async-handler";
 import { configDotenv } from "dotenv";
 configDotenv();
@@ -16,7 +16,7 @@ const refreshTokenHandler = asyncHandler(async (req, res) => {
 
             if (err) return res.status(403).json({ message: 'Forbidden' });
 
-            const user = await User.findById(decoded.id);
+            const user = await Users.findById(decoded.id);
             if (!user) return res.status(401).json({ message: 'Unauthorized' });
 
             
