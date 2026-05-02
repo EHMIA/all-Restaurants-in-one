@@ -2,80 +2,36 @@ import { Users } from '../Models/user.model.js';
 import { reviewModel } from "../Models/reviews.model.js";
 import { restaurantModel } from "../Models/restaurant.model.js";
 import { favResModel } from "../Models/FavoriteRestaurants.model.js";
+
 import asyncHandler from "express-async-handler";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
 import { compare, hash } from 'bcrypt';
 import { v2 as cloudinary } from 'cloudinary'; 
 
 
-
-
 const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await Users.findOne({ _id: req.user.id }).select('-password');
-    // const user = await Users.findOne({ _id: req.user.id }).select('-password');
+    const userId = req.user.id;
+
+    const [user, reviewsCount, favoritesCount, hasRestaurant] = await Promise.all([
+        Users.findById(userId).select('-password'),
+        reviewModel.countDocuments({ user: userId }),
+        favResModel.countDocuments({ user: userId }),
+        restaurantModel.exists({ Owner: userId }) 
+    ]);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
     }
 
     res.status(200).json({
-        message: 'User profile retrieved successfully',
-        user
+        success: true,
+        user: {
+            ...user._doc,
+            reviewsCount,
+            favoritesCount,
+            isRestaurantOwner: hasRestaurant ? true : false 
+        }
     });
-});
-
-
-//======================================================//
-
-
-const uploadProfilePicController = asyncHandler(async (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: "Please upload an image" });
-    }
-
-    const imageUrl = await uploadToCloudinary(req.file.buffer);
-
-    const updatedUser = await Users.findByIdAndUpdate(
-        req.user.id,
-        { profile_pic: imageUrl },
-        { new: true, runValidators: true },
-    );
-
-    if (!updatedUser) {
-        return res.status(404).json({ message: "User not found" });
-    }
-
-    res.status(200).json({
-        message: "Profile picture updated successfully",
-        profile_pic: updatedUser.profile_pic,
-    });
-});
-
-
-//======================================================//
-
-
-const deleteProfilePicController = asyncHandler(async (req, res) => {
-    const targetId = req.user.role === "admin" ? req.params.id : req.user.id;
-
-    const user = await Users.findById(targetId);
-
-    if (!user)
-        return res.status(404).json({ message: "User not found" });
-
-    // if (user.profile_pic_public_id) {
-
-    //     const result = await cloudinary.uploader.destroy(user.profile_pic_public_id);
-
-    //     if (result.result !== 'ok') {
-    //         console.log("Cloudinary Delete Error:", result);
-    //     }
-    // }
-
-    user.profile_pic = "";
-    // user.profile_pic_public_id = ""; 
-    await user.save();
-    res.status(200).json({ message: "Profile picture deleted successfully" });
 });
 
 
@@ -90,14 +46,24 @@ const editUserProfile = asyncHandler(async (req, res) => {
 
     let updateData = {};
     if (fullname) updateData.fullname = fullname;
-    if (email) updateData.email = email;
+    if (email) 
+    {
+        const existingUser = await Users.findOne({ email, _id: { $ne: targetId } });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email is already in use by another account" });
+        }
+        updateData.email = email;
+    }
     if (phone) updateData.phone = phone;
 
     if (req.user.role === "admin" && role) {
         updateData.role = role;
     }
+    else if (role) {
+        return res.status(403).json({ message: "Only admins can change user roles" });
+    }
 
-    if (address) {
+    if (address && typeof address === 'object') {
         if (address.governorate) updateData["address.governorate"] = address.governorate;
         if (address.city) updateData["address.city"] = address.city;
         if (address.street) updateData["address.street"] = address.street;
@@ -121,6 +87,101 @@ const editUserProfile = asyncHandler(async (req, res) => {
         message: "Profile updated successfully",
         user: userWithoutPassword
     });
+});
+
+//======================================================//
+
+
+// const uploadProfilePicController = asyncHandler(async (req, res) => {
+//     if (!req.file) {
+//         return res.status(400).json({ message: "Please upload an image" });
+//     }
+
+//     const imageUrl = await uploadToCloudinary(req.file.buffer);
+
+//     const updatedUser = await Users.findByIdAndUpdate(
+//         req.user.id,
+//         { profile_pic: imageUrl },
+//         { new: true, runValidators: true },
+//     );
+
+//     if (!updatedUser) {
+//         return res.status(404).json({ message: "User not found" });
+//     }
+
+//     res.status(200).json({
+//         message: "Profile picture updated successfully",
+//         profile_pic: updatedUser.profile_pic,
+//     });
+// });
+
+const uploadProfilePicController = asyncHandler(async (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ message: "Please upload an image" });
+    }
+
+    const user = await Users.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.profile_pic && user.profile_pic.publicId) {
+        await cloudinary.uploader.destroy(user.profile_pic.publicId);
+    }
+
+    const cloudRes = await uploadToCloudinary(req.file.buffer);
+
+    user.profile_pic = {
+        url: cloudRes.url,
+        publicId: cloudRes.publicId
+    };
+
+    await user.save();
+
+    res.status(200).json({
+        message: "Profile picture updated successfully",
+        profile_pic: user.profile_pic,
+    });
+});
+
+//======================================================//
+
+
+// const deleteProfilePicController = asyncHandler(async (req, res) => {
+//     const targetId = req.user.role === "admin" ? req.params.id : req.user.id;
+
+//     const user = await Users.findById(targetId);
+
+//     if (!user)
+//         return res.status(404).json({ message: "User not found" });
+
+//     // if (user.profile_pic_public_id) {
+
+//     //     const result = await cloudinary.uploader.destroy(user.profile_pic_public_id);
+
+//     //     if (result.result !== 'ok') {
+//     //         console.log("Cloudinary Delete Error:", result);
+//     //     }
+//     // }
+
+//     user.profile_pic = "";
+//     // user.profile_pic_public_id = ""; 
+//     await user.save();
+//     res.status(200).json({ message: "Profile picture deleted successfully" });
+// });
+
+const deleteProfilePicController = asyncHandler(async (req, res) => {
+    const targetId = req.user.role === "admin" ? req.params.id : req.user.id;
+    const user = await Users.findById(targetId);
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (user.profile_pic?.publicId) {
+        await cloudinary.uploader.destroy(user.profile_pic.publicId);
+    }
+
+    user.profile_pic = null;
+    await user.save();
+
+    res.status(200).json({ message: "Profile picture deleted successfully" });
 });
 
 
