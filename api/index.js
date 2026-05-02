@@ -17,7 +17,7 @@ import SettingsRoutes from "../backend/Routes/adminSettings.route.js";
 import favRestaurantsRoutes from "../backend/Routes/favRestaurants.route.js";
 import ReviewsRoutes from "../backend/Routes/reviews.route.js";
 import restaurantDataRoutes from "../backend/Routes/restaurantData.route.js";
-
+import notificationRoutes from "../backend/Routes/notification.route.js";
 const app = express();
 app.use(cors());
 app.use(json());
@@ -40,7 +40,7 @@ app.use("/admin", SettingsRoutes);
 app.use("/favorites", favRestaurantsRoutes);
 app.use("/reviews",ReviewsRoutes);
 app.use("/restaurant-data",restaurantDataRoutes);   
-
+app.use("/notifications",notificationRoutes)
 app.use(notFoundHandler);
 app.use(errorHandler);
 

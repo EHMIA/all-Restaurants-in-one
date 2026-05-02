@@ -75,7 +75,10 @@ const getOneRequest = asyncHandler(async (req, res) => {
     if (!request) {
         return res.status(404).json({ message: "Request not found" });
     }
-    return res.status(200).json({ request });
+    return res.status(200).json({ 
+        message: "Request retrieved successfully",
+        Data: request
+    });
 });
 
 
