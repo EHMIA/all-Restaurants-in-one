@@ -54,9 +54,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
   Widget build(BuildContext context) {
     return Container(
       height: 80.h,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      decoration: BoxDecoration(
+        color: AppColors.containerWhiteColor,
+        boxShadow: [BoxShadow(color: AppColors.shadowColor, blurRadius: 10)],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -91,7 +91,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
                 size: 28.sp,
                 color: isSelected
                     ? AppColors.primaryColor
-                    : AppColors.grayColor,
+                    : AppColors.textGrayColor,
               ),
               if (isSelected)
                 ClipOpacity(

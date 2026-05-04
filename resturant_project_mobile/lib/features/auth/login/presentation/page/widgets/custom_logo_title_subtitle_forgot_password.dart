@@ -56,7 +56,7 @@ class CustomLogoTitleSubtitleForgotPassword extends StatelessWidget {
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
                     fontFamily: "Poppins",
-                    color: const Color(0xff64748B),
+                    color: AppColors.textGrayColor,
                     height: 1.4,
                   ),
                 ),

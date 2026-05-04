@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 
 class SearchTextFieldWidget extends StatefulWidget {
@@ -28,7 +29,7 @@ class _SearchTextFieldWidgetState extends State<SearchTextFieldWidget> {
             radius: 35.r,
             prefixIcon: Icon(
               CupertinoIcons.search,
-              color: Color(0xff94A3B8),
+              color: AppColors.textFormFieldColor,
               size: 23.sp,
             ),
             hintText: widget.hintText, //"Search dishes...",

@@ -16,7 +16,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
         return Container(
           height: 50.h,
           decoration: BoxDecoration(
-            color: Colors.grey.shade200,
+            color: AppColors.textGrayColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Row(
@@ -39,8 +39,8 @@ class CustomLoginSignupToggle extends StatelessWidget {
                       "Login",
                       style: TextStyle(
                         color: state.selectedIndex == 0
-                            ? Colors.white
-                            : Colors.grey,
+                            ? AppColors.textWhiteColor
+                            : AppColors.textGrayColor.withValues(alpha: 0.7),
                         fontWeight: FontWeight.bold,
                         fontSize: 16.sp,
                         fontFamily: "Poppins",
@@ -70,8 +70,8 @@ class CustomLoginSignupToggle extends StatelessWidget {
                       "Sign Up",
                       style: TextStyle(
                         color: state.selectedIndex == 1
-                            ? Colors.white
-                            : Colors.grey,
+                            ? AppColors.textWhiteColor
+                            : AppColors.textGrayColor.withValues(alpha: 0.7),
                         fontWeight: FontWeight.bold,
                         fontSize: 16.sp,
                         fontFamily: "Poppins",

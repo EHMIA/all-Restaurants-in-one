@@ -42,7 +42,7 @@ class _CustomListCardsState extends State<CustomListCards> {
     return GestureDetector(
       onTap: widget.onTap,
       child: Card(
-        color: Colors.white,
+        color: AppColors.cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24.r),
         ),

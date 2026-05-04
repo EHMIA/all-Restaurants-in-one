@@ -27,7 +27,9 @@ class CustomCategoryItemWidget extends StatelessWidget {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             border: Border.all(
-              color: isSelected ? AppColors.primaryColor : Color(0xffe9eefa),
+              color: isSelected
+                  ? AppColors.primaryColor
+                  : AppColors.textBlackColor,
               width: 1,
             ),
             borderRadius: BorderRadius.circular(56.r),
@@ -35,7 +37,9 @@ class CustomCategoryItemWidget extends StatelessWidget {
           ),
           child: Row(
             children: [
-              isSelected ? Icon(icon, color: Colors.white) : Icon(icon),
+              isSelected
+                  ? Icon(icon, color: AppColors.textWhiteColor)
+                  : Icon(icon, color: AppColors.textGrayColor),
               if (icon != null) WidthSpace(width: 8),
               if (icon != null) WidthSpace(width: 8),
               Text(
@@ -43,7 +47,9 @@ class CustomCategoryItemWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'Poppins',
-                  color: isSelected ? Colors.white : AppColors.grayColor,
+                  color: isSelected
+                      ? AppColors.textWhiteColor
+                      : AppColors.textGrayColor,
                 ),
               ),
             ],

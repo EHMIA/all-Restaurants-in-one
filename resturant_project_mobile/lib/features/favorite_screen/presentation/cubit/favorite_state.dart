@@ -20,9 +20,3 @@ class FavoriteError extends FavoriteState {
   final String message;
   FavoriteError({required this.message});
 }
-
-class AddToFavorite extends FavoriteState{}
-
-class RemoveFromFavorite extends FavoriteState{}
-
-class AddOrRemoveSuccess extends FavoriteState{}

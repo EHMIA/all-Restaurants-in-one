@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 class ExploreNoResultScreen extends StatelessWidget {
@@ -15,7 +16,7 @@ class ExploreNoResultScreen extends StatelessWidget {
             Icon(
               Icons.search_off_rounded,
               size: 64.sp,
-              color: Colors.grey[300],
+              color: AppColors.textGrayColor.withValues(alpha: 0.5),
             ),
             HeightSpace(height: 16),
             Text(
@@ -24,7 +25,7 @@ class ExploreNoResultScreen extends StatelessWidget {
                 fontSize: 16.sp,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w600,
-                color: Colors.grey[400],
+                color: AppColors.textGrayColor.withValues(alpha: 0.5),
               ),
             ),
             HeightSpace(height: 8),
@@ -33,7 +34,7 @@ class ExploreNoResultScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13.sp,
                 fontFamily: 'Poppins',
-                color: Colors.grey[400],
+                color: AppColors.textGrayColor.withValues(alpha: 0.5),
               ),
             ),
           ],

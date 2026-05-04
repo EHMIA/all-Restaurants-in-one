@@ -11,7 +11,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     try {
       emit(ForgotPasswordLoading());
   final response=await forgetRepo.sendOtpByEmail(email);
-  emit(ForgotPasswordSuccess(message: "message send successfully to $email",otp: response.otp));
+  emit(ForgotPasswordSuccess(message: "message send successfully to $email",verificationToken: response.verificationToken??""));
 } on ServerException catch (e) {
   emit(ForgotPasswordFailure(errorMessage: e.errorModel.error));
 }

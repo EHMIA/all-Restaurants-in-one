@@ -4,9 +4,14 @@ class EndPoints {
   static const String login = "auth/login";
   static const String signUp = "auth/register";
   static const String forgetPassword = "auth/forgot-password";
+  static const String otpCode = "auth/verify-otp";
   static const String resetPassword = "auth/reset-password";
   static const String getAllRestuarant = "restaurants";
   static const String favorites = "favorites";
+  static const String addRreviews = "/reviews/add-review";
+  static const String getRreviews = "reviews/my-reviews";
+  static const String deleteRreviews = "reviews/delete-review";
+  static String editUserProfile(String userId) =>'/user/editUserProfile/$userId';
 }
 
 class ApiKey {
@@ -25,22 +30,12 @@ class ApiKey {
 
   //! otp
   static const String otpMessage = 'message';
+  static const String resetToken = 'resetToken';
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  //! reset password
+  static const String newPassword = 'newPassword';
 
   //==========================================
-  final String token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZThkNjRlZGJjNjZjZGJkNTllMDAwYiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2ODgzNTUzLCJleHAiOjE3NzY4ODcxNTN9.e50dlp3TFSInNHn_SOiIJT0mOv4KXJnR3B2VJK0K9uI";
+  final String token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZThkNjRlZGJjNjZjZGJkNTllMDAwYiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2ODgzNTUzLCJleHAiOjE3NzY4ODcxNTN9.e50dlp3TFSInNHn_SOiIJT0mOv4KXJnR3B2VJK0K9uI";
 }

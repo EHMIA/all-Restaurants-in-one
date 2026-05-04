@@ -20,6 +20,14 @@ class LoginRepository {
 
 
       await StorageHelper.saveToken(loginModel.token);
+      await StorageHelper.saveUserId(loginModel.user.id ?? '');
+
+    await StorageHelper.saveUserData(
+      name: loginModel.user.fullname ?? '',
+      email: loginModel.user.email ?? '',
+      phone: loginModel.user.phone ?? '',
+      address: '',
+    );
 
     return loginModel;
   }

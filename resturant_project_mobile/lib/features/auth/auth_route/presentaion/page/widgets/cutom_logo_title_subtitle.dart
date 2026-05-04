@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 import '../../../../../../core/widgets/spacing_widgets.dart';
 
 class CutomLogoTitleSubtitle extends StatelessWidget {
@@ -13,11 +14,15 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
         const HeightSpace(height: 32),
         CircleAvatar(
           radius: 35.r,
-          backgroundColor: Colors.red.withValues(alpha: 0.1),
-          child: Icon(Icons.restaurant, color: Colors.red, size: 35.sp),
+          backgroundColor: AppColors.primaryColor.withValues(alpha: 0.1),
+          child: Icon(
+            Icons.restaurant,
+            color: AppColors.primaryColor,
+            size: 35.sp,
+          ),
         ),
 
-        const SizedBox(height: 12),
+        const HeightSpace(height: 12),
 
         /// Title
         Text(
@@ -25,7 +30,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
           style: TextStyle(
             fontSize: 24.sp,
             fontWeight: FontWeight.bold,
-            color: Colors.red,
+            color: AppColors.primaryColor,
           ),
         ),
 
@@ -37,7 +42,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16.sp,
-            color: Color(0xff64748B),
+            color: AppColors.textGrayColor,
             fontWeight: FontWeight.w600,
           ),
         ),

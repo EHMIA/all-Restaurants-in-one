@@ -36,24 +36,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: const Color(0xffFFF8F0),
+          backgroundColor: AppColors.backgoroundColor,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.black, size: 28.sp),
+              icon: Icon(
+                Icons.arrow_back,
+                color: AppColors.textBlackColor,
+                size: 28.sp,
+              ),
               onPressed: () => context.pop(),
             ),
           ),
           body: BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
             listener: (context, state) {
               if (state is ForgotPasswordSuccess) {
-                CustomSnackBar.show(context, message: state.message, backgroundColor: Colors.green);
+                CustomSnackBar.show(
+                  context,
+                  message: state.message,
+                  backgroundColor: AppColors.snackBarSuccessColor,
+                );
                 GoRouter.of(context).pushNamed(
                   RouteName.otpPage,
-                  extra: {"email": _emailController.text, "otp": state.otp},
+                  extra: {"email": _emailController.text,"verificationToken": state.verificationToken},
                 );
               } else if (state is ForgotPasswordFailure) {
-                CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.primaryColor);
+                CustomSnackBar.show(
+                  context,
+                  message: state.errorMessage,
+                  backgroundColor: AppColors.snackBarErrorColor,
+                );
               }
             },
             builder: (context, state) {
@@ -68,13 +80,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: Container(
                       padding: EdgeInsets.all(24.sp),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: AppColors.containerWhiteColor,
                         borderRadius: BorderRadius.circular(30.r),
                         boxShadow: [
                           BoxShadow(
                             spreadRadius: 5.r,
                             blurRadius: 15.r,
-                            color: Colors.black.withValues(alpha: 0.1),
+                            color: AppColors.shadowColor,
                           ),
                         ],
                       ),
@@ -88,11 +100,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               controller: _emailController,
                               textFieldTitle: "Email",
                               hintText: "e.g. name@email.com",
-                               validator: (value) =>
+                              validator: (value) =>
                                   ConstantValidate().validateEmail(value ?? ''),
                               hintTextStyle: TextStyle(
                                 fontSize: 16.sp,
-                                color: const Color(0xff94A3B8),
+                                color: AppColors.textFormFieldColor,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: "Poppins",
                               ),
@@ -100,21 +112,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 fontSize: 16.sp,
                                 fontFamily: "Poppins",
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff94A3B8),
+                                color: AppColors.textFormFieldColor,
                               ),
                               prefixIcon: Icon(
                                 Icons.email_outlined,
-                                color: Color(0xff94A3B8),
+                                color: AppColors.textFormFieldColor,
                                 size: 25.sp,
                                 fontWeight: FontWeight.bold,
                               ),
-        
-                              fillColor: Color(0xffF8FAFC),
-                              borderColor: Color(0xff94A3B8),
+
+                              fillColor: AppColors.textFormFillColor,
+                              borderColor: AppColors.textFormFieldColor,
                               radius: 8,
                             ),
                             const HeightSpace(height: 32),
-        
+
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
@@ -137,7 +149,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 ),
                                 child: state is ForgotPasswordLoading
                                     ? const CircularProgressIndicator(
-                                        color: Colors.white,
+                                        color: AppColors.textWhiteColor,
                                       )
                                     : Row(
                                         mainAxisAlignment:
@@ -149,13 +161,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                               fontSize: 16.sp,
                                               fontWeight: FontWeight.w700,
                                               fontFamily: "Poppins",
-                                              color: Colors.white,
+                                              color: AppColors.textWhiteColor,
                                             ),
                                           ),
                                           const WidthSpace(width: 8),
                                           Icon(
                                             Icons.arrow_forward,
-                                            color: Colors.white,
+                                            color: AppColors.textWhiteColor,
                                             size: 20.sp,
                                           ),
                                         ],

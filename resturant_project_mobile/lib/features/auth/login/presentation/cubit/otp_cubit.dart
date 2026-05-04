@@ -8,13 +8,15 @@ class OtpCubit extends Cubit<OtpState> {
 
   final OtpRepo otpRepo;
 
-  Future<void> verifyOtp(String email, String otp) async {
+  Future<void> verifyOtp(String otp, String token) async {
     try {
       emit(OtpLoading());
 
-      final response = await otpRepo.verifyOtp(email, otp);
+      final response = await otpRepo.verifyOtp(otp, token);
 
-      emit(OtpSuccess(message: response.message));
+      emit(
+        OtpSuccess(message: response.message, resetToken: response.resetToken),
+      );
     } on ServerException catch (e) {
       emit(OtpFailure(errorMessage: e.errorModel.error));
     }

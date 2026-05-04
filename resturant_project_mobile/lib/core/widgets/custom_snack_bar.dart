@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 
 class CustomSnackBar {
   static void show(
@@ -21,14 +22,14 @@ class CustomSnackBar {
           borderRadius: BorderRadius.circular(15.r),
         ),
         backgroundColor:
-            backgroundColor ?? Colors.red,
+            backgroundColor ?? AppColors.primaryColor,
         content: Text(
           message,
           style: TextStyle(
             fontSize: 14.sp, 
             fontFamily: "Poppins",
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: AppColors.textWhiteColor,
           ),
         ),
       ),

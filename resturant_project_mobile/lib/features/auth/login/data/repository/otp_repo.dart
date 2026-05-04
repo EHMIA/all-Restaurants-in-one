@@ -7,10 +7,14 @@ class OtpRepo {
 
   OtpRepo({required this.api});
 
-  Future verifyOtp(String email, String otp) async {
+  Future verifyOtp(String otp, String token) async {
     final response = await api.post(
-      EndPoints.resetPassword,
-      data: {ApiKey.email: email, ApiKey.otp: otp},
+      EndPoints.otpCode,
+      data: {ApiKey.otp: otp},
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
     );
     return OtpModel.fromJson(response);
   }

@@ -1,9 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; // 1. ضيف الـ import
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
+import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_password_requirements_reset_password.dart';
+import 'package:resturant_project/features/auth/login/data/repository/reset_password_repo.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
@@ -14,7 +18,8 @@ import '../cubit/reset_password_cubit.dart';
 import '../cubit/reset_password_state.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({super.key});
+  const ResetPasswordScreen({super.key, required this.resetToken});
+  final String resetToken;
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -29,9 +34,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Password cannot be empty';
     if (value.length < 8) return 'Must be at least 8 characters';
-    if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'Must contain an uppercase letter';
-    }
+    // if (!value.contains(RegExp(r'[A-Z]'))) {
+    //   return 'Must contain an uppercase letter';
+    // }
     if (!value.contains(RegExp(r'[0-9]'))) return 'Must contain a number';
     return null;
   }
@@ -39,32 +44,36 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ResetPasswordCubit(),
+      create: (context) => ResetPasswordCubit(
+        resetPasswordRepo: ResetPasswordRepo(api: DioConsumer(dio: Dio())),
+      ),
       child: Scaffold(
-        backgroundColor: const Color(0xffFFF8F0),
+        backgroundColor: AppColors.backgoroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black, size: 28.sp),
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppColors.textBlackColor,
+              size: 28.sp,
+            ),
             onPressed: () => context.pop(),
           ),
         ),
         body: BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
           listener: (context, state) {
             if (state is ResetPasswordSuccess) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.green,
-                ),
+              CustomSnackBar.show(
+                context,
+                message: state.message,
+                backgroundColor: AppColors.snackBarSuccessColor,
               );
               context.goNamed(RouteName.authRouteScreen);
             } else if (state is ResetPasswordFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage),
-                  backgroundColor: Colors.red,
-                ),
+              CustomSnackBar.show(
+                context,
+                message: state.errorMessage,
+                backgroundColor: AppColors.snackBarErrorColor,
               );
             }
           },
@@ -79,13 +88,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: Container(
                     padding: EdgeInsets.all(24.sp),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.containerWhiteColor,
                       borderRadius: BorderRadius.circular(30.r),
                       boxShadow: [
                         BoxShadow(
                           spreadRadius: 5.r,
                           blurRadius: 15.r,
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: AppColors.shadowColor,
                         ),
                       ],
                     ),
@@ -131,7 +140,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 14.sp,
-                                    color: const Color(0xff64748B),
+                                    color: AppColors.textGrayColor,
                                   ),
                                 ),
                               ],
@@ -148,7 +157,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             isPassword: true,
                             prefixIcon: Icon(
                               Icons.lock_outline,
-                              color: const Color(0xff94A3B8),
+                              color: AppColors.textFormFieldColor,
                               size: 25.sp,
                             ),
                           ),
@@ -172,7 +181,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             isPassword: true,
                             prefixIcon: Icon(
                               Icons.lock_outline,
-                              color: const Color(0xff94A3B8),
+                              color: AppColors.textFormFieldColor,
                               size: 25.sp,
                             ),
                           ),
@@ -194,6 +203,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                               confirmPassword:
                                                   _confirmPasswordController
                                                       .text,
+                                              token: widget.resetToken,
                                             );
                                       }
                                     },
@@ -206,14 +216,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               ),
                               child: state is ResetPasswordLoading
                                   ? const CircularProgressIndicator(
-                                      color: Colors.white,
+                                      color: AppColors.textWhiteColor,
                                     )
                                   : Text(
                                       "Reset Password",
                                       style: TextStyle(
                                         fontSize: 16.sp,
                                         fontWeight: FontWeight.w700,
-                                        color: Colors.white,
+                                        color: AppColors.textWhiteColor,
                                       ),
                                     ),
                             ),

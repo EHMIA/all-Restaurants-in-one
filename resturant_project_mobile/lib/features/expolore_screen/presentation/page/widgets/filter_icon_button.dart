@@ -21,9 +21,10 @@ class FilterIconButton extends StatelessWidget {
         height: 48.h,
         width: 48.w,
         decoration: BoxDecoration(
+          border: Border.all(color: AppColors.textBlackColor),
           color: hasActiveFilter
               ? AppColors.primaryColor
-              : const Color(0xffe9eefa),
+              : AppColors.textWhiteColor,
           borderRadius: BorderRadius.circular(14.r),
         ),
         child: Stack(
@@ -31,7 +32,9 @@ class FilterIconButton extends StatelessWidget {
           children: [
             Icon(
               Icons.tune_rounded,
-              color: hasActiveFilter ? Colors.white : AppColors.grayColor,
+              color: hasActiveFilter
+                  ? AppColors.textWhiteColor
+                  : AppColors.textGrayColor,
               size: 22.sp,
             ),
             if (hasActiveFilter)
@@ -42,7 +45,7 @@ class FilterIconButton extends StatelessWidget {
                   width: 8.w,
                   height: 8.h,
                   decoration: const BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.textWhiteColor,
                     shape: BoxShape.circle,
                   ),
                 ),

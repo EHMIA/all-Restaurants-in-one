@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 
 class CustomTermsAndPrivacy extends StatelessWidget {
   const CustomTermsAndPrivacy({super.key});
@@ -16,12 +17,12 @@ class CustomTermsAndPrivacy extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: "Terms of Service",
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.primaryColor),
                         ),
                         TextSpan(text: " and "),
                         TextSpan(
                           text: "Privacy Policy",
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.primaryColor),
                         ),
                       ],
                     ),

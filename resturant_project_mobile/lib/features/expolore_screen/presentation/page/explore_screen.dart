@@ -80,7 +80,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.containerWhiteColor,
       builder: (_) => FilterBottomSheet(
         initialOpenOnly: state.openOnly,
         initialMinRating: state.minRating,
@@ -110,10 +110,10 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
 
         if (state is ExploreLoading) {
           return Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.backgoroundColor,
             appBar: _buildAppBar(),
             body: const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor,),
+              child: CircularProgressIndicator(color: AppColors.primaryColor),
             ),
           );
         }
@@ -125,7 +125,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
         final hasActiveFilter = state.openOnly || state.minRating != null;
 
         return Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.backgoroundColor,
           appBar: _buildAppBar(),
           body: SingleChildScrollView(
             child: Padding(
@@ -196,7 +196,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                     '${results.length} restaurant${results.length == 1 ? '' : 's'} found',
                     style: TextStyle(
                       fontSize: 13.sp,
-                      color: const Color(0xff94A3B8),
+                      color: AppColors.textGrayColor,
                       fontFamily: 'Poppins',
                     ),
                   ),
@@ -228,7 +228,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                               },
                               isFavorite: favCubit.isFavorite(res.id),
                               isOpen: res.isOpen,
-                              image: res.coverPhoto.url,                                  
+                              image: res.coverPhoto.url,
                               resName: res.name,
                               numReviews: res.reviewsCount.toString(),
                               resRate: res.rating.toString(),

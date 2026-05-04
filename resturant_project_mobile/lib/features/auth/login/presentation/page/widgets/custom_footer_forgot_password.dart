@@ -10,8 +10,9 @@ class CustomFooterForgotPassword extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-       const HeightSpace(height: 24),
+    return Column(
+      children: [
+        const HeightSpace(height: 24),
         Center(
           child: GestureDetector(
             onTap: () => context.pop(),
@@ -27,7 +28,7 @@ class CustomFooterForgotPassword extends StatelessWidget {
           ),
         ),
         const HeightSpace(height: 24),
-    ],)
-    ;
+      ],
+    );
   }
 }

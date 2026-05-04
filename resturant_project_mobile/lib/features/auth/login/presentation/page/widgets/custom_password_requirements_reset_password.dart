@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 
 import '../../../../../../core/widgets/spacing_widgets.dart';
 
@@ -23,7 +24,7 @@ class CustomPasswordRequirementsResetPassword extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.sp),
       decoration: BoxDecoration(
-        color: const Color(0xffFFF8F0),
+        color:  AppColors.backgoroundColor,
         borderRadius: BorderRadius.circular(8.r),
         border: Border.all(color: const Color(0xffFFEDD5)),
       ),
@@ -35,7 +36,7 @@ class CustomPasswordRequirementsResetPassword extends StatelessWidget {
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w600,
-              color: const Color(0xff64748B),
+              color: AppColors.textGrayColor,
             ),
           ),
           const HeightSpace(height: 8),
@@ -55,12 +56,12 @@ class CustomPasswordRequirementsResetPassword extends StatelessWidget {
           Icon(
             Icons.check_circle_outline,
             size: 14.sp,
-            color: const Color(0xff94A3B8),
+            color: AppColors.textFormFieldColor,
           ),
           const WidthSpace(width: 8),
           Text(
             text,
-            style: TextStyle(fontSize: 12.sp, color: const Color(0xff64748B)),
+            style: TextStyle(fontSize: 12.sp, color: AppColors.textGrayColor),
           ),
         ],
       ),

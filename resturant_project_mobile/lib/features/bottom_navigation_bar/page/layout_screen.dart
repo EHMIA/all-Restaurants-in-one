@@ -7,13 +7,14 @@ import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cu
 import 'package:resturant_project/features/bottom_navigation_bar/page/custom_bottom_nav_bar.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/cubit/explore_cubit.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
-import 'package:resturant_project/features/favorite_screen/data/repository/favorite_repo.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/favorite_screen.dart';
 import 'package:resturant_project/features/home_screen/presentation/cubit/home_cubit.dart';
-import 'package:resturant_project/features/profile_screen/profile_screen.dart';
+import 'package:resturant_project/features/profile_screen/presentation/page/profile_screen.dart';
 
 import '../../home_screen/presentation/page/home_screen.dart';
+import '../../review_page/data/repository/reviews_repo.dart';
+import '../../review_page/presentation/cubit/reviews_cubit.dart';
 
 class LayoutScreen extends StatefulWidget {
   const LayoutScreen({super.key});
@@ -24,13 +25,6 @@ class LayoutScreen extends StatefulWidget {
 
 class _LayoutScreenState extends State<LayoutScreen>
     with WidgetsBindingObserver {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   WidgetsBinding.instance.addObserver(this);
-  //   _favoriteCubit = FavoriteCubit(FavoriteRepository())..loadFavorites();
-  // }
-
   @override
   Widget build(BuildContext context) {
     final screens = [
@@ -56,11 +50,6 @@ class _LayoutScreenState extends State<LayoutScreen>
       ],
       child: BlocBuilder<LayoutCubit, int>(
         builder: (context, currentIndex) {
-          // if (currentIndex == 2 && _previousIndex != 2) {
-          //   Future.microtask(() => _favoriteCubit.loadFavorites());
-          // }
-          // _previousIndex = currentIndex;
-
           return Scaffold(
             body: IndexedStack(index: currentIndex, children: screens),
             bottomNavigationBar: CustomBottomNavBar(

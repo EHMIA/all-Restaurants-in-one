@@ -7,7 +7,7 @@ class ForgetPasswordRepo {
 
   ForgetPasswordRepo({required this.api});
 
-  Future sendOtpByEmail(String email)async{
+  Future <ForgetPasswordModel> sendOtpByEmail(String email)async{
     final response =await api.post(EndPoints.forgetPassword,data: {
       ApiKey.email:email
     });

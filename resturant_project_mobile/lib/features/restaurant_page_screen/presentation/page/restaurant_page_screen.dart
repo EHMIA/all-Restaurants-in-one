@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/models/restaurant_data_model.dart';
 import 'package:resturant_project/core/repositories/restaurant_details_repo.dart';
-import 'package:resturant_project/features/favorite_screen/data/repository/favorite_repo.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_page_cubit.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_res_page_head.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_res_tab_bar_page.dart';
@@ -26,6 +24,8 @@ class RestaurantPageScreen extends StatelessWidget {
                 id: restaurant.id,
                 rate: restaurant.rating.toString(),
                 numOfReviews: restaurant.reviewsCount.toString(),
+                name: restaurant.name,
+                image: restaurant.coverPhoto.url,
               ),
             ),
           ),

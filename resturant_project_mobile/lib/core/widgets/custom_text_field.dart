@@ -68,7 +68,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
                   fontFamily: "Poppins",
-                  color: const Color(0xff334155),
+                  color: AppColors.titleTextFormFieldColor,
                 ),
               ),
             ],
@@ -109,7 +109,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         isPasswordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color: Color(0xff94A3B8),
+                        color: AppColors.textFormFieldColor,
                         size: 25.sp,
                       ),
                     ),

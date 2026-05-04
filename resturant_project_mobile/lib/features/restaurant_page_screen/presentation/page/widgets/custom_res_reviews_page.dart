@@ -11,9 +11,12 @@ import 'package:resturant_project/features/restaurant_page_screen/presentation/c
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_user_review_card.dart';
 
 class CustomResReviewsPage extends StatelessWidget {
-  const CustomResReviewsPage({super.key, this.rate, this.numOfReviews});
+  const CustomResReviewsPage({super.key, this.rate, this.numOfReviews, this.name, required this.id, required this.image});
   final String? rate;
   final String? numOfReviews;
+  final String? name;
+  final String id;
+  final String image;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<RestaurantPageCubit, RestaurantPageState>(
@@ -103,10 +106,24 @@ class CustomResReviewsPage extends StatelessWidget {
                         ),
                         HeightSpace(height: 24),
                         GestureDetector(
-                          onTap: () {
-                            GoRouter.of(
-                              context,
-                            ).pushNamed(RouteName.writeReviewPage);
+                          onTap: () async {
+                            // ✅ استنى الرجوع وبعدين عمل refresh
+                            await GoRouter.of(context).pushNamed(
+                              RouteName.writeReviewPage,
+                              extra: {
+                                "name": name,
+                                "id": id,
+                                "review": numOfReviews,
+                                "rate": rate,
+                                "image": image,
+                              },
+                            );
+
+                            // ✅ بعد ما اليوزر يرجع، حدّث البيانات
+                            if (context.mounted) {
+                              context
+                                  .read<RestaurantPageCubit>().getRestaurantsDetails(id);
+                            }
                           },
                           child: Container(
                             width: 203.w,

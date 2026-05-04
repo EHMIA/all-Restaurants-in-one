@@ -1,11 +1,13 @@
+import 'package:resturant_project/core/app_assets/app_assets.dart';
+
 class SignUpModel {
   final String token;
   final User user;
 
   SignUpModel({required this.token, required this.user});
-  
-  factory SignUpModel.fromJson(Map<String,dynamic> json){
-    return SignUpModel(token: json['Token'], user:User.fromJson(json['user']));
+
+  factory SignUpModel.fromJson(Map<String, dynamic> json) {
+    return SignUpModel(token: json['Token'], user: User.fromJson(json['user']));
   }
 }
 
@@ -36,7 +38,7 @@ class User {
       fullname: json['fullname'],
       email: json['email'],
       phone: json['phone'],
-      profilePic: json['profile_pic'],
+      profilePic: json['profile_pic'] ?? AppAssets.profile,
       role: json['role'],
       id: json['_id'],
       address: Address.fromJson(json['address']),

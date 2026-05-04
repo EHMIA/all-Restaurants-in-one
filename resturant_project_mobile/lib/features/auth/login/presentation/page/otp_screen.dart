@@ -16,45 +16,34 @@ import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 class OtpScreen extends StatefulWidget {
-  final String email;
-  final String otp;
-
-  const OtpScreen({super.key, required this.email, required this.otp});
-
+  const OtpScreen({super.key, required this.verificationToken});
+  final String verificationToken;
   @override
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _pinController = TextEditingController();
-  late OtpCubit _otpCubit;
-
-  @override
-  void initState() {
-    super.initState();
-    _otpCubit = OtpCubit(
-      otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
-    );
-  }
+  // late OtpCubit _otpCubit;
 
   @override
   void dispose() {
     _pinController.dispose();
-    _otpCubit.close();
+    // _otpCubit.close();
     super.dispose();
   }
 
-  void _handleVerifyOtp() {
+  void _handleVerifyOtp(BuildContext context) {
     String otp = _pinController.text;
     if (otp.length != 6) {
       CustomSnackBar.show(
         context,
         message: "Please enter a valid 6-digit OTP",
-        backgroundColor: Colors.red,
+        backgroundColor: AppColors.primaryColor,
       );
       return;
     }
-    _otpCubit.verifyOtp(widget.email, otp);
+    context.read<OtpCubit>().verifyOtp(otp, widget.verificationToken);
   }
 
   @override
@@ -64,32 +53,38 @@ class _OtpScreenState extends State<OtpScreen> {
         otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xffFFF8F0),
+        backgroundColor: AppColors.backgoroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black, size: 28.sp),
+            icon: Icon(
+              Icons.arrow_back,
+              color: AppColors.textBlackColor,
+              size: 28.sp,
+            ),
             onPressed: () => GoRouter.of(context).pop(),
           ),
         ),
         body: BlocListener<OtpCubit, OtpState>(
-          bloc: _otpCubit,
           listener: (context, state) {
             if (state is OtpFailure) {
               CustomSnackBar.show(
                 context,
                 message: state.errorMessage,
-                backgroundColor: AppColors.primaryColor,
+                backgroundColor: AppColors.snackBarErrorColor,
               );
             }
             if (state is OtpSuccess) {
               CustomSnackBar.show(
                 context,
                 message: state.message,
-                backgroundColor: Colors.green,
+                backgroundColor: AppColors.snackBarSuccessColor,
               );
-              GoRouter.of(context).goNamed(RouteName.resetPasswordPage);
+              GoRouter.of(context).pushNamed(
+                RouteName.resetPasswordPage,
+                extra: {"resetToken": state.resetToken},
+              );
             }
           },
           child: SingleChildScrollView(
@@ -127,14 +122,14 @@ class _OtpScreenState extends State<OtpScreen> {
         textStyle: TextStyle(
           fontSize: 20.sp,
           fontFamily: "Poppins",
-          color: AppColors.grayColor,
+          color: AppColors.textGrayColor,
           fontWeight: FontWeight.bold,
         ),
         width: 50.w,
         height: 50.h,
         decoration: BoxDecoration(
-          color: const Color(0xffF8FAFC),
-          border: Border.all(color: const Color(0xff94A3B8), width: 2),
+          color: AppColors.textFormFillColor,
+          border: Border.all(color: AppColors.textFormFieldColor, width: 2),
           borderRadius: BorderRadius.circular(12.r),
         ),
       ),
@@ -143,10 +138,9 @@ class _OtpScreenState extends State<OtpScreen> {
 
   Widget _buildVerifyButton() {
     return BlocBuilder<OtpCubit, OtpState>(
-      bloc: _otpCubit,
       builder: (context, state) {
         return GestureDetector(
-          onTap: state is OtpLoading ? null : _handleVerifyOtp,
+          onTap: state is OtpLoading ? null : () => _handleVerifyOtp(context),
           child: Container(
             width: double.infinity,
             height: 56.h,
@@ -158,11 +152,13 @@ class _OtpScreenState extends State<OtpScreen> {
             ),
             child: Center(
               child: state is OtpLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
+                  ? const CircularProgressIndicator(
+                      color: AppColors.textWhiteColor,
+                    )
                   : Text(
                       "Verify OTP",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textWhiteColor,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -179,7 +175,7 @@ class _OtpScreenState extends State<OtpScreen> {
       children: [
         Text(
           "Didn't receive the code?",
-          style: TextStyle(color: const Color(0xff64748B), fontSize: 14.sp),
+          style: TextStyle(color: AppColors.textGrayColor, fontSize: 14.sp),
         ),
         const HeightSpace(height: 8),
         GestureDetector(
@@ -199,13 +195,13 @@ class _OtpScreenState extends State<OtpScreen> {
 
   BoxDecoration _buildBoxDecoration() {
     return BoxDecoration(
-      color: Colors.white,
+      color: AppColors.containerWhiteColor,
       borderRadius: BorderRadius.circular(30.r),
       boxShadow: [
         BoxShadow(
           spreadRadius: 5,
           blurRadius: 15,
-          color: Colors.black.withValues(alpha: 0.1),
+          color: AppColors.shadowColor,
         ),
       ],
     );

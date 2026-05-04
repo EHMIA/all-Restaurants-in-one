@@ -9,10 +9,12 @@ import 'package:resturant_project/features/restaurant_page_screen/presentation/p
 
 
 class CustomResTabBarPage extends StatelessWidget {
-  const CustomResTabBarPage({super.key, this.rate, this.numOfReviews, required this.id});
+  const CustomResTabBarPage({super.key, this.rate, this.numOfReviews, required this.id, this.name, required this.image});
   final String? rate;
   final String? numOfReviews;
   final String id;
+  final String? name;
+  final String image;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -42,96 +44,11 @@ class CustomResTabBarPage extends StatelessWidget {
         views: [
            CustomResMenuPage(restaurantId: id),
           CustomResPhotoPage(restaurantId: id),
-          CustomResReviewsPage(rate: rate, numOfReviews: numOfReviews),
+          CustomResReviewsPage(rate: rate, numOfReviews: numOfReviews,name: name,id: id,image: image,),
           CustomResInfoPage(),
         ],
-        //onChange: (index) => print(index),
       ),
     );
   }
 }
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-// class RestaurantDetailsScreen extends StatelessWidget {
-//   const RestaurantDetailsScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return DefaultTabController(
-//       length: 4,
-//       child: Scaffold(
-//         body: NestedScrollView(
-//           headerSliverBuilder: (context, innerBoxIsScrolled) {
-//             return [
-//               SliverAppBar(
-//                 pinned: true,
-//                 backgroundColor: Colors.white,
-//                 elevation: 0,
-//                 toolbarHeight: 0, // 👈 مهم جداً
-//                 bottom: PreferredSize(
-//                   preferredSize: Size(double.infinity, 60.h),
-//                   child: Container(
-//                     decoration: BoxDecoration(
-//                       color: Colors.grey.shade200,
-//                       border: Border(
-//                         bottom: BorderSide(
-//                           color: Colors.grey.shade300,
-//                           width: 1,
-//                         ),
-//                       ),
-//                     ),
-//                     child: TabBar(
-//                       indicatorColor: Colors.red,
-//                       indicatorWeight: 3,
-//                       indicatorSize: TabBarIndicatorSize.tab,
-//                       labelColor: Colors.red,
-//                       unselectedLabelColor: Colors.grey,
-//                       labelStyle: TextStyle(
-//                         fontSize: 16.sp,
-//                         fontWeight: FontWeight.w600,
-//                       ),
-//                       tabs: const [
-//                         Tab(text: "Menu"),
-//                         Tab(text: "Photos"),
-//                         Tab(text: "Reviews"),
-//                         Tab(text: "Info"),
-//                       ],
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ];
-//           },
-
-//           // 👇 محتوى كل تاب
-//           body: TabBarView(
-//             children: [
-//               _buildList("Menu"),
-//               _buildList("Photos"),
-//               _buildList("Reviews"),
-//               _buildList("Info"),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   static Widget _buildList(String title) {
-//     return ListView.builder(
-//       padding: const EdgeInsets.all(16),
-//       itemCount: 20,
-//       itemBuilder: (context, index) {
-//         return Card(
-//           margin: const EdgeInsets.only(bottom: 12),
-//           child: Padding(
-//             padding: const EdgeInsets.all(16),
-//             child: Text("$title Item ${index + 1}"),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }

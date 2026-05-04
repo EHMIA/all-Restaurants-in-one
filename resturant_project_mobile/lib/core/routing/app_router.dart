@@ -12,7 +12,10 @@ import 'package:resturant_project/features/auth/login/presentation/page/otp_scre
 import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
-import 'package:resturant_project/features/review_page/review_page.dart';
+import 'package:resturant_project/features/profile_screen/presentation/page/edit_profile_screen.dart';
+import 'package:resturant_project/features/review_page/data/repository/reviews_repo.dart';
+import 'package:resturant_project/features/review_page/presentation/cubit/reviews_cubit.dart';
+import 'package:resturant_project/features/review_page/presentation/page/review_page.dart';
 import 'package:resturant_project/features/splash_screen/splash_screen.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/page/layout_screen.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/restaurant_page_screen.dart';
@@ -65,7 +68,12 @@ class AppRouter {
       GoRoute(
         path: RouteName.myReviewPgeScreen,
         name: RouteName.myReviewPgeScreen,
-        builder: (context, state) => ReviewPage(),
+        builder: (context, state) => BlocProvider(
+          create: (context) => ReviewsCubit(
+            repo: ReviewRepo(api: DioConsumer(dio: Dio())),
+          ),
+          child: ReviewPage(),
+        ),
       ),
       GoRoute(
         path: RouteName.forgotPasswordPage,
@@ -87,24 +95,48 @@ class AppRouter {
             create: (context) => OtpCubit(
               otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
             ),
-            child: OtpScreen(email: data["email"], otp: data["otp"]),
+
+            child: OtpScreen(verificationToken: data['verificationToken']),
           );
         },
       ),
       GoRoute(
         path: RouteName.resetPasswordPage,
         name: RouteName.resetPasswordPage,
-        builder: (context, state) => ResetPasswordScreen(),
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return ResetPasswordScreen(resetToken: data['resetToken'] ?? '');
+        },
       ),
       GoRoute(
         path: RouteName.writeReviewPage,
         name: RouteName.writeReviewPage,
-        builder: (context, state) => WriteReviewScreen(),
+
+        builder: (context, state) {
+          final data = state.extra as Map<String, dynamic>;
+          return BlocProvider(
+            create: (context) => ReviewsCubit(
+              repo: ReviewRepo(api: DioConsumer(dio: Dio())),
+            ),
+            child: WriteReviewScreen(
+              restuarantId: data['id'],
+              restuarantName: data['name'],
+              restuarantRate: data['rate'],
+              restuarantReview: data['review'],
+              restaurantImage: data['image'],
+            ),
+          );
+        },
       ),
       GoRoute(
         path: RouteName.splashScreen,
         name: RouteName.splashScreen,
         builder: (context, state) => SplashScreen(),
+      ),
+      GoRoute(
+        path: RouteName.editProfilePage,
+        name: RouteName.editProfilePage,
+        builder: (context, state) => const EditProfileScreen(),
       ),
     ],
   );

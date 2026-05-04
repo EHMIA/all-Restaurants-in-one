@@ -54,13 +54,13 @@ class CustomUserReviewCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          name,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        // Text(
+                        //   name,
+                        //   style: TextStyle(
+                        //     fontSize: 16.sp,
+                        //     fontWeight: FontWeight.bold,
+                        //   ),
+                        // ),
                         const HeightSpace(height: 4),
                         Text(
                           timeAgo,

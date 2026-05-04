@@ -5,7 +5,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:resturant_project/core/utils/storage_helper.dart';
 import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/forget_password_cubit.dart';
@@ -37,26 +36,23 @@ class _LoginPageState extends State<LoginScreen> {
     _passwordController.dispose();
     super.dispose();
   }
-// @override
-//   void initState() {
-//     WidgetsBinding.instance.addPostFrameCallback((_) async {
-//       final token = await StorageHelper.getToken();
-//       if (token != null && token.isNotEmpty) {
-//         if (mounted) {
-//           GoRouter.of(context).pushReplacementNamed(RouteName.layOutScreen);
-//         }
-//       }
-//     });
-//     super.initState();
-//   }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state is LoginFailure) {
-          CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.primaryColor);
+          CustomSnackBar.show(
+            context,
+            message: state.errorMessage,
+            backgroundColor: AppColors.primaryColor,
+          );
         } else if (state is LoginSuccess) {
-          CustomSnackBar.show(context, message: "Login successful!", backgroundColor: Colors.green);
+          CustomSnackBar.show(
+            context,
+            message: "Login successful!",
+            backgroundColor: Colors.green,
+          );
           GoRouter.of(context).goNamed(RouteName.layOutScreen);
         }
       },
@@ -74,7 +70,7 @@ class _LoginPageState extends State<LoginScreen> {
                   ConstantValidate().validateEmail(value ?? ''),
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -82,17 +78,17 @@ class _LoginPageState extends State<LoginScreen> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.email_outlined,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Email",
@@ -110,7 +106,7 @@ class _LoginPageState extends State<LoginScreen> {
                   ConstantValidate().validatePassword(value ?? ''),
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -118,16 +114,16 @@ class _LoginPageState extends State<LoginScreen> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.lock_outline,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Password",
@@ -154,7 +150,7 @@ class _LoginPageState extends State<LoginScreen> {
                 builder: (context, state) {
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: AppColors.primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14.r),
@@ -172,11 +168,11 @@ class _LoginPageState extends State<LoginScreen> {
                             }
                           },
                     child: state is LoginLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: AppColors.textWhiteColor)
                         : Text(
                             "Login",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textWhiteColor,
                               fontSize: 18.sp,
                               fontFamily: "Poppins",
                               fontWeight: FontWeight.w600,

@@ -6,7 +6,7 @@ import '../../../../../../core/widgets/spacing_widgets.dart';
 
 class CustomFooterLogin extends StatelessWidget {
   const CustomFooterLogin({super.key, required this.onSignUpClicked});
-  final VoidCallback onSignUpClicked ;
+  final VoidCallback onSignUpClicked;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -17,15 +17,14 @@ class CustomFooterLogin extends StatelessWidget {
             text: "Don't have an account? ",
             style: TextStyle(
               fontSize: 14.sp,
-              color: Color(0xff64748B),
+              color: AppColors.textGrayColor,
               fontWeight: FontWeight.w600,
             ),
             children: [
               TextSpan(
                 text: "Sign Up Free",
                 style: TextStyle(color: AppColors.primaryColor),
-                recognizer: TapGestureRecognizer()
-                  ..onTap = onSignUpClicked,
+                recognizer: TapGestureRecognizer()..onTap = onSignUpClicked,
               ),
             ],
           ),

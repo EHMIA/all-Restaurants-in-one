@@ -1,12 +1,18 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:resturant_project/core/errors/exceptions.dart';
+import 'package:resturant_project/features/auth/login/data/repository/reset_password_repo.dart';
 import 'reset_password_state.dart';
 
 class ResetPasswordCubit extends Cubit<ResetPasswordState> {
-  ResetPasswordCubit() : super(ResetPasswordInitial());
+  ResetPasswordCubit({required this.resetPasswordRepo})
+    : super(ResetPasswordInitial());
+
+  final ResetPasswordRepo resetPasswordRepo;
 
   Future<void> resetPassword({
     required String newPassword,
     required String confirmPassword,
+    required String token,
   }) async {
     if (newPassword != confirmPassword) {
       emit(ResetPasswordFailure(errorMessage: "Passwords do not match"));
@@ -16,15 +22,14 @@ class ResetPasswordCubit extends Cubit<ResetPasswordState> {
     emit(ResetPasswordLoading());
 
     try {
-      await Future.delayed(const Duration(seconds: 2));
-
-      emit(ResetPasswordSuccess(message: "Password reset successfully!"));
-    } catch (e) {
-      emit(
-        ResetPasswordFailure(
-          errorMessage: "Something went wrong. Please try again.",
-        ),
+      final response = await resetPasswordRepo.resetPassword(
+        newPassword: newPassword,
+        confirmPassword: confirmPassword,
+        token: token,
       );
+      emit(ResetPasswordSuccess(message: response.message));
+    } on ServerException catch (e) {
+      emit(ResetPasswordFailure(errorMessage: e.errorModel.error));
     }
   }
 

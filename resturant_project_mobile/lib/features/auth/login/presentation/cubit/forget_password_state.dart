@@ -14,12 +14,12 @@ final class ForgotPasswordLoading extends ForgotPasswordState {
 
 final class ForgotPasswordSuccess extends ForgotPasswordState {
   final String message;
-  final String otp;
+  final String verificationToken;
 
-  ForgotPasswordSuccess({required this.message, required this.otp});
+  ForgotPasswordSuccess({required this.message, required this.verificationToken,});
 
   @override
-  List<Object?> get props => [message, otp];
+  List<Object?> get props => [message, verificationToken];
 }
 
 final class ForgotPasswordFailure extends ForgotPasswordState {

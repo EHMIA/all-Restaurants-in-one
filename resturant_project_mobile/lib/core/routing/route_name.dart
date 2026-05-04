@@ -14,4 +14,5 @@ class RouteName {
   static const otpPage = '/otpPage';
   static const resetPasswordPage = '/resetPasswordPage';
   static const splashScreen = '/splashScreen';
+  static const editProfilePage = '/editProfilePage';
 }

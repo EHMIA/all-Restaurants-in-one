@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/custom_login_signup_toggle.dart';
 import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/cutom_logo_title_subtitle.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
@@ -23,7 +24,7 @@ class _AuthRouteScreenState extends State<AuthRouteScreen> {
       child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Scaffold(
-          backgroundColor: const Color(0xffFFF8F0),
+          backgroundColor:  AppColors.backgoroundColor,
           body: SafeArea(
             child: SingleChildScrollView(
               child: Padding(
@@ -31,13 +32,13 @@ class _AuthRouteScreenState extends State<AuthRouteScreen> {
                 child: Container(
                   padding: EdgeInsets.all(24.sp),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.containerWhiteColor,
                     borderRadius: BorderRadius.circular(30.r),
                     boxShadow: [
                       BoxShadow(
                         spreadRadius: 5.r,
                         blurRadius: 15.r,
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: AppColors.shadowColor,
                       ),
                     ],
                   ),

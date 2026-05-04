@@ -44,10 +44,10 @@ class _SignUpPageState extends State<SignUpPage> {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpFailure) {
-          CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.primaryColor);
+          CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.snackBarErrorColor);
         }
         if (state is SignUpSuccess) {
-          CustomSnackBar.show(context, message: "Account Created Successfully", backgroundColor: Colors.green);
+          CustomSnackBar.show(context, message: "Account Created Successfully", backgroundColor: AppColors.snackBarSuccessColor);
 
           context.read<AuthRouteCubit>().selectLoginTab();
         }
@@ -64,7 +64,7 @@ class _SignUpPageState extends State<SignUpPage> {
               controller: _fullNameController,
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color:  AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -72,17 +72,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.person_outline,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Full Name",
@@ -100,7 +100,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ConstantValidate().validateEmail(value ?? ''),
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color:  AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -108,17 +108,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.email_outlined,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Email",
@@ -134,7 +134,7 @@ class _SignUpPageState extends State<SignUpPage> {
               controller: _phoneController,
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color:  AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -142,17 +142,17 @@ class _SignUpPageState extends State<SignUpPage> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.phone_outlined,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
                 fontWeight: FontWeight.bold,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Phone",
@@ -170,7 +170,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ConstantValidate().validatePassword(value ?? ''),
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color:  AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -178,16 +178,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.lock_outline,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Password",
@@ -207,7 +207,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   : null,
               hintTextStyle: TextStyle(
                 fontSize: 16.sp,
-                color: const Color(0xff94A3B8),
+                color:  AppColors.textFormFieldColor,
                 fontWeight: FontWeight.w500,
                 fontFamily: "Poppins",
               ),
@@ -215,16 +215,16 @@ class _SignUpPageState extends State<SignUpPage> {
                 fontSize: 16.sp,
                 fontFamily: "Poppins",
                 fontWeight: FontWeight.bold,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
               ),
               prefixIcon: Icon(
                 Icons.lock_outline,
-                color: Color(0xff94A3B8),
+                color: AppColors.textFormFieldColor,
                 size: 25.sp,
               ),
 
               fillColor: Color(0xffF8FAFC),
-              borderColor: Color(0xff94A3B8),
+              borderColor: AppColors.textFormFieldColor,
               radius: 8,
 
               textFieldTitle: "Confirm Password",
@@ -245,7 +245,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
+                      backgroundColor: AppColors.primaryColor,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -266,11 +266,11 @@ class _SignUpPageState extends State<SignUpPage> {
                             }
                           },
                     child: state is SignUpLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: AppColors.textWhiteColor)
                         : Text(
                             "Create Account",
                             style: TextStyle(
-                              color: Colors.white,
+                              color: AppColors.textWhiteColor,
                               fontSize: 18.sp,
                               fontFamily: "Poppins",
                               fontWeight: FontWeight.w600,
