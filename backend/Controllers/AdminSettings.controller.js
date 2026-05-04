@@ -51,7 +51,8 @@ const getRestaurantRequests = asyncHandler(async (req, res) => {
     const requests = await restaurantModel.find({ 
         status: { $in: ["pending", "rejected"] } 
     })
-    .select("_id name coverPhoto rejectionCount status createdAt") 
+    .select("_id name coverPhoto rejectionCount  createdAt")
+    .populate("Owner", " fullname") 
     .sort({ createdAt: -1 }); 
 
     if (requests.length === 0) {
