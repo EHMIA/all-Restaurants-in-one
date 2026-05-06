@@ -70,7 +70,7 @@ const getRestaurantRequests = asyncHandler(async (req, res) => {
 const getOneRequest = asyncHandler(async (req, res) => {
     const restaurantId= req.params.restaurantId;
     const request = await restaurantModel.findById(restaurantId)
-        .select("_id name coverPhoto rejectionCount status createdAt Owner email name phoneNumber whatsappNumber address openingHours cuisineType delivery ")
+        .select("_id name coverPhoto rejectionCount status createdAt Owner email  phoneNumber whatsappNumber address openingHours cuisineType delivery ")
         .populate("Owner", "_id fullname profile_pic"); 
 
     if (!request) {
