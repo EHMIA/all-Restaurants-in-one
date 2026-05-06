@@ -56,7 +56,10 @@ const getRestaurantRequests = asyncHandler(async (req, res) => {
     .sort({ createdAt: -1 }); 
 
     if (requests.length === 0) {
-        return res.status(404).json({ message: "No requests found" });
+        return res.status(200).json({
+            message: "no requests found",
+            Data: []
+        });
     }
 
     return res.status(200).json({ 
@@ -95,7 +98,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
 
     const restaurant = await restaurantModel.findById(restaurantId);
     if (!restaurant) {
-        return res.status(404).json({ message: "Request not found" });
+        return res.status(200).json({ message: "restaurant not found" });
     }
     const ownerId = restaurant.Owner;
 
