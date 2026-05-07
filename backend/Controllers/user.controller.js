@@ -38,6 +38,44 @@ const getUserProfile = asyncHandler(async (req, res) => {
 //======================================================//
 
 
+const getAllUsers = asyncHandler(async (req, res) => {
+    let { page, limit, searchQuery } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
+
+    let conditions = {};
+    if (searchQuery) {
+        conditions.fullname = { $regex: String(searchQuery), $options: "i" };
+    }
+
+    // 1. ضفنا "absoluteTotal" هنا عشان نعد كل المستخدمين بدون أي فلاتر
+    const [users, filteredCount, absoluteTotal] = await Promise.all([
+        Users.find(conditions)
+            .select("-password")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Users.countDocuments(conditions), // عد نتائج البحث فقط (عشان الصفحات)
+        Users.countDocuments({})         // عد كل اليوزرز في الداتابيز (بدون شروط)
+    ]);
+
+    res.status(200).json({
+        success: true,
+        data: users,
+        meta: {
+            totalInDatabase: absoluteTotal, // ده الرقم اللي هيتحط في خانة "Total Users" فوق في الـ Figma
+            foundResults: filteredCount,    // ده عدد النتائج اللي طلعت من البحث
+            pagesCount: Math.ceil(filteredCount / limit), // الصفحات بتتحسب دايماً على قد اللي لقيناه بس
+            currentPage: page,
+            limit
+        }
+    });
+});
+//======================================================//
+
+
 const editUserProfile = asyncHandler(async (req, res) => {
 
     const targetId = req.user.role === "admin" ? req.params.id : req.user.id;
@@ -188,6 +226,34 @@ const deleteProfilePicController = asyncHandler(async (req, res) => {
 //======================================================//
 
 
+const changePasswordController = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword , confirmPassword} = req.body;  
+    const user = await Users.findById(req.user.id);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await compare(currentPassword, user.password);
+    // const isMatch = await checkPassword(currentPassword, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: "Current password is incorrect" });
+    }
+    
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "New passwords do not match" });
+    }
+
+    const hashedPassword = await hash(newPassword, 10);
+    
+    user.password = hashedPassword; // Ensure this will be hashed in the model's pre-save hook
+    await user.save();
+    res.status(200).json({ message: "Password changed successfully" });
+
+
+})
+
+
 const deleteAccountController = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const currentUser = req.user;
@@ -226,32 +292,12 @@ const deleteAccountController = asyncHandler(async (req, res) => {
 });
 
 
-const changePasswordController = asyncHandler(async (req, res) => {
-    const { currentPassword, newPassword , confirmPassword} = req.body;  
-    const user = await Users.findById(req.user.id);
-
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
-    }
-
-    const isMatch = await compare(currentPassword, user.password);
-    // const isMatch = await checkPassword(currentPassword, user.password);
-    if (!isMatch) {
-        return res.status(400).json({ message: "Current password is incorrect" });
-    }
-    
-    if (newPassword !== confirmPassword) {
-        return res.status(400).json({ message: "New passwords do not match" });
-    }
-
-    const hashedPassword = await hash(newPassword, 10);
-    
-    user.password = hashedPassword; // Ensure this will be hashed in the model's pre-save hook
-    await user.save();
-    res.status(200).json({ message: "Password changed successfully" });
-
-
-})
-
-
-export { getUserProfile, uploadProfilePicController, editUserProfile, deleteProfilePicController, deleteAccountController, changePasswordController };
+export { 
+        getUserProfile, 
+        uploadProfilePicController, 
+        editUserProfile,
+        deleteProfilePicController,
+        deleteAccountController, 
+        changePasswordController ,
+        getAllUsers
+    };
