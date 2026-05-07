@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import { restaurantModel } from "../Models/restaurant.model.js";
+import { reviewModel } from "../Models/reviews.model.js";
+import { favResModel } from "../Models/FavoriteRestaurants.model.js";
+import { Users } from "../Models/user.model.js";
 
 /**
  * @param {*}
@@ -263,7 +266,17 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     return Restaurant;
 };
 
-
+const deleteRestaurantService = async(restaurantId, ownerId)=>{
+    await reviewModel.deleteMany({ restaurant: restaurantId });
+    await favResModel.deleteMany({ restaurant: restaurantId });
+    const user= await Users.findByIdAndUpdate(ownerId,{
+        role:"user"
+    });
+    const deletedRestaurant =await restaurantModel.findByIdAndDelete(restaurantId);
+    if(!deletedRestaurant)
+        return null;
+    return deletedRestaurant;
+}
 
 
 

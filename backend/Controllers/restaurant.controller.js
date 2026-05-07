@@ -224,11 +224,25 @@ const getMyRestaurantDashboard = asyncHandler(async (req, res) => {
     });
 });
 
+const deleteRestaurant = asyncHandler(async (req, res) => {
+    const restaurant = await restaurantModel.findOne({ Owner: req.user.id });
+    if (!restaurant) {
+        return res.status(404).json({ message: "You don't have a restaurant" });
+    }
+
+    const deletedRes = await deleteRestaurantService(restaurant._id,req.user.id);
+    if (!deletedRes) {
+        return res.status(404).json({ message: "Restaurant not found" });
+    }
+    res.status(200).json({ message: "Restaurant deleted successfully" });
+});
+
 export {
     createNewRestaurant,
     getAllRestaurants,
     getOneRestaurant,
     getSelectionRestaurant,
     editRestaurantMainData,
-    getMyRestaurantDashboard
+    getMyRestaurantDashboard,
+    deleteRestaurant
 }

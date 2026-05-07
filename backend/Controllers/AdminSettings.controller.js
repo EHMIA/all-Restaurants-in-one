@@ -51,11 +51,15 @@ const getRestaurantRequests = asyncHandler(async (req, res) => {
     const requests = await restaurantModel.find({ 
         status: { $in: ["pending", "rejected"] } 
     })
-    .select("_id name coverPhoto rejectionCount status createdAt") 
+    .select("_id name coverPhoto rejectionCount  createdAt")
+    .populate("Owner", " fullname") 
     .sort({ createdAt: -1 }); 
 
     if (requests.length === 0) {
-        return res.status(404).json({ message: "No requests found" });
+        return res.status(200).json({
+            message: "no requests found",
+            Data: []
+        });
     }
 
     return res.status(200).json({ 
@@ -69,13 +73,16 @@ const getRestaurantRequests = asyncHandler(async (req, res) => {
 const getOneRequest = asyncHandler(async (req, res) => {
     const restaurantId= req.params.restaurantId;
     const request = await restaurantModel.findById(restaurantId)
-        .select("_id name coverPhoto rejectionCount status createdAt Owner email name phoneNumber whatsappNumber address openingHours cuisineType delivery ")
+        .select("_id name coverPhoto rejectionCount status createdAt Owner email  phoneNumber whatsappNumber address openingHours cuisineType delivery ")
         .populate("Owner", "_id fullname profile_pic"); 
 
     if (!request) {
         return res.status(404).json({ message: "Request not found" });
     }
-    return res.status(200).json({ request });
+    return res.status(200).json({ 
+        message: "Request retrieved successfully",
+        Data: request
+    });
 });
 
 
@@ -91,7 +98,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
 
     const restaurant = await restaurantModel.findById(restaurantId);
     if (!restaurant) {
-        return res.status(404).json({ message: "Request not found" });
+        return res.status(200).json({ message: "restaurant not found" });
     }
     const ownerId = restaurant.Owner;
 

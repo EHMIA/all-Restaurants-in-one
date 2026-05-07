@@ -8,8 +8,8 @@ const aggragateReviewStats = async (restaurantId) => {
         {
             $group: {
                 _id: "$restaurant",
-                avgRating: { $avg: "$rating" },
-                nRating: { $sum: 1 },
+                avgRating: { $avg: "$rating" },  
+                nRating: { $sum: 1 }, 
             },
         },
     ]);

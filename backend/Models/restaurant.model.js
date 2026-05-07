@@ -220,15 +220,6 @@ restaurantSchema.path("openingHours").validate((hours) => {
     return true;
 });
 
-restaurantSchema
-    .path("Gallery")
-    .validate(
-        (gallery) => gallery.length <= LIMITS.Gallery_MAX,
-        `Gallery cannot have more than ${LIMITS.Gallery_MAX} photos`,
-    );
-
-
-
 restaurantSchema.path("menu").validate(function (menu) {
     const dishNames = menu.map(item => item.dishName.trim().toLowerCase());
     

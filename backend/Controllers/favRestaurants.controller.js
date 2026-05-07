@@ -7,7 +7,10 @@ import { favResModel } from "../Models/FavoriteRestaurants.model.js";
 const getMyFavRestaurants=asyncHandler(async(req,res)=>{
     const restaurants= await getMyFavRestaurantsService(req.user.id);
     if(!restaurants)
-        return res.status(404).json({message:"No favorite Restaurants Found"});
+        return res.status(200).json({
+    message:"No favorite Restaurants Found",
+    Data:[]
+});
     res.status(200).json({
         message:"Favorite Restaurants retrieved successfully",
         Data:restaurants
