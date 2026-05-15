@@ -93,7 +93,22 @@ const editUserProfile = asyncHandler(async (req, res) => {
     }
     if (phone) updateData.phone = phone;
 
-    if (req.user.role === "admin" && role) {
+    if (role) {
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Only admins can change user roles" });
+        }
+
+        if (!["user", "owner", "admin"].includes(role)) {
+            return res.status(400).json({ message: "Invalid role specified must be 'user', 'owner', or 'admin'" });
+        }
+        
+        if (role === "admin") {
+            const restaurant = await restaurantModel.findOne({ Owner: targetId });
+            if (restaurant) {
+                return res.status(400).json({ message: "Cannot change role to admin. User should not have an associated restaurant to be admin." });
+            }
+             
+        }
         updateData.role = role;
     }
     else if (role) {
