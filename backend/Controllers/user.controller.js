@@ -269,7 +269,7 @@ const deleteAccountController = asyncHandler(async (req, res) => {
         if (adminCount <= 1) {
             return res.status(400).json({ message: "Cannot delete the last admin account" });
         }
-        const restaurant = await restaurantModel.findOne({ owner: targetId });
+        const restaurant = await restaurantModel.findOne({ Owner: targetId });
         if (restaurant) {
             await reviewModel.deleteMany({ restaurant: restaurant._id });
             await restaurantModel.deleteOne({ _id: restaurant._id });
@@ -277,10 +277,16 @@ const deleteAccountController = asyncHandler(async (req, res) => {
     }
 
     if (userToDelete.role === "owner") {
-        const restaurant = await restaurantModel.findOne({ owner: targetId });
+        const restaurant = await restaurantModel.findOne({ Owner: targetId });
         if (restaurant) {
-            await reviewModel.deleteMany({ restaurant: restaurant._id });
-            await restaurantModel.deleteOne({ _id: restaurant._id });
+            await Promise.all([
+            reviewModel.deleteMany({ restaurant: restaurant._id }),
+            favResModel.deleteMany({ restaurant: restaurant._id }),
+            restaurantModel.deleteOne({ _id: restaurant._id })
+        ]);
+            // await reviewModel.deleteMany({ restaurant: restaurant._id });
+            // await favResModel.deleteMany({ restaurant: restaurant._id });
+            // await restaurantModel.deleteOne({ _id: restaurant._id });
         }
     }
 
