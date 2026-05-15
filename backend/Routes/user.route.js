@@ -7,7 +7,7 @@ import { uploadSingleImage } from "../Middlewares/upload.middleware.js";
 import { getMyRestaurantDashboard } from "../Controllers/restaurant.controller.js";
 
 
-router.get('/getUserProfile', Protect, restrictToAdminOrAccountOwner, getUserProfile);
+router.get('/getUserProfile/:id', Protect, restrictToAdminOrAccountOwner, getUserProfile);
 router.get('/getAllUsers',Protect, restrictToAdmin, getAllUsers);
 router.patch('/editUserProfile/:id', Protect, restrictToAdminOrAccountOwner, editUserProfile);
 router.patch('/uploadProfilePhoto', Protect, uploadSingleImage, uploadProfilePicController);

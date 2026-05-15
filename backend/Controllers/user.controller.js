@@ -10,8 +10,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 
 const getUserProfile = asyncHandler(async (req, res) => {
-    const userId = req.user.id;
-
+    const userId = req.params.id;
     const [user, reviewsCount, favoritesCount, hasRestaurant] = await Promise.all([
         Users.findById(userId).select('-password'),
         reviewModel.countDocuments({ user: userId }),
