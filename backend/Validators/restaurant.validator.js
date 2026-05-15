@@ -62,7 +62,6 @@ const createRestaurantValidation = (obj) => {
                         .optional(),
         facebookLink: joi.string().allow(null, ""),
         whatsappNumber: joi.string().allow(null, ""),
-        menu: joi.array().items(joi.object()).default([]),
     });
     return schema.validate(obj, { convert: true, stripUnknown: true });
 };
