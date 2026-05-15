@@ -64,17 +64,32 @@ const restrictToAccountOwner= (req,res,next)=>{
     return res.status(403).json({message:"Only users have this access"});
 }
 
-const restrictToAdminOrAccountOwner= (req,res,next)=>{
-    if(!req.user){
-        return res.status(401).json({message: "Please Login first"});
-    }
-    const isAccOwner= req.params.id && req.params.id=== req.user.id;
 
-    if(isAccOwner || req.user.role=="admin"){
+const restrictToAdminOrAccountOwner = (req, res, next) => {
+    if (!req.user) {
+        return res.status(401).json({ message: "Please Login first" });
+    }
+
+    const isAccOwner = req.params.id && req.params.id.toString() === req.user._id.toString();
+
+    if (req.user.role === "admin" || isAccOwner) {
         return next();
     }
-    return res.status(403).json({message:"You can Only modify your data"});
+
+    return res.status(403).json({ message: "You can Only modify your data" });
 }
+
+// const restrictToAdminOrAccountOwner= (req,res,next)=>{
+//     if(!req.user){
+//         return res.status(401).json({message: "Please Login first"});
+//     }
+//     const isAccOwner= req.params.id && req.params.id=== req.user.id;
+
+//     if(isAccOwner || req.user.role=="admin"){
+//         return next();
+//     }
+//     return res.status(403).json({message:"You can Only modify your data"});
+// }
 
 
 const restrictToAdmin= (req,res,next)=>{
