@@ -104,9 +104,8 @@ const restrictToAdmin= (req,res,next)=>{
 }
 
 
-
-const restrictToRestaurantOwner = async (req, res, next) => {
-    const restaurantId = new mongoose.Types.ObjectId(req.params.restaurantId);
+const restrictToRestaurantOwnerPublic = async (req, res, next) => {
+        const restaurantId = new mongoose.Types.ObjectId(req.params.restaurantId);
     const restaurant = await restaurantModel.findById(restaurantId)
         .select("_id status Owner Gallery coverPhoto menu rejectionCount");
 
@@ -116,7 +115,11 @@ const restrictToRestaurantOwner = async (req, res, next) => {
     if (!restaurant.Owner.equals(req.user.id)) {
         return res.status(403).json({ message: "Only Restaurant Owner has access" });
     }
-
+    req.restaurant = restaurant;
+    next();
+}
+const restrictToRestaurantOwner = async (req, res, next) => {
+    const restaurant= req.restaurant;
     if (restaurant.status === "pending") {
         return res.status(400).json({ message: "Cannot edit while request is pending review." });
     }
@@ -144,5 +147,6 @@ export{
     restrictToAdmin,
     restrictToAccountOwner,
     restrictToRestaurantOwner,
-    isApprovedOwner
+    isApprovedOwner,
+    restrictToRestaurantOwnerPublic
 }
