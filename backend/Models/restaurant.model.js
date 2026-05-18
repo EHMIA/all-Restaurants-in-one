@@ -129,7 +129,7 @@ const restaurantSchema = new Schema(
 
         menu: [
             {
-                dishName: { type: String, required: true, trim: true  , unique: true },
+                dishName: { type: String, required: true, trim: true },
                 price: { type: Number, min: 0, required: true },
                 description: { type: String, trim: true, default: null },
                 image: {
@@ -139,6 +139,7 @@ const restaurantSchema = new Schema(
                 category: { type: String, required: true, enum: MenuCategories },
             },
         ],
+
         openingHours: [
             {
                 day: { type: String, required: true, enum: Days, lowercase: true },
