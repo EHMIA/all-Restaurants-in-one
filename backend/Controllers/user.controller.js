@@ -10,8 +10,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 
 const getUserProfile = asyncHandler(async (req, res) => {
-    const userId = req.user.id;
-
+    const userId = req.params.id;
     const [user, reviewsCount, favoritesCount, hasRestaurant] = await Promise.all([
         Users.findById(userId).select('-password'),
         reviewModel.countDocuments({ user: userId }),
@@ -38,6 +37,44 @@ const getUserProfile = asyncHandler(async (req, res) => {
 //======================================================//
 
 
+const getAllUsers = asyncHandler(async (req, res) => {
+    let { page, limit, searchQuery } = req.query;
+
+    page = parseInt(page) || 1;
+    limit = parseInt(limit) || 10;
+    const skip = (page - 1) * limit;
+
+    let conditions = {};
+    if (searchQuery) {
+        conditions.fullname = { $regex: String(searchQuery), $options: "i" };
+    }
+
+    // 1. ضفنا "absoluteTotal" هنا عشان نعد كل المستخدمين بدون أي فلاتر
+    const [users, filteredCount, absoluteTotal] = await Promise.all([
+        Users.find(conditions)
+            .select("-password")
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit),
+        Users.countDocuments(conditions), // عد نتائج البحث فقط (عشان الصفحات)
+        Users.countDocuments({})         // عد كل اليوزرز في الداتابيز (بدون شروط)
+    ]);
+
+    res.status(200).json({
+        success: true,
+        data: users,
+        meta: {
+            totalInDatabase: absoluteTotal, // ده الرقم اللي هيتحط في خانة "Total Users" فوق في الـ Figma
+            foundResults: filteredCount,    // ده عدد النتائج اللي طلعت من البحث
+            pagesCount: Math.ceil(filteredCount / limit), // الصفحات بتتحسب دايماً على قد اللي لقيناه بس
+            currentPage: page,
+            limit
+        }
+    });
+});
+//======================================================//
+
+
 const editUserProfile = asyncHandler(async (req, res) => {
 
     const targetId = req.user.role === "admin" ? req.params.id : req.user.id;
@@ -56,7 +93,22 @@ const editUserProfile = asyncHandler(async (req, res) => {
     }
     if (phone) updateData.phone = phone;
 
-    if (req.user.role === "admin" && role) {
+    if (role) {
+        if (req.user.role !== "admin") {
+            return res.status(403).json({ message: "Only admins can change user roles" });
+        }
+
+        if (!["user", "owner", "admin"].includes(role)) {
+            return res.status(400).json({ message: "Invalid role specified must be 'user', 'owner', or 'admin'" });
+        }
+        
+        if (role === "admin") {
+            const restaurant = await restaurantModel.findOne({ Owner: targetId });
+            if (restaurant) {
+                return res.status(400).json({ message: "Cannot change role to admin. User should not have an associated restaurant to be admin." });
+            }
+             
+        }
         updateData.role = role;
     }
     else if (role) {
@@ -188,44 +240,6 @@ const deleteProfilePicController = asyncHandler(async (req, res) => {
 //======================================================//
 
 
-const deleteAccountController = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const currentUser = req.user;
-
-    const targetId = (currentUser.role === "admin" && id) ? id : currentUser.id;
-
-    const userToDelete = await Users.findById(targetId);
-    if (!userToDelete) {
-        return res.status(404).json({ message: "User not found" });
-    }
-
-    if (userToDelete.role === 'admin') {
-        const adminCount = await Users.countDocuments({ role: 'admin' });
-        if (adminCount <= 1) {
-            return res.status(400).json({ message: "Cannot delete the last admin account" });
-        }
-        const restaurant = await restaurantModel.findOne({ owner: targetId });
-        if (restaurant) {
-            await reviewModel.deleteMany({ restaurant: restaurant._id });
-            await restaurantModel.deleteOne({ _id: restaurant._id });
-        }
-    }
-
-    if (userToDelete.role === "owner") {
-        const restaurant = await restaurantModel.findOne({ owner: targetId });
-        if (restaurant) {
-            await reviewModel.deleteMany({ restaurant: restaurant._id });
-            await restaurantModel.deleteOne({ _id: restaurant._id });
-        }
-    }
-
-    await favResModel.deleteMany({ user: targetId });
-    await Users.findByIdAndDelete(targetId);
-
-    res.status(200).json({ message: "Account and related data deleted successfully" });
-});
-
-
 const changePasswordController = asyncHandler(async (req, res) => {
     const { currentPassword, newPassword , confirmPassword} = req.body;  
     const user = await Users.findById(req.user.id);
@@ -254,4 +268,56 @@ const changePasswordController = asyncHandler(async (req, res) => {
 })
 
 
-export { getUserProfile, uploadProfilePicController, editUserProfile, deleteProfilePicController, deleteAccountController, changePasswordController };
+const deleteAccountController = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const currentUser = req.user;
+
+    const targetId = (currentUser.role === "admin" && id) ? id : currentUser.id;
+
+    const userToDelete = await Users.findById(targetId);
+    if (!userToDelete) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    if (userToDelete.role === 'admin') {
+        const adminCount = await Users.countDocuments({ role: 'admin' });
+        if (adminCount <= 1) {
+            return res.status(400).json({ message: "Cannot delete the last admin account" });
+        }
+        const restaurant = await restaurantModel.findOne({ Owner: targetId });
+        if (restaurant) {
+            await reviewModel.deleteMany({ restaurant: restaurant._id });
+            await restaurantModel.deleteOne({ _id: restaurant._id });
+        }
+    }
+
+    if (userToDelete.role === "owner") {
+        const restaurant = await restaurantModel.findOne({ Owner: targetId });
+        if (restaurant) {
+            await Promise.all([
+            reviewModel.deleteMany({ restaurant: restaurant._id }),
+            favResModel.deleteMany({ restaurant: restaurant._id }),
+            restaurantModel.deleteOne({ _id: restaurant._id })
+        ]);
+            // await reviewModel.deleteMany({ restaurant: restaurant._id });
+            // await favResModel.deleteMany({ restaurant: restaurant._id });
+            // await restaurantModel.deleteOne({ _id: restaurant._id });
+        }
+    }
+
+    await favResModel.deleteMany({ user: targetId });
+    await Users.findByIdAndDelete(targetId);
+
+    res.status(200).json({ message: "Account and related data deleted successfully" });
+});
+
+
+export { 
+        getUserProfile, 
+        uploadProfilePicController, 
+        editUserProfile,
+        deleteProfilePicController,
+        deleteAccountController, 
+        changePasswordController ,
+        getAllUsers
+    };
