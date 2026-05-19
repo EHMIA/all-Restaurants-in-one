@@ -4,7 +4,7 @@ class Review {
   final Restaurant restaurant;
   final String content;
   final DateTime createdAt;
-  final int rating;
+  final double rating;
 
   Review({
     required this.id,

@@ -1,14 +1,20 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/models/restaurant_data_model.dart';
+import 'package:resturant_project/core/repositories/restaurant_data_repo.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_state.dart';
+import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_main_data_cubit.dart';
+import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_main_data_state.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_button_res_page.dart';
+import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/restaurant_head_shimmer_loading.dart';
 import 'package:shimmer/shimmer.dart';
 
 class CustomResPageHead extends StatelessWidget {
@@ -18,49 +24,77 @@ class CustomResPageHead extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String getPriceSymbol(String priceRange) {
-  switch (priceRange.toLowerCase()) {
-    case 'low':
-      return r'$';
-    case 'medium':
-      return r'$•$';
-    case 'high':
-      return r'$•$•$';
-    default:
-      return r'$';
+    return BlocProvider(
+      create: (context) => RestaurantMainDataCubit(
+        repo: RestaurantDataRepo(api: DioConsumer(dio: Dio())),
+      )..getRestaurantsMainData(restaurant.id),
+      child: BlocBuilder<RestaurantMainDataCubit, RestaurantMainDataState>(
+        builder: (context, state) {
+          // Show shimmer loading
+          if (state is RestaurantMainDataLoading) {
+            return const RestaurantHeadShimmerLoading();
+          }
+
+          // Show error - still display basic restaurant info
+          if (state is RestaurantMainDataError) {
+            return _buildHeadContent(context, restaurant);
+          }
+
+          // Show loaded data with full details
+          if (state is RestaurantMainDataSuccess) {
+            final loadedRestaurant = state.restaurant.data.isNotEmpty
+                ? state.restaurant.data.first
+                : restaurant;
+            return _buildHeadContent(context, loadedRestaurant);
+          }
+
+          // Default: show basic restaurant info
+          return _buildHeadContent(context, restaurant);
+        },
+      ),
+    );
   }
-}
+
+  Widget _buildHeadContent(
+    BuildContext context,
+    RestaurantModel restaurantData,
+  ) {
+    String getPriceSymbol(String priceRange) {
+      switch (priceRange.toLowerCase()) {
+        case 'low':
+          return r'$';
+        case 'medium':
+          return r'$•$';
+        case 'high':
+          return r'$•$•$';
+        default:
+          return r'$';
+      }
+    }
+
     return SizedBox(
       height: 380.h,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          Image.network(
-            restaurant.coverPhoto.url,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) {
-              return Image.asset(AppAssets.image, fit: BoxFit.cover);
-            },
-          ),
+          /// Image with Shimmer Placeholder
           CachedNetworkImage(
-            imageUrl: restaurant.coverPhoto.url,
+            imageUrl: restaurantData.coverPhoto.url,
             fit: BoxFit.cover,
-
             memCacheWidth: 600,
             memCacheHeight: 400,
-
             placeholder: (context, url) => Shimmer.fromColors(
               baseColor: Colors.grey.shade300,
               highlightColor: Colors.grey.shade100,
               child: Container(color: Colors.white),
             ),
-
-            errorWidget: (context, url, error) => Container(
-              color: Colors.grey.shade200,
-              child: Icon(Icons.broken_image_rounded, size: 40.sp),
-            ),
+            errorWidget: (context, url, error) {
+              return Image.asset(AppAssets.image, fit: BoxFit.cover);
+            },
           ),
+
+          /// Gradient Overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -91,14 +125,14 @@ class CustomResPageHead extends StatelessWidget {
             child: BlocBuilder<FavoriteCubit, FavoriteState>(
               builder: (context, state) {
                 final cubit = context.read<FavoriteCubit>();
-                final isFav = cubit.isFavorite(restaurant.id);
+                final isFav = cubit.isFavorite(restaurantData.id);
 
                 return CustomButtonResPage(
                   onTap: () {
                     if (isFav) {
-                      cubit.removeCardFromFav(restaurant.id);
+                      cubit.removeCardFromFav(restaurantData.id);
                     } else {
-                      cubit.addResToFavorites(restaurant.id);
+                      cubit.addResToFavorites(restaurantData.id);
                     }
                   },
                   icon: isFav ? Icons.favorite : Icons.favorite_border,
@@ -115,19 +149,20 @@ class CustomResPageHead extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                /// Open/Closed Badge
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 14.w,
                     vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: restaurant.isOpen
+                    color: restaurantData.isOpen
                         ? const Color(0xff22C55E)
                         : const Color(0xff64748B),
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    restaurant.isOpen ? 'OPEN NOW' : 'CLOSED',
+                    restaurantData.isOpen ? 'OPEN NOW' : 'CLOSED',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12.sp,
@@ -137,9 +172,9 @@ class CustomResPageHead extends StatelessWidget {
                 ),
                 HeightSpace(height: 12),
 
-                /// Name
+                /// Restaurant Name
                 Text(
-                  restaurant.name,
+                  restaurantData.name,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 32.sp,
@@ -149,7 +184,7 @@ class CustomResPageHead extends StatelessWidget {
 
                 HeightSpace(height: 8),
 
-                /// Rating
+                /// Rating Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -158,7 +193,7 @@ class CustomResPageHead extends StatelessWidget {
                         Icon(Icons.star, color: Colors.amber, size: 16.sp),
                         SizedBox(width: 6.w),
                         Text(
-                          restaurant.rating.toString(),
+                          restaurantData.rating.toString(),
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -174,7 +209,7 @@ class CustomResPageHead extends StatelessWidget {
                         ),
                         WidthSpace(width: 8),
                         Text(
-                          "( ${restaurant.reviewsCount} reviews )",
+                          "( ${restaurantData.reviewsCount} reviews )",
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -184,7 +219,7 @@ class CustomResPageHead extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      getPriceSymbol(restaurant.priceRange),
+                      getPriceSymbol(restaurantData.priceRange),
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -197,27 +232,29 @@ class CustomResPageHead extends StatelessWidget {
 
                 HeightSpace(height: 8),
 
-                /// Categories
+                /// Cuisine Types
                 SizedBox(
                   height: 20.h,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: restaurant.cuisineType.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(right: 8.w),
-                        child: Text(
-                          restaurant.cuisineType[index],
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins",
-                            color: Colors.white,
-                          ),
+                  child: restaurantData.cuisineType.isEmpty
+                      ? const SizedBox()
+                      : ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: restaurantData.cuisineType.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(right: 8.w),
+                              child: Text(
+                                restaurantData.cuisineType[index],
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.bold,
+                                  fontFamily: "Poppins",
+                                  color: Colors.white,
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

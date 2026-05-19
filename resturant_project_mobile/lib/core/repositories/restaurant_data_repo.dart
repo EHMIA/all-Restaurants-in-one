@@ -11,4 +11,10 @@ class RestaurantDataRepo {
     final data = await api.get(EndPoints.getAllRestuarant);
     return RestaurantDataModel.fromJson(data);
   }
+  Future<RestaurantDataModel> getMainDataRestuarant(String id) async {
+    final data = await api.get(
+      '${EndPoints.getAllRestuarant}/$id',
+    );
+    return RestaurantDataModel.fromJson(data);
+  }
 }

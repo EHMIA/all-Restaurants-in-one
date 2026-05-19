@@ -18,16 +18,11 @@ class LoginRepository {
     );
     final loginModel = LoginModel.fromJson(response);
 
-
+if (loginModel.user.id != null) {
+      await StorageHelper.saveUserId(loginModel.user.id!);
+      print("User ID saved successfully: ${loginModel.user.id}");
+    }
       await StorageHelper.saveToken(loginModel.token);
-      await StorageHelper.saveUserId(loginModel.user.id ?? '');
-
-    await StorageHelper.saveUserData(
-      name: loginModel.user.fullname ?? '',
-      email: loginModel.user.email ?? '',
-      phone: loginModel.user.phone ?? '',
-      address: '',
-    );
 
     return loginModel;
   }

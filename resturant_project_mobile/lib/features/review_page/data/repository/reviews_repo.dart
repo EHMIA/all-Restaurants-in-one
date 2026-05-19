@@ -18,7 +18,7 @@ class ReviewRepo {
   Future<Review> addReview({
     required String restaurantId,
     required String content,
-    required int rating,
+    required double rating,
   }) async {
     final response = await api.post(
       '${EndPoints.addRreviews}/$restaurantId',

@@ -10,11 +10,8 @@ import 'package:resturant_project/features/expolore_screen/presentation/page/exp
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/favorite_screen.dart';
 import 'package:resturant_project/features/home_screen/presentation/cubit/home_cubit.dart';
-import 'package:resturant_project/features/profile_screen/presentation/page/profile_screen.dart';
-
 import '../../home_screen/presentation/page/home_screen.dart';
-import '../../review_page/data/repository/reviews_repo.dart';
-import '../../review_page/presentation/cubit/reviews_cubit.dart';
+import '../../profile_screen/presentation/page/profile_screen.dart';
 
 class LayoutScreen extends StatefulWidget {
   const LayoutScreen({super.key});

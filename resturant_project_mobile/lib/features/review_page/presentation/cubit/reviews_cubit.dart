@@ -22,7 +22,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
   Future<void> addReview({
     required String restaurantId,
     required String content,
-    required int rating,
+    required double rating,
   }) async {
     final previousState = state;
 

@@ -11,7 +11,14 @@ import 'package:resturant_project/features/restaurant_page_screen/presentation/c
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/custom_user_review_card.dart';
 
 class CustomResReviewsPage extends StatelessWidget {
-  const CustomResReviewsPage({super.key, this.rate, this.numOfReviews, this.name, required this.id, required this.image});
+  const CustomResReviewsPage({
+    super.key,
+    this.rate,
+    this.numOfReviews,
+    this.name,
+    required this.id,
+    required this.image,
+  });
   final String? rate;
   final String? numOfReviews;
   final String? name;
@@ -122,7 +129,8 @@ class CustomResReviewsPage extends StatelessWidget {
                             // ✅ بعد ما اليوزر يرجع، حدّث البيانات
                             if (context.mounted) {
                               context
-                                  .read<RestaurantPageCubit>().getRestaurantsDetails(id);
+                                  .read<RestaurantPageCubit>()
+                                  .getRestaurantsDetails(id);
                             }
                           },
                           child: Container(
@@ -172,11 +180,11 @@ class CustomResReviewsPage extends StatelessWidget {
                     itemCount: review.length,
                     itemBuilder: (context, index) {
                       return CustomUserReviewCard(
-                        title: review[index].title,
-                        profileImageUrl:
-                            AppAssets.image, //wait backend to finish it
-                        name: review[index].userName,
-                        timeAgo: review[index].createdAt.toString(),
+                        profileImageUrl: review[index]
+                            .profilePic,
+                        userName: review[index].userName,
+                        createdAt: review[index].createdAt,
+                        updatedAt: review[index].updatedAt,
                         rating: review[index].rating,
                         reviewText: review[index].content,
                         onTap: null,

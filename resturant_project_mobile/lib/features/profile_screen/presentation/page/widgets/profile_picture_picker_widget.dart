@@ -1,21 +1,63 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 
 class ProfilePicturePickerWidget extends StatelessWidget {
-  final String? imagePathOrAsset;
-  final bool isAssetImage;
+  final String? localImagePath;
+
+  final String? networkImageUrl;
+
+  final String assetFallback;
+
   final VoidCallback onTap;
 
   const ProfilePicturePickerWidget({
     super.key,
-    this.imagePathOrAsset,
-    this.isAssetImage = true,
+    this.localImagePath,
+    this.networkImageUrl,
+    required this.assetFallback,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    // Priority: local picked file > network URL > asset placeholder
+    Widget imageWidget;
+
+    final hasLocal =
+        localImagePath != null &&
+        localImagePath!.isNotEmpty &&
+        File(localImagePath!).existsSync();
+
+    final hasNetwork = networkImageUrl != null && networkImageUrl!.isNotEmpty;
+
+    if (hasLocal) {
+      imageWidget = Image.file(File(localImagePath!), fit: BoxFit.cover);
+    } else if (hasNetwork) {
+      imageWidget = Image.network(
+        networkImageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) =>
+            Image.asset(assetFallback, fit: BoxFit.cover),
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Center(
+            child: CircularProgressIndicator(
+              value: progress.expectedTotalBytes != null
+                  ? progress.cumulativeBytesLoaded /
+                        progress.expectedTotalBytes!
+                  : null,
+              color: AppColors.primaryColor,
+              strokeWidth: 2,
+            ),
+          );
+        },
+      );
+    } else {
+      imageWidget = Image.asset(assetFallback, fit: BoxFit.cover);
+    }
+
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -35,21 +77,7 @@ class ProfilePicturePickerWidget extends StatelessWidget {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(200.r),
-            child: imagePathOrAsset != null
-                ? (isAssetImage
-                      ? Image.asset(imagePathOrAsset!, fit: BoxFit.cover)
-                      : Image.file(
-                          throw Exception('File path not supported yet'),
-                          fit: BoxFit.cover,
-                        ))
-                : Container(
-                    color: AppColors.textFormFillColor,
-                    child: Icon(
-                      Icons.person,
-                      size: 80.sp,
-                      color: AppColors.grayColor,
-                    ),
-                  ),
+            child: imageWidget,
           ),
         ),
         GestureDetector(

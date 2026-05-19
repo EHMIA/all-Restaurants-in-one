@@ -17,6 +17,6 @@ class FavoriteRepo {
   }
 
   Future<void> addResToFavorites(String resId) async {
-    await api.get('${EndPoints.favorites}/$resId');
+    await api.post('${EndPoints.favorites}/$resId');
   }
 }

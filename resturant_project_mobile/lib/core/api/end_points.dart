@@ -11,7 +11,13 @@ class EndPoints {
   static const String addRreviews = "/reviews/add-review";
   static const String getRreviews = "reviews/my-reviews";
   static const String deleteRreviews = "reviews/delete-review";
-  static String editUserProfile(String userId) =>'/user/editUserProfile/$userId';
+  static String editUserProfile(String userId) =>
+      '/user/editUserProfile/$userId';
+  static String userProfile(String userId) => 'user/getUserProfile/$userId';
+  static String deleteProfilePhoto(String userId) =>
+      'user/deleteProfilePhoto/$userId';
+  static const String changePassword = 'user/changePassword';
+  static const String profileImage = "user/uploadProfilePhoto";
 }
 
 class ApiKey {

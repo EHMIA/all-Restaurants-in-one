@@ -10,7 +10,7 @@ class CustomReveiwCard extends StatelessWidget {
   const CustomReveiwCard({super.key, required this.resName, required this.timeReview, required this.starRating, required this.content, this.onTap});
   final String resName;
   final String timeReview;
-  final int starRating;
+  final double starRating;
   final String content;
   final void Function()? onTap;
   @override

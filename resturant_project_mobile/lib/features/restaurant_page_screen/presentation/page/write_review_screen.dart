@@ -239,27 +239,45 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                 ),
                 HeightSpace(height: 20),
                 Center(
-                  child: BlocBuilder<ReviewsCubit, ReviewsState>(
-                    builder: (context, state) {
-                      if (state is ReviewLoading) {
-                        return const CircularProgressIndicator();
-                      }
-                      return CustomTextButton(
-                        backgroundColor: AppColors.primaryColor,
-                        onTap: () {
-                          if (reviewController.text.isNotEmpty) {
-                            context.read<ReviewsCubit>().addReview(
-                              restaurantId: widget.restuarantId,
-                              content: reviewController.text,
-                              rating: selectedRating.toInt(),
-                            );
-                          }
-                        },
-                        text: 'Post Review',
-                        textColor: Colors.white,
-                        isIcon: false,
-                      );
-                    },
+                  child: SizedBox(
+                    width: 300.w,
+                    child: BlocBuilder<ReviewsCubit, ReviewsState>(
+                      builder: (context, state) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14.r),
+                            ),
+                          ),
+                          onPressed: state is ReviewLoading
+                              ? null
+                              : () {
+                                  if (reviewController.text.isNotEmpty) {
+                                    context.read<ReviewsCubit>().addReview(
+                                      restaurantId: widget.restuarantId,
+                                      content: reviewController.text,
+                                      rating: selectedRating,
+                                    );
+                                  }
+                                },
+                          child: state is ReviewLoading
+                              ? const CircularProgressIndicator(
+                                  color: AppColors.textWhiteColor,
+                                )
+                              : Text(
+                                  "Post Review",
+                                  style: TextStyle(
+                                    color: AppColors.textWhiteColor,
+                                    fontSize: 18.sp,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],

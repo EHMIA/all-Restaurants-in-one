@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -89,11 +91,25 @@ class _SplashScreenState extends State<SplashScreen>
 
     if (!mounted) return;
 
-    if (token != null && token.isNotEmpty) {
+    if (token != null && token.isNotEmpty && !isTokenExpired(token)) {
       context.goNamed(RouteName.layOutScreen);
     } else {
+      await StorageHelper.removeToken();
       context.goNamed(RouteName.authRouteScreen);
     }
+  }
+  bool isTokenExpired(String token) {
+    final parts = token.split('.');
+    if (parts.length != 3) return true;
+
+    final payload = json.decode(
+      utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+    );
+
+    final exp = payload['exp'];
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    return now > exp;
   }
 
   Future<void> _startAnimations()async {

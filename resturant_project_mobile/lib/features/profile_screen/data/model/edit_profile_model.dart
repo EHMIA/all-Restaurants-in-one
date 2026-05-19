@@ -37,7 +37,9 @@ class EditedUser {
       fullname: json['fullname'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      profilePic: json['profile_pic'],
+      profilePic: json['profile_pic'] is Map
+          ? json['profile_pic']['url']
+          : json['profile_pic'],
       role: json['role'] ?? '',
       address: EditedAddress.fromJson(json['address'] ?? {}),
     );
