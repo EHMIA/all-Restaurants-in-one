@@ -5,7 +5,6 @@ import { optionalProtect, Protect, restrictToAccountOwner, restrictToRestaurantO
 const router = Router();
 
 router.get("/",optionalProtect,getAllRestaurants);
-
 router.get("/:restaurantId",optionalProtect,getOneRestaurant);
 
 router.get('/:restaurantId/details',optionalProtect, getSelectionRestaurant);

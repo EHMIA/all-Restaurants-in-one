@@ -4,13 +4,13 @@ import { addRestaurantToFav, getMyFavRestaurants, removeRestaurantFromFav } from
 const router=Router();
 
 // get my fav restaurants
-router.get("/",Protect,restrictToRestaurantOwnerPublic,restrictToAccountOwner,getMyFavRestaurants);
+router.get("/",Protect,restrictToAccountOwner,getMyFavRestaurants);
 
 // add restaurant to favorites
-router.post("/:restaurantId",Protect,restrictToRestaurantOwnerPublic,restrictToAccountOwner,addRestaurantToFav);
+router.post("/:restaurantId",Protect,restrictToAccountOwner,addRestaurantToFav);
 
 // remove restaurant from fav
-router.delete("/:restaurantId",Protect,restrictToRestaurantOwnerPublic,restrictToAccountOwner,removeRestaurantFromFav);
+router.delete("/:restaurantId",Protect,restrictToAccountOwner,removeRestaurantFromFav);
 
 
 export default router;

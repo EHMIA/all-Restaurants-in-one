@@ -16,7 +16,7 @@ const hoursField =
 const invalidPhoneMsg = "Phone number must be Egyptian, 11 digits, starting with 010, 011, 012, or 015";
 const invalidEmailMsg = "Invalid email format";
 
-export  {
+export {
     emailField, phoneNumberField,
     facebookLinkField, hoursField,
     invalidPhoneMsg, invalidEmailMsg

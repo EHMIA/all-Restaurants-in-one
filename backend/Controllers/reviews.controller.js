@@ -42,7 +42,6 @@ const addReview= asyncHandler(async(req,res)=>{
     const restaurant= await getOneRestaurantService(restaurantId);
     if(!restaurant)
         return res.status(404).json({message:"No such Restaurant Found"});
-    console.log(restaurant);
     
     const {error}= addReviewValidation(req.body);
     if(error)
