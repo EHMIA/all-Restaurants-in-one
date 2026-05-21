@@ -17,11 +17,11 @@ class SignUpRepo {
     final response = await api.post(
       EndPoints.signUp,
       data: {
-        ApiKey.email: email,
-        ApiKey.fullname: fullname,
-        ApiKey.password: password,
+        ApiKey.loginEmail: email,
+        ApiKey.loginFullname: fullname,
+        ApiKey.loginPassword: password,
         ApiKey.confirmPassword: comfirmPassword,
-        ApiKey.phone: phone,
+        ApiKey.loginPhone: phone,
       },
     );
     return SignUpModel.fromJson(response);

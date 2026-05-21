@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/custom_login_signup_toggle.dart';
-import 'package:resturant_project/features/auth/auth_route/presentaion/page/widgets/cutom_logo_title_subtitle.dart';
+import 'package:resturant_project/features/auth/auth_route/page/widgets/custom_login_signup_toggle.dart';
+import 'package:resturant_project/features/auth/auth_route/page/widgets/cutom_logo_title_subtitle.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 
 import '../cubit/auth_route_cubit.dart';

@@ -6,10 +6,10 @@ import 'package:resturant_project/features/auth/login/data/repository/login_repo
 import 'package:resturant_project/features/auth/login/presentation/cubit/login_cubit.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/login_screen.dart';
 import 'package:resturant_project/features/auth/signup/data/repository/sign_up_repo.dart';
-import '../../../../signup/presentation/cubit/signup_cubit.dart';
+import '../../../signup/presentation/cubit/signup_cubit.dart';
 import '../../cubit/auth_route_cubit.dart';
 import '../../cubit/auth_route_state.dart';
-import '../../../../signup/presentation/page/sign_up_page.dart';
+import '../../../signup/presentation/page/sign_up_page.dart';
 
 class CustomAuthSwitcherBody extends StatelessWidget {
   const CustomAuthSwitcherBody({super.key});

@@ -10,6 +10,13 @@ import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/profile_screen/data/repository/settings_repo.dart';
 import 'package:resturant_project/features/profile_screen/presentation/cubit/settings_cubit.dart';
 import 'package:resturant_project/features/profile_screen/presentation/cubit/settings_state.dart';
+import 'widgets/settings_account_section.dart';
+import 'widgets/settings_appearance_section.dart';
+import 'widgets/settings_logout_button.dart';
+import 'widgets/settings_logout_dialog.dart';
+import 'widgets/settings_notifications_section.dart';
+import 'widgets/settings_privacy_section.dart';
+import 'widgets/settings_support_section.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -19,19 +26,119 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  // Notification toggles
+  bool pushNotificationsEnabled = true;
+  bool emailNotificationsEnabled = true;
+  bool promotionsEnabled = true;
+
+  // Appearance toggles
+  bool darkModeEnabled = false;
+  String currentLanguage = 'English';
+
+  // Privacy toggles
+  bool locationEnabled = true;
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => SettingsCubit(
         repo: SettingsRepo(api: DioConsumer(dio: Dio())),
       ),
-      child: const _SettingsView(),
+      child: _SettingsView(
+        pushNotificationsEnabled: pushNotificationsEnabled,
+        emailNotificationsEnabled: emailNotificationsEnabled,
+        promotionsEnabled: promotionsEnabled,
+        darkModeEnabled: darkModeEnabled,
+        currentLanguage: currentLanguage,
+        locationEnabled: locationEnabled,
+        onPushNotificationsChanged: (value) {
+          setState(() => pushNotificationsEnabled = value);
+        },
+        onEmailNotificationsChanged: (value) {
+          setState(() => emailNotificationsEnabled = value);
+        },
+        onPromotionsChanged: (value) {
+          setState(() => promotionsEnabled = value);
+        },
+        onDarkModeChanged: (value) {
+          setState(() => darkModeEnabled = value);
+        },
+        onLanguageTap: _showLanguageOptions,
+        onLocationChanged: (value) {
+          setState(() => locationEnabled = value);
+        },
+      ),
+    );
+  }
+
+  void _showLanguageOptions() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(
+          'Select Language',
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Poppins',
+            color: AppColors.primaryColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildLanguageOption('English', dialogContext),
+            _buildLanguageOption('العربية', dialogContext),
+            _buildLanguageOption('Français', dialogContext),
+            _buildLanguageOption('Español', dialogContext),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOption(String language, BuildContext context) {
+    return ListTile(
+      title: Text(language),
+      trailing: currentLanguage == language
+          ? Icon(Icons.check, color: AppColors.primaryColor)
+          : null,
+      onTap: () {
+        setState(() => currentLanguage = language);
+        Navigator.pop(context);
+      },
     );
   }
 }
 
 class _SettingsView extends StatelessWidget {
-  const _SettingsView();
+  final bool pushNotificationsEnabled;
+  final bool emailNotificationsEnabled;
+  final bool promotionsEnabled;
+  final bool darkModeEnabled;
+  final String currentLanguage;
+  final bool locationEnabled;
+  final ValueChanged<bool> onPushNotificationsChanged;
+  final ValueChanged<bool> onEmailNotificationsChanged;
+  final ValueChanged<bool> onPromotionsChanged;
+  final ValueChanged<bool> onDarkModeChanged;
+  final VoidCallback onLanguageTap;
+  final ValueChanged<bool> onLocationChanged;
+
+  const _SettingsView({
+    required this.pushNotificationsEnabled,
+    required this.emailNotificationsEnabled,
+    required this.promotionsEnabled,
+    required this.darkModeEnabled,
+    required this.currentLanguage,
+    required this.locationEnabled,
+    required this.onPushNotificationsChanged,
+    required this.onEmailNotificationsChanged,
+    required this.onPromotionsChanged,
+    required this.onDarkModeChanged,
+    required this.onLanguageTap,
+    required this.onLocationChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -88,91 +195,115 @@ class _SettingsView extends StatelessWidget {
             children: [
               HeightSpace(height: 24),
 
-              // Account Section
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(16.sp),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Account Settings',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primaryColor,
-                          ),
-                        ),
-                        HeightSpace(height: 16),
-                        Divider(
-                          color: Colors.grey.shade200,
-                          thickness: 0.5,
-                          height: 1,
-                        ),
-                        HeightSpace(height: 16),
+              // Account Settings Section
+              SettingsAccountSection(
+                onEditProfile: () {
+                  context.goNamed(RouteName.editProfileScreen);
+                },
+                onChangePassword: () {
+                  context.goNamed(RouteName.editProfileScreen);
+                },
+                onDeleteAccount: () {
+                  _showDeleteAccountDialog(context);
+                },
+              ),
 
-                        // Delete Account Section
-                        GestureDetector(
-                          onTap: () => _showDeleteAccountDialog(context),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.delete_forever_outlined,
-                                color: Colors.red,
-                                size: 24.sp,
-                              ),
-                              WidthSpace(width: 12),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Delete Account',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                  HeightSpace(height: 4),
-                                  Text(
-                                    'Permanently delete your account',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.red,
-                                size: 16.sp,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+              HeightSpace(height: 20),
+
+              // Notifications Section
+              SettingsNotificationsSection(
+                pushEnabled: pushNotificationsEnabled,
+                emailEnabled: emailNotificationsEnabled,
+                promoEnabled: promotionsEnabled,
+                onPushChanged: onPushNotificationsChanged,
+                onEmailChanged: onEmailNotificationsChanged,
+                onPromoChanged: onPromotionsChanged,
+              ),
+
+              HeightSpace(height: 20),
+
+              // Appearance Section
+              SettingsAppearanceSection(
+                darkModeEnabled: darkModeEnabled,
+                onDarkModeChanged: onDarkModeChanged,
+                currentLanguage: currentLanguage,
+                onLanguageTap: onLanguageTap,
+              ),
+
+              HeightSpace(height: 20),
+
+              // Privacy & Security Section
+              SettingsPrivacySection(
+                locationEnabled: locationEnabled,
+                onLocationChanged: onLocationChanged,
+                onPrivacyPolicy: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Opening Privacy Policy...'),
+                      duration: Duration(seconds: 2),
                     ),
-                  ),
-                ),
+                  );
+                },
+                onTermsOfService: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Opening Terms of Service...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+
+              HeightSpace(height: 20),
+
+              // Support Section
+              SettingsSupportSection(
+                onHelpCenter: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Opening Help Center...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                onContactUs: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Opening Contact Us...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+                onRateApp: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Opening App Store...'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+
+              HeightSpace(height: 20),
+
+              // Logout Button
+              SettingsLogoutButton(
+                onTap: () {
+                  SettingsLogoutDialog.show(
+                    context,
+                    onConfirm: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Logged out successfully'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                      Future.delayed(const Duration(seconds: 1), () {
+                        context.goNamed(RouteName.authRouteScreen);
+                      });
+                    },
+                  );
+                },
               ),
 
               HeightSpace(height: 40),

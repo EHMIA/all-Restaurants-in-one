@@ -13,9 +13,9 @@ class ForgetPasswordModel {
 
   factory ForgetPasswordModel.fromJson(Map<String, dynamic> json) {
     return ForgetPasswordModel(
-      message: json['message'] ?? '',
-      otp: json['otp']?.toString() ?? '',
-      verificationToken: json['verificationToken'],
+      message: json[ApiKey.forgetMessage] ?? '',
+      otp: json[ApiKey.otp]?.toString() ?? '',
+      verificationToken: json[ApiKey.verificationToken],
     );
   }
 }

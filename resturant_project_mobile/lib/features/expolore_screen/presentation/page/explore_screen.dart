@@ -15,7 +15,6 @@ import 'package:resturant_project/features/expolore_screen/presentation/page/wid
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/filter_bottom_sheet.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/active_filter_chip.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/explore_no_result_screen.dart';
-import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_main_data_cubit.dart';
 import '../../../favorite_screen/presentation/cubit/favorite_cubit.dart';
 import '../../../home_screen/presentation/page/widgets/search_text_field_widget.dart';
 import 'widgets/custom_error_explore_screen.dart';
@@ -225,7 +224,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                             return CustomListCards(
                               onTap: () {
                                 GoRouter.of(context).pushNamed(
-                                  RouteName.restaurantPageScreen,
+                                  RouteName.restaurantScreen,
                                   extra: res,
                                 );
                               },

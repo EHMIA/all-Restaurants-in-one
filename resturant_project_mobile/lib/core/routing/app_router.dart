@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/models/restaurant_data_model.dart';
-import 'package:resturant_project/features/auth/auth_route/presentaion/page/auth_route_screen.dart';
+import 'package:resturant_project/features/auth/auth_route/page/auth_route_screen.dart';
 import 'package:resturant_project/features/auth/login/data/repository/forget_password_repo.dart';
 import 'package:resturant_project/features/auth/login/data/repository/otp_repo.dart';
 import 'package:resturant_project/features/auth/login/presentation/cubit/otp_cubit.dart';
@@ -59,8 +59,8 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: RouteName.restaurantPageScreen,
-        name: RouteName.restaurantPageScreen,
+        path: RouteName.restaurantScreen,
+        name: RouteName.restaurantScreen,
         builder: (context, state) {
           final restaurant = state.extra as RestaurantModel;
           return RestaurantPageScreen(restaurant: restaurant);
@@ -77,8 +77,8 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: RouteName.forgotPasswordPage,
-        name: RouteName.forgotPasswordPage,
+        path: RouteName.forgotPasswordScreen,
+        name: RouteName.forgotPasswordScreen,
         builder: (context, state) => BlocProvider(
           create: (context) => ForgotPasswordCubit(
             forgetRepo: ForgetPasswordRepo(api: DioConsumer(dio: Dio())),
@@ -87,8 +87,8 @@ class AppRouter {
         ),
       ),
       GoRoute(
-        path: RouteName.otpPage,
-        name: RouteName.otpPage,
+        path: RouteName.otpScreen,
+        name: RouteName.otpScreen,
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
 
@@ -102,16 +102,16 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: RouteName.resetPasswordPage,
-        name: RouteName.resetPasswordPage,
+        path: RouteName.resetPasswordScreen,
+        name: RouteName.resetPasswordScreen,
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
           return ResetPasswordScreen(resetToken: data['resetToken'] ?? '');
         },
       ),
       GoRoute(
-        path: RouteName.writeReviewPage,
-        name: RouteName.writeReviewPage,
+        path: RouteName.writeReviewScreen,
+        name: RouteName.writeReviewScreen,
 
         builder: (context, state) {
           final data = state.extra as Map<String, dynamic>;
@@ -135,13 +135,13 @@ class AppRouter {
         builder: (context, state) => SplashScreen(),
       ),
       GoRoute(
-        path: RouteName.editProfilePage,
-        name: RouteName.editProfilePage,
+        path: RouteName.editProfileScreen,
+        name: RouteName.editProfileScreen,
         builder: (context, state) => const EditProfileScreen(),
       ),
       GoRoute(
-        path: RouteName.settingsPage,
-        name: RouteName.settingsPage,
+        path: RouteName.settingsScreen,
+        name: RouteName.settingsScreen,
         builder: (context, state) => const SettingsScreen(),
       ),
     ],

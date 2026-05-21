@@ -8,7 +8,6 @@ class SettingsCubit extends Cubit<SettingsState> {
 
   SettingsCubit({required this.repo}) : super(SettingsInitial());
 
-  // ── Delete account ─────────────────────────────────────────────────────
   Future<void> deleteAccount() async {
     try {
       emit(DeleteAccountLoading());
@@ -16,9 +15,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       emit(DeleteAccountSuccess(message: message));
     } on ServerException catch (e) {
       emit(DeleteAccountError(error: e.errorModel.error));
-    } catch (e, stackTrace) {
-      print('❌ DeleteAccount error: $e');
-      print('❌ StackTrace: $stackTrace');
+    } catch (e) {
       emit(DeleteAccountError(error: 'Something went wrong'));
     }
   }

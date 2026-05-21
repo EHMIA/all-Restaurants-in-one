@@ -6,7 +6,8 @@ import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/custom_list_cards.dart';
-import 'package:resturant_project/features/favorite_screen/presentation/page/favorite_empty_screen.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/page/widgets/custom_favorite_header.dart';
+import 'package:resturant_project/features/favorite_screen/presentation/page/widgets/favorite_empty_screen.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_state.dart';
 
@@ -54,7 +55,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           }
 
           if (state is FavoriteError) {
-            return const FavoriteEmptyScreen(); //Center(child: Text("Error: ${state.message}"));
+            return const FavoriteEmptyScreen();
           }
 
           if (state is FavoriteSuccess) {
@@ -68,74 +69,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// Header
-                    Container(
-                      height: 128.h,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xffFAFAFA), Color(0xffFFFDE7)],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 24.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Favorites",
-                                  style: TextStyle(
-                                    fontFamily: "Poppins",
-                                    fontSize: 30.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Container(
-                                  height: 31.h,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                  ),
-                                  constraints: BoxConstraints(minWidth: 107.w),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50.r),
-                                    color: Color(
-                                      0xffE23744,
-                                    ).withValues(alpha: 0.1),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "${state.favorites.length} restaurants",
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontFamily: "Poppins",
-                                        color: AppColors.primaryColor,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            HeightSpace(height: 8),
-                            Text(
-                              "All the restaurants you loved and saved.",
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontFamily: "Poppins",
-                                color: Color(0xff475569),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    CustomFavoriteHeader(favoritesCount: state.favorites.length),
 
-                    /// Grid
                     Padding(
                       padding: EdgeInsets.all(8.sp),
                       child: GridView.builder(
@@ -151,7 +86,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         itemBuilder: (context, index) {
                           final item = state.favorites[index];
                           final restaurant = item
-                              .restaurant; // Access the nested restaurant object
+                              .restaurant;
 
                           return CustomListCards(
                             onFavoriteToggle: () {
@@ -159,7 +94,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             },
                             onTap: () {
                               GoRouter.of(context).pushNamed(
-                                RouteName.restaurantPageScreen,
+                                RouteName.restaurantScreen,
                                 extra: restaurant.toRestaurantModel(),
                               );
                             },
@@ -180,7 +115,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             );
           }
 
-          return const SizedBox(); // Fallback
+          return const SizedBox();
         },
       ),
     );

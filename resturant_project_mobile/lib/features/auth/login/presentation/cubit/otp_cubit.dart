@@ -18,6 +18,7 @@ class OtpCubit extends Cubit<OtpState> {
         OtpSuccess(message: response.message, resetToken: response.resetToken),
       );
     } on ServerException catch (e) {
+      print('ERROR=================$e');
       emit(OtpFailure(errorMessage: e.errorModel.error));
     }
   }

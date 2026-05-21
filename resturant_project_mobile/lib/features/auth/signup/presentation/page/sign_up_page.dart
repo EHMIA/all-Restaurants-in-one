@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/signup/presentation/page/widgets/custom_footer_signup.dart';
 import 'package:resturant_project/core/constants/constant_validate.dart';
-import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-
-import '../../../auth_route/presentaion/cubit/auth_route_cubit.dart';
+import '../../../auth_route/cubit/auth_route_cubit.dart';
 import '../cubit/signup_cubit.dart';
 import '../cubit/signup_state.dart';
+import 'widgets/custom_sign_up_text_field.dart';
+import 'widgets/custom_sign_up_button.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key, required this.onLoginClicked});
@@ -39,16 +38,36 @@ class _SignUpPageState extends State<SignUpPage> {
     super.dispose();
   }
 
+  void _handleSignUp(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      FocusScope.of(context).unfocus();
+      context.read<SignUpCubit>().signUp(
+        _emailController.text,
+        _fullNameController.text,
+        _passwordController.text,
+        _confirmPasswordController.text,
+        _phoneController.text,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SignUpCubit, SignUpState>(
       listener: (context, state) {
         if (state is SignUpFailure) {
-          CustomSnackBar.show(context, message: state.errorMessage, backgroundColor: AppColors.snackBarErrorColor);
+          CustomSnackBar.show(
+            context,
+            message: state.errorMessage,
+            backgroundColor: AppColors.snackBarErrorColor,
+          );
         }
         if (state is SignUpSuccess) {
-          CustomSnackBar.show(context, message: "Account Created Successfully", backgroundColor: AppColors.snackBarSuccessColor);
-
+          CustomSnackBar.show(
+            context,
+            message: "Account Created Successfully",
+            backgroundColor: AppColors.snackBarSuccessColor,
+          );
           context.read<AuthRouteCubit>().selectLoginTab();
         }
       },
@@ -59,224 +78,65 @@ class _SignUpPageState extends State<SignUpPage> {
           children: [
             const HeightSpace(height: 16),
 
-            /// Full Name
-            CustomTextField(
+            CustomSignUpTextField(
               controller: _fullNameController,
-              hintTextStyle: TextStyle(
-                fontSize: 16.sp,
-                color:  AppColors.textFormFieldColor,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins",
-              ),
-              textStyle: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormFieldColor,
-              ),
-              prefixIcon: Icon(
-                Icons.person_outline,
-                color: AppColors.textFormFieldColor,
-                size: 25.sp,
-                fontWeight: FontWeight.bold,
-              ),
-
-              fillColor: Color(0xffF8FAFC),
-              borderColor: AppColors.textFormFieldColor,
-              radius: 8,
-
               textFieldTitle: "Full Name",
               hintText: "Enter your full name",
-
+              prefixIcon: Icons.person_outline,
               keyBoardType: TextInputType.name,
             ),
-
             const HeightSpace(height: 16),
 
-            /// Email
-            CustomTextField(
+            CustomSignUpTextField(
               controller: _emailController,
-              validator: (value) =>
-                  ConstantValidate().validateEmail(value ?? ''),
-              hintTextStyle: TextStyle(
-                fontSize: 16.sp,
-                color:  AppColors.textFormFieldColor,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins",
-              ),
-              textStyle: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormFieldColor,
-              ),
-              prefixIcon: Icon(
-                Icons.email_outlined,
-                color: AppColors.textFormFieldColor,
-                size: 25.sp,
-                fontWeight: FontWeight.bold,
-              ),
-
-              fillColor: Color(0xffF8FAFC),
-              borderColor: AppColors.textFormFieldColor,
-              radius: 8,
-
               textFieldTitle: "Email",
               hintText: "Enter your email",
-
+              prefixIcon: Icons.email_outlined,
               keyBoardType: TextInputType.emailAddress,
+              validator: (value) =>
+                  ConstantValidate().validateEmail(value ?? ''),
             ),
-
             const HeightSpace(height: 16),
 
-            /// Phone
-            CustomTextField(
+            CustomSignUpTextField(
               controller: _phoneController,
-              hintTextStyle: TextStyle(
-                fontSize: 16.sp,
-                color:  AppColors.textFormFieldColor,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins",
-              ),
-              textStyle: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormFieldColor,
-              ),
-              prefixIcon: Icon(
-                Icons.phone_outlined,
-                color: AppColors.textFormFieldColor,
-                size: 25.sp,
-                fontWeight: FontWeight.bold,
-              ),
-
-              fillColor: Color(0xffF8FAFC),
-              borderColor: AppColors.textFormFieldColor,
-              radius: 8,
-
               textFieldTitle: "Phone",
               hintText: "Enter your phone number",
-
+              prefixIcon: Icons.phone_outlined,
               keyBoardType: TextInputType.phone,
             ),
-
             const HeightSpace(height: 16),
 
-            /// Password
-            CustomTextField(
+            CustomSignUpTextField(
               controller: _passwordController,
-              validator: (value) =>
-                  ConstantValidate().validatePassword(value ?? ''),
-              hintTextStyle: TextStyle(
-                fontSize: 16.sp,
-                color:  AppColors.textFormFieldColor,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins",
-              ),
-              textStyle: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormFieldColor,
-              ),
-              prefixIcon: Icon(
-                Icons.lock_outline,
-                color: AppColors.textFormFieldColor,
-                size: 25.sp,
-              ),
-
-              fillColor: Color(0xffF8FAFC),
-              borderColor: AppColors.textFormFieldColor,
-              radius: 8,
-
               textFieldTitle: "Password",
               hintText: "Enter your password",
-
+              prefixIcon: Icons.lock_outline,
               keyBoardType: TextInputType.visiblePassword,
               isPassword: true,
+              validator: (value) =>
+                  ConstantValidate().validatePassword(value ?? ''),
             ),
-
             const HeightSpace(height: 16),
 
-            /// Confirm Password
-            CustomTextField(
+            CustomSignUpTextField(
               controller: _confirmPasswordController,
+              textFieldTitle: "Confirm Password",
+              hintText: "Re-enter your password",
+              prefixIcon: Icons.lock_outline,
+              keyBoardType: TextInputType.visiblePassword,
+              isPassword: true,
               validator: (value) => value != _passwordController.text
                   ? 'Passwords do not match'
                   : null,
-              hintTextStyle: TextStyle(
-                fontSize: 16.sp,
-                color:  AppColors.textFormFieldColor,
-                fontWeight: FontWeight.w500,
-                fontFamily: "Poppins",
-              ),
-              textStyle: TextStyle(
-                fontSize: 16.sp,
-                fontFamily: "Poppins",
-                fontWeight: FontWeight.bold,
-                color: AppColors.textFormFieldColor,
-              ),
-              prefixIcon: Icon(
-                Icons.lock_outline,
-                color: AppColors.textFormFieldColor,
-                size: 25.sp,
-              ),
-
-              fillColor: Color(0xffF8FAFC),
-              borderColor: AppColors.textFormFieldColor,
-              radius: 8,
-
-              textFieldTitle: "Confirm Password",
-              hintText: "Re-enter your password",
-
-              keyBoardType: TextInputType.visiblePassword,
-              isPassword: true,
             ),
-            const HeightSpace(height: 16),
+            const HeightSpace(height: 36),
 
-            //const CustomTermsAndPrivacy(),
-            const HeightSpace(height: 20),
-
-            /// Create Account Button
             BlocBuilder<SignUpCubit, SignUpState>(
               builder: (context, state) {
-                return SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryColor,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    onPressed: state is SignUpLoading
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              FocusScope.of(context).unfocus();
-                              context.read<SignUpCubit>().signUp(
-                                _emailController.text,
-                                _fullNameController.text,
-                                _passwordController.text,
-                                _confirmPasswordController.text,
-                                _phoneController.text,
-                              );
-                            }
-                          },
-                    child: state is SignUpLoading
-                        ? const CircularProgressIndicator(color: AppColors.textWhiteColor)
-                        : Text(
-                            "Create Account",
-                            style: TextStyle(
-                              color: AppColors.textWhiteColor,
-                              fontSize: 18.sp,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                  ),
+                return CustomSignUpButton(
+                  isLoading: state is SignUpLoading,
+                  onPressed: () => _handleSignUp(context),
                 );
               },
             ),

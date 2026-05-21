@@ -19,7 +19,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
   String? networkProfilePic;
   bool notificationsEnabled = true;
 
-  // ── Called on screen init to pre-fill all fields from backend ──────────
   Future<void> loadUserData() async {
     try {
       emit(EditProfileLoading());
@@ -38,7 +37,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         ),
       );
     } on ServerException catch (_) {
-      // fallback: read from local storage if API fails
       final data = await StorageHelper.getUserData();
       emit(
         EditProfileLoaded(
@@ -61,7 +59,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  // ── Image pickers ──────────────────────────────────────────────────────
   Future<void> pickFromGallery() async {
     final XFile? picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -84,13 +81,11 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  // ── Toggle ─────────────────────────────────────────────────────────────
   void toggleNotifications(bool value) {
     notificationsEnabled = value;
     emit(NotificationsToggled(isEnabled: value));
   }
 
-  // ── Save changes to backend ────────────────────────────────────────────
   Future<void> saveChanges({
     required String fullname,
     required String email,
@@ -111,9 +106,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       emit(EditProfileSuccess(message: result.message));
     } on ServerException catch (e) {
       emit(EditProfileError(error: e.errorModel.error));
-    } catch (e, stackTrace) {
-      print('❌ SaveChanges error: $e');
-      print('❌ StackTrace: $stackTrace');
+    } catch (e) {
       emit(EditProfileError(error: 'Something went wrong'));
     }
   }
@@ -122,7 +115,6 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     emit(PasswordChangeInitiated());
   }
 
-  // ── Change password (from profile) ───────────────────────────────────────
   Future<void> updatePassword({
     required String currentPassword,
     required String newPassword,
@@ -143,30 +135,24 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       emit(ChangePasswordSuccess(message: message));
     } on ServerException catch (e) {
       emit(ChangePasswordError(error: e.errorModel.error));
-    } catch (e, stackTrace) {
-      print('❌ ChangePassword error: $e');
-      print('❌ StackTrace: $stackTrace');
+    } catch (e) {
       emit(ChangePasswordError(error: 'Something went wrong'));
     }
   }
 
-  // ── Delete profile picture ─────────────────────────────────────────────
   Future<void> deleteProfilePicture() async {
     try {
       emit(DeleteProfilePictureLoading());
       final userId = await StorageHelper.getUserId();
       final message = await repo.deleteProfilePicture(userId ?? '');
 
-      // Clear the local profile picture
       selectedImageFile = null;
       networkProfilePic = null;
 
       emit(DeleteProfilePictureSuccess(message: message));
     } on ServerException catch (e) {
       emit(DeleteProfilePictureError(error: e.errorModel.error));
-    } catch (e, stackTrace) {
-      print('❌ DeleteProfilePicture error: $e');
-      print('❌ StackTrace: $stackTrace');
+    } catch (e) {
       emit(DeleteProfilePictureError(error: 'Something went wrong'));
     }
   }

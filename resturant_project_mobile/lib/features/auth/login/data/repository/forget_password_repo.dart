@@ -9,7 +9,7 @@ class ForgetPasswordRepo {
 
   Future <ForgetPasswordModel> sendOtpByEmail(String email)async{
     final response =await api.post(EndPoints.forgetPassword,data: {
-      ApiKey.email:email
+      ApiKey.loginEmail:email
     });
     return ForgetPasswordModel.fromJson(response);
   }

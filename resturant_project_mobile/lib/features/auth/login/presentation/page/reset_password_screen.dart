@@ -1,21 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // 1. ضيف الـ import
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_password_requirements_reset_password.dart';
 import 'package:resturant_project/features/auth/login/data/repository/reset_password_repo.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-
 import '../cubit/reset_password_cubit.dart';
 import '../cubit/reset_password_state.dart';
+import 'widgets/custom_reset_password_header.dart';
+import 'widgets/custom_reset_password_button.dart';
+import 'widgets/custom_back_to_login_button.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({super.key, required this.resetToken});
@@ -34,11 +34,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) return 'Password cannot be empty';
     if (value.length < 8) return 'Must be at least 8 characters';
-    // if (!value.contains(RegExp(r'[A-Z]'))) {
-    //   return 'Must contain an uppercase letter';
-    // }
     if (!value.contains(RegExp(r'[0-9]'))) return 'Must contain a number';
     return null;
+  }
+
+  void _handlePasswordReset(BuildContext context) {
+    if (_formKey.currentState!.validate()) {
+      context.read<ResetPasswordCubit>().resetPassword(
+        newPassword: _newPasswordController.text,
+        confirmPassword: _confirmPasswordController.text,
+        token: widget.resetToken,
+      );
+    }
   }
 
   @override
@@ -104,51 +111,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const HeightSpace(height: 20),
-                          Center(
-                            child: Column(
-                              children: [
-                                Container(
-                                  width: 70.w,
-                                  height: 70.h,
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryColor,
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                  child: SvgPicture.asset(AppAssets.logo),
-                                ),
-                                const HeightSpace(height: 16),
-                                Text(
-                                  "Akiel",
-                                  style: TextStyle(
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                                const HeightSpace(height: 24),
-                                Text(
-                                  "Reset Password",
-                                  style: TextStyle(
-                                    fontSize: 28.sp,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                ),
-                                const HeightSpace(height: 16),
-                                Text(
-                                  "Create a strong new password for your account.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: AppColors.textGrayColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          const CustomResetPasswordHeader(),
+
                           const HeightSpace(height: 40),
 
-                          // New Password Field
                           CustomTextField(
                             controller: _newPasswordController,
                             validator: _validatePassword,
@@ -162,9 +128,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                             ),
                           ),
 
-                          CustomPasswordRequirementsResetPassword(),
+                          const CustomPasswordRequirementsResetPassword(),
 
-                          // Confirm Password Field
                           CustomTextField(
                             controller: _confirmPasswordController,
                             validator: (value) {
@@ -188,61 +153,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                           const HeightSpace(height: 32),
 
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: state is ResetPasswordLoading
-                                  ? null
-                                  : () {
-                                      if (_formKey.currentState!.validate()) {
-                                        context
-                                            .read<ResetPasswordCubit>()
-                                            .resetPassword(
-                                              newPassword:
-                                                  _newPasswordController.text,
-                                              confirmPassword:
-                                                  _confirmPasswordController
-                                                      .text,
-                                              token: widget.resetToken,
-                                            );
-                                      }
-                                    },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryColor,
-                                padding: EdgeInsets.symmetric(vertical: 16.h),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                              ),
-                              child: state is ResetPasswordLoading
-                                  ? const CircularProgressIndicator(
-                                      color: AppColors.textWhiteColor,
-                                    )
-                                  : Text(
-                                      "Reset Password",
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppColors.textWhiteColor,
-                                      ),
-                                    ),
-                            ),
+                          CustomResetPasswordButton(
+                            isLoading: state is ResetPasswordLoading,
+                            onPressed: () => _handlePasswordReset(context),
                           ),
+
                           const HeightSpace(height: 20),
-                          Center(
-                            child: GestureDetector(
-                              onTap: () =>
-                                  context.goNamed(RouteName.authRouteScreen),
-                              child: Text(
-                                "Back to Login",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
+
+                          CustomBackToLoginButton(
+                            onTap: () =>
+                                context.goNamed(RouteName.authRouteScreen),
                           ),
+
                           const HeightSpace(height: 24),
                         ],
                       ),

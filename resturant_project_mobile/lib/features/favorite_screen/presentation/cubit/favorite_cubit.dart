@@ -22,26 +22,7 @@ class FavoriteCubit extends Cubit<FavoriteState> {
       emit(FavoriteError(message: e.toString()));
     }
   }
-
-  // advanced remove
-  // Future<void> removeCardFromFav(String resId) async {
-  //   try {
-  //     final oldlist = List<Datum>.from(_allFavorites);
-
-  //     _allFavorites.removeWhere((e) => e.restaurant.id == resId);
-  //     emit(FavoriteSuccess(favorites: _allFavorites));
-
-  //     await repo.deleteResFromFavorites(resId);
-  //   } catch (e) {
-  //     // rollback
-  //     final oldlist = List<Datum>.from(_allFavorites);
-  //     _allFavorites = oldlist;
-  //     emit(FavoriteSuccess(favorites: _allFavorites));
-
-  //     emit(FavoriteError(message: e.toString()));
-  //   }
-  // }
-
+  
   Future<void> removeCardFromFav(String resId) async {
     try {
       await repo.deleteResFromFavorites(resId);

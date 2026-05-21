@@ -15,7 +15,7 @@ class ResetPasswordRepo {
     final response = await api.patch(
       EndPoints.resetPassword,
       data: {
-        ApiKey.password: newPassword,
+        ApiKey.loginPassword: newPassword,
         ApiKey.confirmPassword: confirmPassword,
       },
       headers: {

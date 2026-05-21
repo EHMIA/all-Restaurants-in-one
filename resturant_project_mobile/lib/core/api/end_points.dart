@@ -22,18 +22,29 @@ class EndPoints {
 }
 
 class ApiKey {
+
+  //! multi used keys
+  static const String message='message';
+
+  //! error key
   static const String errorMessage = "error";
-  //! auth keys
-  static const String email = "email";
-  static const String password = "password";
-  static const String fullname = "fullname";
+  //! login keys
+  static const String token='Token';
+  static const String loginMessage=message;
+  static const String loginUser='user';
+  static const String loginId='id';
+  static const String loginEmail = "email";
+  static const String loginPassword = "password";
+  static const String loginFullname = "fullname";
   static const String confirmPassword = "confirmPassword";
-  static const String phone = "phone";
+  static const String loginPhone = "phone";
+  static const String loginRole='role';
 
   //! forget password
-  static const String forgetMessage = 'message';
+  static const String forgetMessage = message;
   static const String otp = 'otp';
   static const String userId = 'userId';
+  static const String verificationToken='verificationToken';
 
   //! otp
   static const String otpMessage = 'message';

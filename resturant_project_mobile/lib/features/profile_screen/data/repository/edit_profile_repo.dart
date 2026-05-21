@@ -21,7 +21,6 @@ class EditProfileRepo {
     final userId = await StorageHelper.getUserId();
 
     if (imageFile != null) {
-      // بنبعتها Map عادية جداً لأن الـ API Consumer عندك بيحولها لـ FormData
       final Map<String, dynamic> imageData = {
         'image': await MultipartFile.fromFile(
           imageFile.path,
@@ -31,8 +30,8 @@ class EditProfileRepo {
 
       await api.patch(
         EndPoints.profileImage,
-        data: imageData, // ابعت الماب هنا
-        isFormData: true, // والـ Consumer هيحولها لـ FormData.fromMap(data)
+        data: imageData, 
+        isFormData: true,
       );
     }
 
@@ -72,7 +71,6 @@ class EditProfileRepo {
   Future<String> deleteProfilePicture(String userId) async {
     final response = await api.delete(EndPoints.deleteProfilePhoto(userId));
 
-    // Clear the profile picture from storage
     await StorageHelper.saveProfileImagePath('');
     await StorageHelper.saveUserData(
       name: '',

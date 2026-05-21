@@ -15,7 +15,7 @@ class CustomLoginForgetPassword extends StatelessWidget {
 
         GestureDetector(
           onTap: () {
-            GoRouter.of(context).pushNamed(RouteName.forgotPasswordPage);
+            GoRouter.of(context).pushNamed(RouteName.forgotPasswordScreen);
           },
 
           child: Text(

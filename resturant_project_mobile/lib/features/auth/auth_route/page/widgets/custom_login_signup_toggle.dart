@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-import '../../../../../../core/styles/app_colors.dart';
+import '../../../../../core/styles/app_colors.dart';
 import '../../cubit/auth_route_cubit.dart';
 import '../../cubit/auth_route_state.dart';
 
@@ -21,7 +21,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
           ),
           child: Row(
             children: [
-              /// Login
+              //login
               Expanded(
                 child: GestureDetector(
                   onTap: () => context.read<AuthRouteCubit>().selectLoginTab(),
@@ -51,8 +51,7 @@ class CustomLoginSignupToggle extends StatelessWidget {
               ),
 
               const WidthSpace(width: 4),
-
-              /// Sign Up
+              //sign up
               Expanded(
                 child: GestureDetector(
                   onTap: () => context.read<AuthRouteCubit>().selectSignUpTab(),

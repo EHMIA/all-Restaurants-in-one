@@ -4,13 +4,12 @@ class EditProfileInitial extends EditProfileState {}
 
 class EditProfileLoading extends EditProfileState {}
 
-// NEW: emitted after fetching user data from API to pre-fill fields
 class EditProfileLoaded extends EditProfileState {
   final String fullName;
   final String email;
   final String phone;
   final String address;
-  final String? profilePicUrl; // network URL from backend
+  final String? profilePicUrl;
 
   EditProfileLoaded({
     required this.fullName,

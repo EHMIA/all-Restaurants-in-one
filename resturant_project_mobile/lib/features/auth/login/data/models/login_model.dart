@@ -1,3 +1,5 @@
+import 'package:resturant_project/core/api/end_points.dart';
+
 class LoginModel {
   final String token;
   final String message;
@@ -7,9 +9,9 @@ class LoginModel {
 
   factory LoginModel.fromJson(Map<String, dynamic> json) {
     return LoginModel(
-      token: json['Token']??'',
-      message: json['message']??'',
-      user: User.fromJson(json['user']??{}),
+      token: json[ApiKey.token]??'',
+      message: json[ApiKey.loginMessage]??'',
+      user: User.fromJson(json[ApiKey.loginUser]??{}),
     );
   }
 }
@@ -24,10 +26,10 @@ class User {
   User({this.id, this.fullname, this.email, this.phone, this.role});
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    fullname = json['fullname'];
-    email = json['email'];
-    phone = json['phone'];
-    role = json['role'];
+    id = json[ApiKey.loginId];
+    fullname = json[ApiKey.loginFullname];
+    email = json[ApiKey.loginEmail];
+    phone = json[ApiKey.loginPhone];
+    role = json[ApiKey.loginRole];
   }
 }

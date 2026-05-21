@@ -116,7 +116,7 @@ class CustomResReviewsPage extends StatelessWidget {
                           onTap: () async {
                             // ✅ استنى الرجوع وبعدين عمل refresh
                             await GoRouter.of(context).pushNamed(
-                              RouteName.writeReviewPage,
+                              RouteName.writeReviewScreen,
                               extra: {
                                 "name": name,
                                 "id": id,

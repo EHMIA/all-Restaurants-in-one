@@ -11,8 +11,6 @@ class SettingsRepo {
     final userId = await StorageHelper.getUserId();
 
     final response = await api.delete(EndPoints.deleteAccount(userId ?? ''));
-
-    // Clear all user data from storage
     await StorageHelper.clearAll();
 
     return response['message'] ?? 'Account deleted successfully';

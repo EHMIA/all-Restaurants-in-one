@@ -57,7 +57,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   backgroundColor: AppColors.snackBarSuccessColor,
                 );
                 GoRouter.of(context).pushNamed(
-                  RouteName.otpPage,
+                  RouteName.otpScreen,
                   extra: {"email": _emailController.text,"verificationToken": state.verificationToken},
                 );
               } else if (state is ForgotPasswordFailure) {

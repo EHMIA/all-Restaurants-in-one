@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import '../../../../../../core/widgets/spacing_widgets.dart';
+import '../../../../../core/widgets/spacing_widgets.dart';
 
 class CutomLogoTitleSubtitle extends StatelessWidget {
   const CutomLogoTitleSubtitle({super.key});
@@ -10,7 +10,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        /// Logo
+        //logo
         const HeightSpace(height: 32),
         CircleAvatar(
           radius: 35.r,
@@ -24,7 +24,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
 
         const HeightSpace(height: 12),
 
-        /// Title
+        // title
         Text(
           "Akiel",
           style: TextStyle(
@@ -36,7 +36,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
 
         const HeightSpace(height: 4),
 
-        /// Subtitle
+        // subtitle
         Text(
           "Welcome! Login or Create an Account",
           textAlign: TextAlign.center,

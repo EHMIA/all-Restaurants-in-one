@@ -14,7 +14,7 @@ class LoginRepository {
   }) async {
     final response = await api.post(
       EndPoints.login,
-      data: {ApiKey.email: email, ApiKey.password: password},
+      data: {ApiKey.loginEmail: email, ApiKey.loginPassword: password},
     );
     final loginModel = LoginModel.fromJson(response);
 
