@@ -304,7 +304,10 @@ const deleteAccountController = asyncHandler(async (req, res) => {
             // await restaurantModel.deleteOne({ _id: restaurant._id });
         }
     }
-
+    const restaurant = await restaurantModel.findOne({ Owner: targetId });
+    if (restaurant) {
+        await restaurantModel.deleteOne({ _id: restaurant._id });
+    }
     await favResModel.deleteMany({ user: targetId });
     await Users.findByIdAndDelete(targetId);
 
