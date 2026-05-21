@@ -13,7 +13,7 @@ import 'package:resturant_project/features/auth/login/presentation/page/reset_pa
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
 import 'package:resturant_project/features/profile_screen/presentation/page/edit_profile_screen.dart';
-import 'package:resturant_project/features/review_page/data/repository/reviews_repo.dart';
+import 'package:resturant_project/features/profile_screen/presentation/page/settings_screen.dart';
 import 'package:resturant_project/features/review_page/presentation/cubit/reviews_cubit.dart';
 import 'package:resturant_project/features/review_page/presentation/page/review_page.dart';
 import 'package:resturant_project/features/splash_screen/splash_screen.dart';
@@ -22,6 +22,7 @@ import 'package:resturant_project/features/restaurant_page_screen/presentation/p
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/write_review_screen.dart';
 import '../../features/auth/login/presentation/cubit/forget_password_cubit.dart';
 import '../../features/home_screen/presentation/page/home_screen.dart';
+import '../../features/review_page/data/repository/reviews_repo.dart';
 
 class AppRouter {
   static GoRouter goRouter = GoRouter(
@@ -137,6 +138,11 @@ class AppRouter {
         path: RouteName.editProfilePage,
         name: RouteName.editProfilePage,
         builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: RouteName.settingsPage,
+        name: RouteName.settingsPage,
+        builder: (context, state) => const SettingsScreen(),
       ),
     ],
   );

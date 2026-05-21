@@ -18,16 +18,14 @@ class ConstantValidate {
     // if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
     //   return 'Password must contain at least one special character';
     // }
-    return null; // Valid
+    return null;
   }
-
 
    String? validateEmail(String email) {
     if (email.isEmpty) {
       return 'Email cannot be empty';
     }
 
-    // Regular expression for standard email format
     final emailRegex = RegExp(
       r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
     );
@@ -36,6 +34,6 @@ class ConstantValidate {
       return 'Please enter a valid email address (e.g., name@example.com)';
     }
 
-    return null; // Valid
+    return null;
   }
 }

@@ -91,6 +91,20 @@ class _ProfileView extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          Padding(
+            padding: EdgeInsets.only(right: 16.w),
+            child: GestureDetector(
+              onTap: () =>
+                  GoRouter.of(context).pushNamed(RouteName.settingsPage),
+              child: Icon(
+                Icons.settings_outlined,
+                color: AppColors.primaryColor,
+                size: 24.sp,
+              ),
+            ),
+          ),
+        ],
       ),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
@@ -149,7 +163,7 @@ class _ProfileView extends StatelessWidget {
 
                               width: double.infinity,
                               height: double.infinity,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
 
                               memCacheWidth: 600,
                               memCacheHeight: 400,

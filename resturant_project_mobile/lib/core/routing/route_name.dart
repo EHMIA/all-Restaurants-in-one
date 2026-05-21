@@ -15,4 +15,5 @@ class RouteName {
   static const resetPasswordPage = '/resetPasswordPage';
   static const splashScreen = '/splashScreen';
   static const editProfilePage = '/editProfilePage';
+  static const settingsPage = '/settingsPage';
 }

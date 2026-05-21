@@ -76,7 +76,7 @@ class Restaurant {
   final String name;
   final String description;
   final List<AddressModel> addresses;
-  final int rating;
+  final double rating;
   final bool delivery;
   final String priceRange;
   final List<OpeningHour> openingHours;

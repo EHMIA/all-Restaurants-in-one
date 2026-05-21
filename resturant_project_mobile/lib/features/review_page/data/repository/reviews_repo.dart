@@ -11,7 +11,8 @@ class ReviewRepo {
   Future<List<Review>> getUserReviews() async {
     final response = await api.get(EndPoints.getRreviews);
 
-    return (response as List).map((e) => Review.fromJson(e)).toList();
+    final List<dynamic> dataField = response['Data'] ?? [];
+    return dataField.map((e) => Review.fromJson(e)).toList();
   }
 
   //! ADD review (POST)

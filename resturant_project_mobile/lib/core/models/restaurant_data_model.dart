@@ -26,7 +26,7 @@ class RestaurantModel {
   final String name;
   final String? description;
   final CoverPhoto coverPhoto;
-  final int rating;
+  final double rating;
   final bool delivery;
   final String priceRange;
   final String? owner;
@@ -70,7 +70,7 @@ class RestaurantModel {
       name: json['name'] ?? '',
       description: json['description'],
       coverPhoto: CoverPhoto.fromJson(json['coverPhoto'] ?? {}),
-      rating: json['rating'] ?? 0,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       delivery: json['delivery'] ?? false,
       priceRange: json['priceRange'] ?? 'low',
       owner: json['Owner'],
@@ -94,7 +94,7 @@ class RestaurantModel {
           : [],
       status: json['status'] ?? '',
       reviewsCount: json['reviewsCount'] ?? 0,
-      isFavorite: json['userFavoriteData']?.isNotEmpty ?? false,
+      isFavorite: json['isFavorite'] ?? false,
       isOpen: json['isOpen'] ?? false,
       serverTime: json['serverTime'] ?? '',
     );

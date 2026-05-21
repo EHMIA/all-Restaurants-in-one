@@ -1,14 +1,5 @@
  import 'package:dio/dio.dart';
-
 import '../utils/storage_helper.dart';
-
-// class ApiInterceptors extends Interceptor {
-//   @override
-//   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-//     options.headers['token'];
-//     super.onRequest(options, handler);
-//   }
-// }
 
 class ApiInterceptors extends Interceptor {
   @override

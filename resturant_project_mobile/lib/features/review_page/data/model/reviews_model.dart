@@ -1,14 +1,14 @@
 
 class Review {
   final String id;
-  final Restaurant restaurant;
+  final Restaurant? restaurant;
   final String content;
   final DateTime createdAt;
   final double rating;
 
   Review({
     required this.id,
-    required this.restaurant,
+    this.restaurant,
     required this.content,
     required this.createdAt,
     required this.rating,
@@ -17,10 +17,12 @@ class Review {
   factory Review.fromJson(Map<String, dynamic> json) {
     return Review(
       id: json['_id'],
-      restaurant: Restaurant.fromJson(json['restaurant']),
-      content: json['Content'], 
+      restaurant: json['restaurant'] != null
+          ? Restaurant.fromJson(json['restaurant'])
+          : null,
+      content: json['Content'] ?? json['content'] ?? '',
       createdAt: DateTime.parse(json['createdAt']),
-      rating: json['rating'],
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 }

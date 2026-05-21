@@ -50,6 +50,8 @@ dependencies:
   image_picker: ^1.2.2
   intl: ^0.20.2
   timeago: ^3.7.1
+  ##firebase_core: ^4.9.0
+  ##firebase_messaging: ^16.2.2
   
 
 dev_dependencies:

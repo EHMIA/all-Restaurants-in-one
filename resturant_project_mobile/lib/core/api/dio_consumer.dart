@@ -4,21 +4,6 @@ import 'package:resturant_project/core/api/api_interceptors.dart';
 import 'package:resturant_project/core/api/end_points.dart';
 import 'package:resturant_project/core/errors/exceptions.dart';
 
-// class DioConsumer extends ApiConsumer {
-//   final Dio dio;
-//   DioConsumer({required this.dio}){
-
-//     dio.options.baseUrl=EndPoints.baseUrl;
-//     dio.interceptors.add(ApiInterceptors());
-//     dio.interceptors.add(LogInterceptor(
-//       request: true,
-//       requestHeader: true,
-//       requestBody: true,
-//       responseBody: true,
-//       responseHeader: true,
-//       error: true,
-//     ));
-//   }
 class DioConsumer extends ApiConsumer {
   final Dio dio;
 

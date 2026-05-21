@@ -115,12 +115,16 @@ class _ReviewPageState extends State<ReviewPage> {
                         final review = state.review[index];
 
                         return CustomReveiwCard(
-                          resName: review.restaurant.name,
+                          resName: review.restaurant?.name ?? 'Unknown Restaurant',
                           timeReview: review.createdAt.toString(),
                           starRating: review.rating,
                           content: review.content,
                           onTap: (){
-                            context.read<ReviewsCubit>().deleteReview(review.restaurant.id);
+                            if (review.restaurant != null) {
+                              context.read<ReviewsCubit>().deleteReview(
+                                review.restaurant!.id,
+                              );
+                            }
                           },
                         );
                       },

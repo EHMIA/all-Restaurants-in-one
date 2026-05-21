@@ -16,6 +16,7 @@ class EndPoints {
   static String userProfile(String userId) => 'user/getUserProfile/$userId';
   static String deleteProfilePhoto(String userId) =>
       'user/deleteProfilePhoto/$userId';
+  static String deleteAccount(String userId) => 'user/deleteAccount/$userId';
   static const String changePassword = 'user/changePassword';
   static const String profileImage = "user/uploadProfilePhoto";
 }
@@ -41,7 +42,4 @@ class ApiKey {
   //! reset password
   static const String newPassword = 'newPassword';
 
-  //==========================================
-  final String token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ZThkNjRlZGJjNjZjZGJkNTllMDAwYiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzc2ODgzNTUzLCJleHAiOjE3NzY4ODcxNTN9.e50dlp3TFSInNHn_SOiIJT0mOv4KXJnR3B2VJK0K9uI";
 }
