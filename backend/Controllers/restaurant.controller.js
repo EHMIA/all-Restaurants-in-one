@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler"
 import { restaurantModel } from "../Models/restaurant.model.js";
 import { CuisineTypes, DeliveryEnum, PriceRanges } from "../Utils/Constants.util.js";
 import {  createRestaurantValidation, editRestaurantMainDataValidation } from "../Validators/restaurant.validator.js";
-import { editRestaurantMainDataService, getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
+import { deleteRestaurantService, editRestaurantMainDataService, getAllRestaurantsService, getOneRestaurantService, updateRestaurantStatus } from "../Services/restaurant.service.js";
 import { getAllAdminService } from "../Services/user.service.js";
 import { notificationModel } from "../Models/notifications.model.js";
 import { uploadToCloudinary } from "../Utils/cloudinary.util.js";
@@ -213,7 +213,7 @@ const editRestaurantMainData = asyncHandler(async (req, res) => {
 
 //FOR OWNER
 const getMyRestaurantDashboard = asyncHandler(async (req, res) => {
-    const restaurant = await restaurantModel.findOne({ Owner: req.user.id });
+    const restaurant = await restaurantModel.findOne({ Owner: req.user.id  });
     if (!restaurant) {
         return res.status(404).json({ message: "You don't have a restaurant" });
     }
@@ -225,16 +225,14 @@ const getMyRestaurantDashboard = asyncHandler(async (req, res) => {
 });
 
 const deleteRestaurant = asyncHandler(async (req, res) => {
-    const restaurant = await restaurantModel.findOne({ Owner: req.user.id });
-    if (!restaurant) {
-        return res.status(404).json({ message: "You don't have a restaurant" });
-    }
-
-    const deletedRes = await deleteRestaurantService(restaurant._id,req.user.id);
+    const deletedRes = await deleteRestaurantService(req.params.restaurantId, req.user.id);
+    
     if (!deletedRes) {
-        return res.status(404).json({ message: "Restaurant not found" });
+        return res.status(404).json({ 
+            message: "Restaurant not found or you don't have permission to delete it" 
+        });
     }
-    res.status(200).json({ message: "Restaurant deleted successfully" });
+    res.status(200).json({ message: "Restaurant and all its related data deleted successfully" });
 });
 
 export {

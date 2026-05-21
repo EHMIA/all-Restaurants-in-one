@@ -74,7 +74,7 @@ const getOneRequest = asyncHandler(async (req, res) => {
     const restaurantId= req.params.restaurantId;
     const request = await restaurantModel.findById(restaurantId)
         .select("_id name coverPhoto rejectionCount status createdAt Owner email  phoneNumber whatsappNumber address openingHours cuisineType delivery ")
-        .populate("Owner", "_id fullname profile_pic"); 
+        .populate("Owner", "_id fullname profile_pic createdAt"); 
 
     if (!request) {
         return res.status(404).json({ message: "Request not found" });

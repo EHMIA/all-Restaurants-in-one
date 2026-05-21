@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Protect, restrictToAccountOwner } from "../Middlewares/auth.middleware.js";
+import { Protect, restrictToAccountOwner, restrictToRestaurantOwnerPublic } from "../Middlewares/auth.middleware.js";
 import { addRestaurantToFav, getMyFavRestaurants, removeRestaurantFromFav } from "../Controllers/favRestaurants.controller.js";
 const router=Router();
 

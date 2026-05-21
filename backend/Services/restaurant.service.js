@@ -266,24 +266,25 @@ const updateRestaurantStatus = async (id, status, AdminId, reason = null) => {
     return Restaurant;
 };
 
-const deleteRestaurantService = async(restaurantId, ownerId)=>{
+const deleteRestaurantService = async (restaurantId, ownerId) => {
+    const deletedRestaurant = await restaurantModel.findByIdAndDelete(restaurantId);
+    
+    if (!deletedRestaurant) 
+        return null;
+
     await reviewModel.deleteMany({ restaurant: restaurantId });
     await favResModel.deleteMany({ restaurant: restaurantId });
-    const user= await Users.findByIdAndUpdate(ownerId,{
-        role:"user"
-    });
-    const deletedRestaurant =await restaurantModel.findByIdAndDelete(restaurantId);
-    if(!deletedRestaurant)
-        return null;
+    
+    await Users.findByIdAndUpdate(ownerId, { role: "user" });
     return deletedRestaurant;
-}
-
+};
 
 
 export {
     getAllRestaurantsService,
     getOneRestaurantService,
     updateRestaurantStatus,
-    editRestaurantMainDataService
+    editRestaurantMainDataService,
+    deleteRestaurantService
 };
 
