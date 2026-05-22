@@ -34,6 +34,7 @@
 
 import asyncHandler from "express-async-handler";
 import nodemailer from "nodemailer"; 
+import { contactUsSchema } from "../Validators/contact_us_validation.js";
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -52,7 +53,12 @@ const contactUs = asyncHandler(async (req, res) => {
     if (!name || !email || !message) {
         return res.status(400).json({ message: 'All fields are required' });
     }
-    
+
+    const { massage } = contactUsSchema.validate({ name, email, message });
+    if (massage) {
+        return res.status(400).json({ message: massage.details[0].message });
+    }
+
     const mailOptions = {
         from: `${name} <${process.env.EMAIL}>`, 
         replyTo: email,
