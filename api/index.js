@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import { ConnectDB } from "../backend/Config/Connectdb.js";
 import authRoutes from "../backend/Routes/auth.route.js";
 import refreshRoutes from "../backend/Routes/refresh.route.js";
+import contactUsRoutes from "../backend/Routes/contactUs.route.js";
 import userRoutes from "../backend/Routes/user.route.js";
 import RestaurantsRoutes from "../backend/Routes/restaurant.route.js";
 import { errorHandler, notFoundHandler } from "../backend/Middlewares/notFoundErrorHandler.middleware.js";
@@ -33,6 +34,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/auth", authRoutes);
+app.use("/contact", contactUsRoutes);
 app.use("/refresh", refreshRoutes);
 app.use("/user", userRoutes);
 app.use("/restaurants", RestaurantsRoutes);
