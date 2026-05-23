@@ -49,7 +49,7 @@ const updateSysSettings = asyncHandler(async (req, res) => {
 
 const getRestaurantRequests = asyncHandler(async (req, res) => {
     const requests = await restaurantModel.find({ 
-        status: { $in: ["pending", "rejected"] } 
+        status: { $in: ["pending"] } 
     })
     .select("_id name coverPhoto rejectionCount  createdAt")
     .populate("Owner", " fullname") 
@@ -124,16 +124,16 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
         if (!reason || !reason.trim()) {
             return res.status(400).json({ message: "Please provide a reason for rejection" });
         }
+        
+        const updatedRestaurant = await updateRestaurantStatus(restaurant._id, "rejected", AdminId, reason);
 
         const settings = await getSettingsService();
         const maxRejectionLimit = settings.maxRejectionLimit;
-        
-        const currentRejectionCount = (restaurant.rejectionCount || 0) + 1;
+        const currentRejectionCount = updatedRestaurant.rejectionCount || 0;
 
         if (currentRejectionCount >= maxRejectionLimit) {
             await reviewModel.deleteMany({ restaurant: restaurantId });
             await favResModel.deleteMany({ restaurant: restaurantId });
-            
             await restaurantModel.findByIdAndDelete(restaurantId);
 
             await notificationModel.create({
@@ -148,8 +148,7 @@ const acceptRejectRequest = asyncHandler(async (req, res) => {
             });
         }
 
-        const updatedRestaurant = await updateRestaurantStatus(restaurant._id, "rejected", AdminId, reason);
-        const remainCounts = maxRejectionLimit - updatedRestaurant.rejectionCount;
+        const remainCounts = maxRejectionLimit - currentRejectionCount;
 
         await notificationModel.create({
             sender: AdminId,
@@ -175,3 +174,4 @@ export {
     getOneRequest,
     acceptRejectRequest
 }; 
+
