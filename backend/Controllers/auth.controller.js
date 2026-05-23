@@ -93,7 +93,10 @@ const login = async (req, res) => {
         const userWithoutPassword = {
             id: user._id,
             fullname: user.fullname,
-            picture: user.profile_pic.url,
+                profile_pic: {
+                    url: user.profile_pic.url,
+                    publicId: user.profile_pic.publicId
+                },
             email: user.email,
             phone: user.phone
         };
