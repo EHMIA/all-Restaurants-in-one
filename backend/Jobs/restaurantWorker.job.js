@@ -4,16 +4,16 @@ import { handleRestaurantPriceRange } from "../Utils/handleRestaurantData.util.j
 import redisOptions from "../Config/redis.config.js";
 
 
-export const worker= new Worker("restaurantQueue",async(job)=>{
-    if(job.name==="recalculate-prices"){
-        const {lowMax,mediumMax}=job.data;
-        const restaurants=await restaurantModel.find({});
-        for(const restaurant of restaurants){
+export const worker = new Worker("restaurantQueue", async (job) => {
+    if (job.name === "recalculate-prices") {
+        const { lowMax, mediumMax } = job.data;
+        const restaurants = await restaurantModel.find({});
+        for (const restaurant of restaurants) {
             await handleRestaurantPriceRange(restaurant);
             await restaurant.save();
         }
     }
-},{
-    connection:redisOptions,
+}, {
+    connection: redisOptions,
 });
 
