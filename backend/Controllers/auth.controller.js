@@ -9,8 +9,6 @@ import { createTransport } from 'nodemailer';
 import jwt from 'jsonwebtoken';
 import { configDotenv } from "dotenv";
 configDotenv();
-// import { config } from 'dotenv'; 
-// config();
 
 
 const register = asyncHandler(async (req, res) => {
@@ -38,10 +36,9 @@ const register = asyncHandler(async (req, res) => {
     const token = newUser.generateToken();
     const refreshToken = newUser.generateRefreshToken();
 
-    // إرسال الـ Refresh Token كـ Cookie آمنة
     res.cookie('jwt', refreshToken, {
-        httpOnly: true, // بيمنع الـ XSS attacks
-        secure: process.env.NODE_ENV === 'production', // بيشتغل على https بس لو في البرودكشن
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production', 
         sameSite: 'None',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 أيام
     });
@@ -85,19 +82,18 @@ const login = async (req, res) => {
         const token = user.generateToken();
         const refreshToken = user.generateRefreshToken();
 
-        // إرسال الـ Refresh Token كـ Cookie آمنة
         res.cookie('jwt', refreshToken, {
-            httpOnly: true, // بيمنع الـ XSS attacks
-            secure: process.env.NODE_ENV === 'production', // بيشتغل على https بس لو في البرودكشن
+            httpOnly: true, 
+            secure: process.env.NODE_ENV === 'production', 
             sameSite: 'None',
-            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 أيام
+            maxAge: 7 * 24 * 60 * 60 * 1000 
         });
 
 
         const userWithoutPassword = {
             id: user._id,
             fullname: user.fullname,
-            picture: user.profile_pic,
+            picture: user.profile_pic.url,
             email: user.email,
             phone: user.phone
         };
@@ -134,39 +130,6 @@ const transporter = createTransport({
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
 }
-
-// const forgotPassword = async (req, res) => {
-//     try {
-//         const { email } = req.body;
-
-//         if (!email) {
-//             return res.status(400).json({ message: 'Email is required' });
-//         }
-
-//         const user = await Users.findOne({ email });
-//         if (!user) {
-//             return res.status(400).json({ message: 'User not found' });
-//         }
-
-//         const otp = generateOTP();
-
-//         user.otp = otp;
-//         user.otpExpire = Date.now() + 10 * 60 * 1000; 
-//         await user.save();
-
-//         await transporter.sendMail({
-//             from: process.env.EMAIL,
-//             to: email,
-//             subject: 'Reset Password OTP',
-//             text: `Your OTP code is ${otp}`,
-//         });
-
-//         res.status(200).json({ message: 'OTP sent to email', otp , email , userId: user._id});
-
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error server sending OTP', error });
-//     }
-// };
 
 
 const forgotPassword = asyncHandler (async (req, res) => {
@@ -277,47 +240,6 @@ const verifyOTP = asyncHandler(async (req, res) => {
 
 
 
-// const resetPassword = async (req, res) => {
-//         try {
-//             const { email, otp, password, confirmPassword } = req.body;
-
-//             if (!email || !otp || !password || !confirmPassword) {
-//                 return res.status(400).json({ message: 'All fields are required' });
-//             }
-
-//             const user = await Users.findOne({ email });
-//             if (!user) {
-//                 return res.status(400).json({ message: 'User not found' });
-//             }
-
-//             if (password !== confirmPassword) {
-//                 return res.status(400).json({ message: 'Passwords do not match' });
-//             }
-
-//             if (user.otp !== otp) {
-//                 return res.status(400).json({ message: 'Invalid OTP' });
-//             }
-
-
-//             if (user.otpExpire < Date.now()) {
-//                 return res.status(400).json({ message: 'OTP expired' });
-//             }
-
-
-//             const hashedPassword = await hash(password, 10);
-
-//             user.password = hashedPassword;
-//             user.otp = null;
-//             user.otpExpire = null;
-
-//             await user.save();
-
-//             res.status(200).json({ message: 'Password reset successful' });
-
-//         } catch (error) {
-//             res.status(500).json({ message: 'Error resetting password', error });
-//         }
-//     };
 const resetPassword = asyncHandler(async (req, res) => {
 
     const { password, confirmPassword } = req.body;
