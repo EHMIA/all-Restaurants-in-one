@@ -16,7 +16,7 @@ const getMyFavRestaurantsService= async(userID)=>{
             favObj.restaurant.isOpen = CalculateOpenNow(favObj.restaurant);
             favObj.restaurant.serverTime = new Date().toISOString();
         }
-        
+
         return favObj;
     });
 
