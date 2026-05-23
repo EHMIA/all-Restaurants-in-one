@@ -94,8 +94,8 @@ const login = async (req, res) => {
             id: user._id,
             fullname: user.fullname,
                 profile_pic: {
-                    url: user.profile_pic.url,
-                    publicId: user.profile_pic.publicId
+                    url: user.profile_pic?.url || null, 
+                    publicId: user.profile_pic?.publicId || null
                 },
             email: user.email,
             phone: user.phone
