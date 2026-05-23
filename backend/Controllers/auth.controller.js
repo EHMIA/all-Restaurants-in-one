@@ -16,7 +16,7 @@ const register = asyncHandler(async (req, res) => {
 
     if (error) return res.status(400).json({ error: error.details[0].message });
 
-        const { fullname, email, phone, password } = req.body;
+    const { fullname, email, phone, password } = req.body;
 
 
     const existingUser = await Users.findOne({ email });
@@ -37,23 +37,23 @@ const register = asyncHandler(async (req, res) => {
     const refreshToken = newUser.generateRefreshToken();
 
     res.cookie('jwt', refreshToken, {
-        httpOnly: true, 
-        secure: process.env.NODE_ENV === 'production', 
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'None',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 أيام
     });
 
-    
+
     const { password: _password, ...userWithoutPassword } = newUser.toObject();
 
     res.status(201).json({
         Token: token,
-        user: {...userWithoutPassword, role: newUser.role },
+        user: { ...userWithoutPassword, role: newUser.role },
     });
 });
 
 
-                  //======================================================//
+//======================================================//
 
 
 const login = async (req, res) => {
@@ -83,17 +83,20 @@ const login = async (req, res) => {
         const refreshToken = user.generateRefreshToken();
 
         res.cookie('jwt', refreshToken, {
-            httpOnly: true, 
-            secure: process.env.NODE_ENV === 'production', 
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
             sameSite: 'None',
-            maxAge: 7 * 24 * 60 * 60 * 1000 
+            maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
 
         const userWithoutPassword = {
             id: user._id,
             fullname: user.fullname,
-                profile_pic: null,
+            profile_pic: user.profile_pic?.url ? {
+                public_id: user.profile_pic.public_id,
+                url: user.profile_pic.url
+            } : null,
             email: user.email,
             phone: user.phone
         };
@@ -101,7 +104,7 @@ const login = async (req, res) => {
         res.status(200).json({
             message: 'Login successfully',
             Token: token,
-            user:{...userWithoutPassword, role: user.role },
+            user: { ...userWithoutPassword, role: user.role },
         });
 
     } catch (err) {
@@ -112,13 +115,13 @@ const login = async (req, res) => {
 
 
 
-                  //======================================================//
+//======================================================//
 
 
 
 const transporter = createTransport({
     service: 'Gmail',
-    auth: { 
+    auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD
     },
@@ -132,50 +135,50 @@ function generateOTP() {
 }
 
 
-const forgotPassword = asyncHandler (async (req, res) => {
-    
-        const { email } = req.body;
-        
-        if (!email) {
-            return res.status(400).json({ message: 'Email is required' });
-        }
+const forgotPassword = asyncHandler(async (req, res) => {
 
-        const user = await Users.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'User not found' });
-        }
+    const { email } = req.body;
 
-        const otp = generateOTP();
-        
-        user.otp = otp;
-        user.otpExpire = Date.now() + 10 * 60 * 1000; // صالح لمدة 10 دقائق
-        await user.save();
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
+    }
 
-        await transporter.sendMail({
-            from: process.env.EMAIL,
-            to: email,
-            subject: 'Reset Password OTP',
-            text: `Your OTP code is ${otp}`,
-        });
+    const user = await Users.findOne({ email });
+    if (!user) {
+        return res.status(400).json({ message: 'User not found' });
+    }
 
-        const verificationToken = jwt.sign(
-            { 
-                id: user._id,
-                purpose: 'OTP_VERIFICATION' 
-            }, 
-            process.env.JWT_SECRET, 
-            { expiresIn: '10m' }
-        );
+    const otp = generateOTP();
 
-        res.status(200).json({ 
-            message: 'OTP sent to email successfully',
-            otp : otp,
-            verificationToken : verificationToken
-        });
+    user.otp = otp;
+    user.otpExpire = Date.now() + 10 * 60 * 1000; // صالح لمدة 10 دقائق
+    await user.save();
+
+    await transporter.sendMail({
+        from: process.env.EMAIL,
+        to: email,
+        subject: 'Reset Password OTP',
+        text: `Your OTP code is ${otp}`,
+    });
+
+    const verificationToken = jwt.sign(
+        {
+            id: user._id,
+            purpose: 'OTP_VERIFICATION'
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '10m' }
+    );
+
+    res.status(200).json({
+        message: 'OTP sent to email successfully',
+        otp: otp,
+        verificationToken: verificationToken
+    });
 });
 
 
-                  //======================================================//
+//======================================================//
 
 
 const verifyOTP = asyncHandler(async (req, res) => {
@@ -235,7 +238,7 @@ const verifyOTP = asyncHandler(async (req, res) => {
 });
 
 
-                  //======================================================//
+//======================================================//
 
 
 
@@ -289,4 +292,4 @@ const resetPassword = asyncHandler(async (req, res) => {
 });
 
 
-export { login, register, forgotPassword, resetPassword , verifyOTP };
+export { login, register, forgotPassword, resetPassword, verifyOTP };
