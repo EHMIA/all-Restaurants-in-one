@@ -39,7 +39,9 @@ class CustomResTabBarPage extends StatelessWidget {
         color: Colors.white,
         width: double.infinity,
         child: ContainedTabBarView(
+          
           tabBarProperties: TabBarProperties(
+            
             indicatorWeight: 4,
             indicatorSize: TabBarIndicatorSize.label,
             labelColor: AppColors.primaryColor,

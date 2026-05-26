@@ -14,7 +14,6 @@ import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_otp_verify_button.dart';
 import 'widgets/custom_otp_header.dart';
 import 'widgets/custom_otp_pin_input.dart';
-import 'widgets/custom_otp_resend_section.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key, required this.verificationToken});
@@ -52,66 +51,75 @@ class _OtpScreenState extends State<OtpScreen> {
       create: (context) => OtpCubit(
         otpRepo: OtpRepo(api: DioConsumer(dio: Dio())),
       ),
-      child: Scaffold(
-        backgroundColor: AppColors.backgoroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: AppColors.textBlackColor,
-              size: 28.sp,
+      child: Builder(
+        builder: (innerContext) {
+          return Scaffold(
+            backgroundColor: AppColors.backgoroundColor,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: AppColors.textBlackColor,
+                  size: 28.sp,
+                ),
+                onPressed: () => GoRouter.of(context).pop(),
+              ),
             ),
-            onPressed: () => GoRouter.of(context).pop(),
-          ),
-        ),
-        body: BlocListener<OtpCubit, OtpState>(
-          listener: (context, state) {
-            if (state is OtpFailure) {
-              CustomSnackBar.show(
-                context,
-                message: state.errorMessage,
-                backgroundColor: AppColors.snackBarErrorColor,
-              );
-            }
-            if (state is OtpSuccess) {
-              CustomSnackBar.show(
-                context,
-                message: state.message,
-                backgroundColor: AppColors.snackBarSuccessColor,
-              );
-              GoRouter.of(context).pushNamed(
-                RouteName.resetPasswordScreen,
-                extra: {"resetToken": state.resetToken},
-              );
-            }
-          },
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-              child: Container(
-                padding: EdgeInsets.all(24.sp),
-                decoration: _buildBoxDecoration(),
-                child: Column(
-                  children: [
-                    const CustomOtpHeader(),
-                    const HeightSpace(height: 48),
-                     CustomOtpPinInput(controller: _pinController),
-                    const HeightSpace(height: 40),
-                    CustomOtpVerifyButton(onTap: () => _handleVerifyOtp(context)),
-                    const HeightSpace(height: 20),
-                    CustomOtpResendSection(
-                      onResendTap: () {
-                        //code here
-                      },
+            body: BlocListener<OtpCubit, OtpState>(
+              listener: (context, state) {
+                if (state is OtpFailure) {
+                  CustomSnackBar.show(
+                    context,
+                    message: state.errorMessage,
+                    backgroundColor: AppColors.snackBarErrorColor,
+                  );
+                }
+                if (state is OtpSuccess) {
+                  CustomSnackBar.show(
+                    context,
+                    message: state.message,
+                    backgroundColor: AppColors.snackBarSuccessColor,
+                  );
+                  GoRouter.of(context).pushNamed(
+                    RouteName.resetPasswordScreen,
+                    extra: {"resetToken": state.resetToken},
+                  );
+                }
+              },
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 24.w,
+                    vertical: 16.h,
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(24.sp),
+                    decoration: _buildBoxDecoration(),
+                    child: Column(
+                      children: [
+                        const CustomOtpHeader(),
+                        const HeightSpace(height: 48),
+                        CustomOtpPinInput(controller: _pinController),
+                        const HeightSpace(height: 40),
+                        CustomOtpVerifyButton(
+                          onTap: () => _handleVerifyOtp(innerContext),
+                        ),
+                        const HeightSpace(height: 20),
+                        // CustomOtpResendSection(
+                        //   onResendTap: () {
+                        //     //code here
+                        //   },
+                        // ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

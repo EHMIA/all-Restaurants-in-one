@@ -1,17 +1,15 @@
-import 'package:dio/dio.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/core/api/dio_consumer.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:resturant_project/core/widgets/custom_text_bottom.dart';
+import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
-import 'package:resturant_project/features/review_page/data/model/reviews_model.dart';
-import 'package:resturant_project/features/review_page/data/repository/reviews_repo.dart';
 import 'package:resturant_project/features/review_page/presentation/cubit/reviews_cubit.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../../../profile_screen/presentation/cubit/profile_cubit.dart';
 import '../../../review_page/presentation/cubit/reviews_state.dart';
 
 class WriteReviewScreen extends StatefulWidget {
@@ -67,16 +65,14 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       body: BlocListener<ReviewsCubit, ReviewsState>(
         listener: (context, state) {
           if (state is ReviewSuccess) {
-            // إظهار رسالة نجاح عند اكتمال الإضافة
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("تم إضافة تقييمك بنجاح!")),
-            );
-            Navigator.pop(context); // العودة للخلف بعد النجاح
-          } else if (state is ReviewError) {
-            // إظهار الخطأ إن وجد
-            ScaffoldMessenger.of(
+            CustomSnackBar.show(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.message)));
+              message: "Review added successfuly",
+              backgroundColor: AppColors.snackBarSuccessColor,
+            );
+            Navigator.pop(context);
+          } else if (state is ReviewError) {
+            CustomSnackBar.show(context, message: "${state.message}");
           }
         },
         child: SingleChildScrollView(
@@ -95,9 +91,29 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(24.r),
-                        child: Image.network(
-                          widget.restaurantImage,
+                        child: CachedNetworkImage(
+                          imageUrl: widget.restaurantImage,
+
+                          width: double.infinity,
+                          height: double.infinity,
                           fit: BoxFit.cover,
+
+                          memCacheWidth: 600,
+                          memCacheHeight: 400,
+
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            child: Container(color: Colors.white),
+                          ),
+
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey.shade200,
+                            child: Icon(
+                              Icons.broken_image_rounded,
+                              size: 40.sp,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -259,6 +275,8 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                                       restaurantId: widget.restuarantId,
                                       content: reviewController.text,
                                       rating: selectedRating,
+                                      profileCubit: context
+                                          .read<ProfileCubit>(),
                                     );
                                   }
                                 },

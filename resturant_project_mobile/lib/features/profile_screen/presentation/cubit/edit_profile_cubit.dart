@@ -6,6 +6,7 @@ import 'package:resturant_project/core/utils/storage_helper.dart';
 import 'package:resturant_project/features/profile_screen/data/repository/edit_profile_repo.dart';
 import '../../data/repository/profile_repo.dart';
 import 'edit_profile_state.dart';
+import 'profile_cubit.dart';
 
 class EditProfileCubit extends Cubit<EditProfileState> {
   final EditProfileRepo repo;
@@ -91,6 +92,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     required String email,
     required String phone,
     required String address,
+    required ProfileCubit profileCubit,
   }) async {
     try {
       emit(EditProfileLoading());
@@ -102,7 +104,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         addressDetails: address,
         imageFile: selectedImageFile,
       );
-
+      await profileCubit.getProfile();
       emit(EditProfileSuccess(message: result.message));
     } on ServerException catch (e) {
       emit(EditProfileError(error: e.errorModel.error));
@@ -111,36 +113,11 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     }
   }
 
-  Future<void> changePassword() async {
-    emit(PasswordChangeInitiated());
+  Future<void> deleteProfilePicture(
+    {
+    required ProfileCubit profileCubit,
   }
-
-  Future<void> updatePassword({
-    required String currentPassword,
-    required String newPassword,
-    required String confirmPassword,
-  }) async {
-    if (newPassword != confirmPassword) {
-      emit(ChangePasswordError(error: 'Passwords do not match'));
-      return;
-    }
-
-    try {
-      emit(ChangePasswordLoading());
-      final message = await repo.changePassword(
-        currentPassword: currentPassword,
-        newPassword: newPassword,
-        confirmPassword: confirmPassword,
-      );
-      emit(ChangePasswordSuccess(message: message));
-    } on ServerException catch (e) {
-      emit(ChangePasswordError(error: e.errorModel.error));
-    } catch (e) {
-      emit(ChangePasswordError(error: 'Something went wrong'));
-    }
-  }
-
-  Future<void> deleteProfilePicture() async {
+  ) async {
     try {
       emit(DeleteProfilePictureLoading());
       final userId = await StorageHelper.getUserId();
@@ -149,6 +126,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
       selectedImageFile = null;
       networkProfilePic = null;
 
+       await profileCubit.getProfile();
       emit(DeleteProfilePictureSuccess(message: message));
     } on ServerException catch (e) {
       emit(DeleteProfilePictureError(error: e.errorModel.error));

@@ -11,9 +11,11 @@ import 'package:resturant_project/features/auth/login/presentation/page/forgot_p
 import 'package:resturant_project/features/auth/login/presentation/page/otp_screen.dart';
 import 'package:resturant_project/features/auth/login/presentation/page/reset_password_screen.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
+import 'package:resturant_project/features/contact_us_screen/presentation/page/contact_us_screen.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/explore_screen.dart';
 import 'package:resturant_project/features/profile_screen/presentation/page/edit_profile_screen.dart';
 import 'package:resturant_project/features/profile_screen/presentation/page/settings_screen.dart';
+import 'package:resturant_project/features/profile_screen/presentation/page/change_password_screen.dart';
 import 'package:resturant_project/features/review_page/presentation/cubit/reviews_cubit.dart';
 import 'package:resturant_project/features/review_page/presentation/page/review_page.dart';
 import 'package:resturant_project/features/splash_screen/splash_screen.dart';
@@ -143,6 +145,16 @@ class AppRouter {
         path: RouteName.settingsScreen,
         name: RouteName.settingsScreen,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: RouteName.changePasswordScreen,
+        name: RouteName.changePasswordScreen,
+        builder: (context, state) => const ChangePasswordScreen(resetToken: ''),
+      ),
+      GoRoute(
+        path: RouteName.contactUsScreen,
+        name: RouteName.contactUsScreen,
+        builder: (context, state) => ContactUsScreen(),
       ),
     ],
   );

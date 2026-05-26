@@ -175,37 +175,37 @@ class ProfileHeader extends StatelessWidget {
                 ],
               ),
             ),
-            HeightSpace(height: 24),
+            //HeightSpace(height: 24),
 
             // Edit Profile button
-            GestureDetector(
-              onTap: () async {
-                final result = await GoRouter.of(
-                  context,
-                ).pushNamed(RouteName.editProfileScreen);
-                if (result == true && context.mounted) {
-                  context.read<ProfileCubit>().getProfile();
-                }
-              },
-              child: Container(
-                width: 342.w,
-                height: 56.h,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
-                child: Text(
-                  'Edit Profile',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+            // GestureDetector(
+            //   onTap: () async {
+            //     final result = await GoRouter.of(
+            //       context,
+            //     ).pushNamed(RouteName.editProfileScreen);
+            //     if (result == true && context.mounted) {
+            //       context.read<ProfileCubit>().getProfile();
+            //     }
+            //   },
+            //   child: Container(
+            //     width: 342.w,
+            //     height: 56.h,
+            //     alignment: Alignment.center,
+            //     decoration: BoxDecoration(
+            //       color: AppColors.primaryColor,
+            //       borderRadius: BorderRadius.circular(16.r),
+            //     ),
+            //     child: Text(
+            //       'Edit Profile',
+            //       style: TextStyle(
+            //         fontSize: 16.sp,
+            //         fontFamily: 'Poppins',
+            //         fontWeight: FontWeight.bold,
+            //         color: Colors.white,
+            //       ),
+            //     ),
+            //   ),
+            // ),
             HeightSpace(height: 40),
           ],
         ),

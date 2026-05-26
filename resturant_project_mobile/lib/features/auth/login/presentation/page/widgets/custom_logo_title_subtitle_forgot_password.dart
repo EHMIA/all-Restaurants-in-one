@@ -17,13 +17,9 @@ class CustomLogoTitleSubtitleForgotPassword extends StatelessWidget {
         Center(
           child: Column(
             children: [
-              Container(
-                width: 70.w,
-                height: 70.h,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryColor,
-                  borderRadius: BorderRadius.circular(16.r),
-                ),
+              CircleAvatar(
+                radius: 35.r,
+                backgroundColor: AppColors.primaryColor.withValues(alpha: 0.1),
                 child: SvgPicture.asset(AppAssets.logo),
               ),
               const HeightSpace(height: 16),

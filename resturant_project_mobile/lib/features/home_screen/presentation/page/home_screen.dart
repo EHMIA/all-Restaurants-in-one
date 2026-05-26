@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/features/expolore_screen/presentation/cubit/explore_cubit.dart';
 import 'package:resturant_project/features/bottom_navigation_bar/cubit/layout_cubit.dart';
 import 'package:resturant_project/features/home_screen/presentation/cubit/home_state.dart';
 import 'package:resturant_project/features/home_screen/presentation/page/widgets/custom_home_hero_section.dart';
@@ -14,13 +12,10 @@ import '../../../../core/app_assets/app_assets.dart';
 import '../../../../core/models/restaurant_data_model.dart';
 import '../../../../core/routing/route_name.dart';
 import '../../../../core/styles/app_colors.dart';
-import '../../../../core/widgets/custom_text_bottom.dart';
 import '../../../../core/widgets/spacing_widgets.dart';
 import '../cubit/home_cubit.dart';
 import 'widgets/custom_featured_restaurants_card.dart';
-import 'widgets/custom_headline_text.dart';
 import 'widgets/custom_restaurant_card_with_error.dart';
-import 'widgets/search_text_field_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     //StorageHelper.removeToken();
     return Scaffold(
+      backgroundColor: AppColors.backgroundWhiteColor,
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Row(

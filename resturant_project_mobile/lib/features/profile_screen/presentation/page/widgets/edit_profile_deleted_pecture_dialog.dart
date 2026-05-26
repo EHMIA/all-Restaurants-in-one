@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/styles/app_colors.dart';
 import '../../cubit/edit_profile_cubit.dart';
+import '../../cubit/profile_cubit.dart';
 
 class EditProfileDeletePictureDialog extends StatelessWidget {
   const EditProfileDeletePictureDialog({super.key});
@@ -60,7 +61,9 @@ class _EditProfileDeletePictureDialogImpl
         ),
         TextButton(
           onPressed: () {
-            cubit.deleteProfilePicture();
+            cubit.deleteProfilePicture(
+              profileCubit: context.read<ProfileCubit>(),
+            );
             Navigator.pop(context);
           },
           child: Text(

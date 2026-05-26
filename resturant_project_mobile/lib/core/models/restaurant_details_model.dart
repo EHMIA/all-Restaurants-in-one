@@ -17,7 +17,7 @@ class RestaurantData {
   final String? name;
   final String? description;
   final CoverPhotoModel? coverPhoto;
-  final int rating;
+  final  double rating;
   final bool delivery;
   final String priceRange;
   final String? owner;
@@ -67,7 +67,7 @@ class RestaurantData {
       coverPhoto: json['coverPhoto'] != null
           ? CoverPhotoModel.fromJson(json['coverPhoto'])
           : null,
-      rating: json['rating'] ?? 0,
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       delivery: json['delivery'] ?? false,
       priceRange: json['priceRange'] ?? 'low',
       owner: json['Owner'],
@@ -209,14 +209,14 @@ class OpeningHoursItemModel {
 
 class MenuItemModel {
   final String dishName;
-  final int price;
+  final double price;
   final String description;
   final String category;
   final String imageUrl;
 
   MenuItemModel.fromJson(Map<String, dynamic> json)
     : dishName = json['dishName'] ?? '',
-      price = json['price'] ?? 0,
+      price = (json['price'] ?? 0).toDouble(),
       description = json['description'] ?? '',
       category = json['category'] ?? '',
       imageUrl = (json['image'] is Map && json['image']['url'] != null)

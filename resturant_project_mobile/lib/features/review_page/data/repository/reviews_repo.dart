@@ -32,7 +32,7 @@ class ReviewRepo {
     return Review.fromJson(response['data']);
   }
 
-  Future<void> deleteReview(String reviewId) async {
+  Future<void> deleteReview(String reviewId,) async {
     await api.delete('${EndPoints.deleteRreviews}/$reviewId');
   }
 }

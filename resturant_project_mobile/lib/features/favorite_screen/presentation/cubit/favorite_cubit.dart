@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_project/features/favorite_screen/data/model/favorite_model.dart';
 import 'package:resturant_project/features/favorite_screen/data/repository/favorite_repo.dart';
+import '../../../profile_screen/presentation/cubit/profile_cubit.dart';
 import 'favorite_state.dart';
 
 class FavoriteCubit extends Cubit<FavoriteState> {
@@ -23,29 +24,73 @@ class FavoriteCubit extends Cubit<FavoriteState> {
     }
   }
   
-  Future<void> removeCardFromFav(String resId) async {
+   Future<void> removeCardFromFav(
+    String resId,
+    ProfileCubit profileCubit,
+  ) async {
+    _allFavorites.removeWhere((e) => e.restaurant.id == resId);
+    emit(FavoriteSuccess(favorites: List.from(_allFavorites)));
+
     try {
       await repo.deleteResFromFavorites(resId);
-
-      _allFavorites.removeWhere((e) => e.restaurant.id == resId);
-
-      emit(FavoriteSuccess(favorites: _allFavorites));
+      await profileCubit.getProfile();
     } catch (e) {
-      emit(FavoriteError(message: e.toString()));
+      await getAllFavoriteRestaurant();
     }
   }
 
-  Future<void> addResToFavorites(String resId) async {
+  Future<void> addResToFavorites(
+    String resId,
+    ProfileCubit profileCubit,
+  ) async {
+    // Optimistic update: mark as favorite immediately so the heart fills at once.
+    // We add a lightweight placeholder so isFavorite() returns true right away.
+    final alreadyTracked = _allFavorites.any((e) => e.restaurant.id == resId);
+    if (!alreadyTracked) {
+      _allFavorites.add(_placeholderDatum(resId));
+      emit(FavoriteSuccess(favorites: List.from(_allFavorites)));
+    }
+
     try {
       await repo.addResToFavorites(resId);
-
       await getAllFavoriteRestaurant();
+      await profileCubit.getProfile();
     } catch (e) {
+      emit(FavoriteSuccess(favorites: List.from(_allFavorites)));
       emit(FavoriteError(message: e.toString()));
     }
   }
 
   bool isFavorite(String resId) {
     return _allFavorites.any((e) => e.restaurant.id == resId);
+  }
+
+  Datum _placeholderDatum(String resId) {
+    return Datum(
+      id: 'temp_$resId',
+      restaurant: Restaurant(
+        id: resId,
+        name: '',
+        description: '',
+        coverPhoto: CoverPhoto(url: '', publicId: ''),
+        addresses: [],
+        rating: 0,
+        delivery: false,
+        priceRange: '',
+        openingHours: [],
+        isOpen: false,
+        serverTime: '',
+        cuisineType: [],
+        reviewsCount: 0,
+        status: '',
+        phoneNumber: '',
+        whatsappNumber: '',
+        isFavorite: true,
+      ),
+      user: '',
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      v: 0,
+    );
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../../core/styles/app_colors.dart';
 import '../../../../../core/widgets/spacing_widgets.dart';
-import 'Edit_profile_change_password_row .dart';
 import 'edit_profile_notification_toggel.dart';
 import 'edit_profile_text_field.dart';
 
@@ -87,8 +86,6 @@ class EditProfileFieldsCard extends StatelessWidget {
                   size: 25.sp,
                 ),
               ),
-              HeightSpace(height: 15),
-              EditProfileChangePasswordRow(),
               HeightSpace(height: 15),
               EditProfileNotificationsToggle(),
               HeightSpace(height: 15),

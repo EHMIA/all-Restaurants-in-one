@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../core/styles/app_colors.dart';
 import '../../cubit/edit_profile_cubit.dart';
 import '../../cubit/edit_profile_state.dart';
+import '../../cubit/profile_cubit.dart';
 
 class EditProfileSaveButton extends StatelessWidget {
   const EditProfileSaveButton({
@@ -33,6 +34,7 @@ class EditProfileSaveButton extends StatelessWidget {
                 ? null
                 : () {
                     context.read<EditProfileCubit>().saveChanges(
+                      profileCubit: context.read<ProfileCubit>(),
                       fullname: fullNameController.text.trim(),
                       email: emailController.text.trim(),
                       phone: phoneController.text.trim(),

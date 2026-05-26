@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
+import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/profile_screen/data/repository/edit_profile_repo.dart';
 import 'package:resturant_project/features/profile_screen/presentation/cubit/edit_profile_cubit.dart';
@@ -63,12 +64,10 @@ class _EditProfileViewState extends State<_EditProfileView> {
         }
 
         if (state is EditProfileSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.snackBarSuccessColor,
-              duration: const Duration(seconds: 2),
-            ),
+          CustomSnackBar.show(
+            context,
+            message: "${state.message}",
+            backgroundColor: AppColors.snackBarSuccessColor,
           );
           Future.delayed(const Duration(seconds: 1), () {
             context.pop(true);
@@ -105,29 +104,11 @@ class _EditProfileViewState extends State<_EditProfileView> {
           );
         }
 
-        if (state is ChangePasswordSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.snackBarSuccessColor,
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
-
-        if (state is ChangePasswordError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.error),
-              backgroundColor: AppColors.snackBarErrorColor,
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
+        
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar:  AppBar(
+        appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           leading: GestureDetector(

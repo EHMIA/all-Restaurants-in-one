@@ -13,7 +13,14 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LoginLoading());
 
       final loginModel = await loginRepo.login(email: email, password: password);
-
+      if (loginModel.user.role != 'user') {
+        emit(
+          LoginFailure(
+            errorMessage: 'Access denied. This app is for customers only.',
+          ),
+        );
+        return;
+      }
       emit(LoginSuccess(message:loginModel.message));
     } on ServerException catch (e) {
       emit(LoginFailure(errorMessage: e.errorModel.error));

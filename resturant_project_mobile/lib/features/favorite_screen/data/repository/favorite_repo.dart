@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:resturant_project/core/api/api_consumer.dart';
 import 'package:resturant_project/core/api/end_points.dart';
 import 'package:resturant_project/features/favorite_screen/data/model/favorite_model.dart';
@@ -17,6 +18,16 @@ class FavoriteRepo {
   }
 
   Future<void> addResToFavorites(String resId) async {
-    await api.post('${EndPoints.favorites}/$resId');
+    try {
+      await api.post('${EndPoints.favorites}/$resId');
+    } on DioException catch (e) {
+      final body = e.response?.data;
+      final msg = (body is Map ? body['message'] : null) ?? '';
+      if (e.response?.statusCode == 400 &&
+          msg.toString().toLowerCase().contains('already')) {
+        return;
+      }
+      rethrow;
+    }
   }
 }

@@ -20,6 +20,7 @@ class CustomCategoryItemWidget extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: 16.w),
       child: InkWell(
+        borderRadius: BorderRadius.circular(56.r),
         radius: 56.r,
         onTap: onTap,
         child: Container(

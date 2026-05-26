@@ -14,7 +14,7 @@ class CustomErrorExploreScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final cubit = context.read<ExploreCubit>();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundWhiteColor,
       appBar: _buildAppBar(),
       body: Center(
         child: Column(
@@ -51,7 +51,7 @@ class CustomErrorExploreScreen extends StatelessWidget {
 
 AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundWhiteColor,
       title: Text(
         "Restaurants",
         style: TextStyle(

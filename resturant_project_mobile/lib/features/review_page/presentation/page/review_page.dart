@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:resturant_project/features/restaurant_page_screen/presentation/page/write_review_screen.dart';
 import 'package:resturant_project/features/review_page/presentation/cubit/reviews_cubit.dart';
 import 'package:resturant_project/features/review_page/presentation/page/empty_review_screen.dart';
 import 'package:resturant_project/features/review_page/presentation/page/widgets/custom_reveiw_card.dart';
-
 import '../../../../core/widgets/spacing_widgets.dart';
+import '../../../profile_screen/presentation/cubit/profile_cubit.dart';
 import '../cubit/reviews_state.dart';
 
 class ReviewPage extends StatefulWidget {
@@ -28,9 +26,9 @@ class _ReviewPageState extends State<ReviewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backgroundWhiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.backgroundWhiteColor,
         title: Text(
           "My Reviews",
           style: TextStyle(
@@ -39,24 +37,18 @@ class _ReviewPageState extends State<ReviewPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              //print('clicked');
-            },
-            icon: Icon(Icons.filter_list, color: AppColors.primaryColor),
-          ),
-          WidthSpace(width: 16),
-        ],
       ),
       body: BlocBuilder<ReviewsCubit, ReviewsState>(
         builder: (context, state) {
           if (state is ReviewLoading) {
-            return Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
+            return Scaffold(
+              backgroundColor: AppColors.backgroundWhiteColor,
+              body: Center(
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
+              ),
             );
           }
-          
+
           if (state is ReviewError) {
             return const EmptyReviewScreen();
           }
@@ -115,14 +107,17 @@ class _ReviewPageState extends State<ReviewPage> {
                         final review = state.review[index];
 
                         return CustomReveiwCard(
-                          resName: review.restaurant?.name ?? 'Unknown Restaurant',
-                          timeReview: review.createdAt.toString(),
+                          resName:
+                              review.restaurant?.name ?? 'Unknown Restaurant',
+                          createdAt: review.createdAt,
                           starRating: review.rating,
                           content: review.content,
-                          onTap: (){
+                          onDeleteTap: () {
                             if (review.restaurant != null) {
                               context.read<ReviewsCubit>().deleteReview(
-                                review.restaurant!.id,
+                                restaurantId: review.restaurant!.id,
+                                reviewId: review.id,
+                                profileCubit: context.read<ProfileCubit>(),
                               );
                             }
                           },

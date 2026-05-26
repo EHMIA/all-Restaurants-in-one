@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:resturant_project/core/errors/exceptions.dart';
 import 'package:resturant_project/features/review_page/data/repository/reviews_repo.dart';
 
+import '../../../profile_screen/presentation/cubit/profile_cubit.dart';
 import 'reviews_state.dart';
 
 class ReviewsCubit extends Cubit<ReviewsState> {
@@ -23,6 +24,7 @@ class ReviewsCubit extends Cubit<ReviewsState> {
     required String restaurantId,
     required String content,
     required double rating,
+    required ProfileCubit profileCubit,
   }) async {
     final previousState = state;
 
@@ -37,18 +39,26 @@ class ReviewsCubit extends Cubit<ReviewsState> {
 
       if (previousState is ReviewSuccess) {
         final updatedReviews = [review, ...previousState.review];
+
         emit(ReviewSuccess(review: updatedReviews));
       } else {
         emit(ReviewSuccess(review: [review]));
       }
+
+      await profileCubit.getProfile();
     } on ServerException catch (e) {
       emit(ReviewError(message: e.errorModel.error));
     }
   }
 
 
-Future<void> deleteReview(String reviewId) async {
-    try {      if (state is ReviewSuccess) {
+Future<void> deleteReview({
+    required String restaurantId,
+    required String reviewId,
+    required ProfileCubit profileCubit,
+  }) async {
+    try {
+      if (state is ReviewSuccess) {
         final currentReviews = (state as ReviewSuccess).review;
 
         final updatedReviews = currentReviews
@@ -57,11 +67,9 @@ Future<void> deleteReview(String reviewId) async {
 
         emit(ReviewSuccess(review: updatedReviews));
 
-        await repo.deleteReview(reviewId);
-      } else {
-        emit(ReviewLoading());
-        await repo.deleteReview(reviewId);
-        await getUserReviews();
+        await repo.deleteReview(restaurantId);
+
+        await profileCubit.getProfile();
       }
     } on ServerException catch (e) {
       emit(ReviewError(message: e.errorModel.error));

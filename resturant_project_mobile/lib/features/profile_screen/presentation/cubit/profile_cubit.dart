@@ -9,13 +9,16 @@ class ProfileCubit extends Cubit<ProfileState> {
   ProfileCubit({required this.repo}) : super(ProfileInitial());
 
   Future<void> getProfile() async {
-    emit(ProfileLoading());
+    if (state is! ProfileSuccess) {
+      emit(ProfileLoading());
+    }
     try {
       final userModel = await repo.getUserProfile();
       emit(ProfileSuccess(userModel: userModel));
     } catch (e) {
-      print("Profile Error: $e");
-      emit(ProfileFailure(message: e.toString()));
+     if (state is! ProfileSuccess) {
+        emit(ProfileFailure(message: e.toString()));
+      }
     }
   }
 }

@@ -127,7 +127,7 @@ class Restaurant {
             )
           : [],
 
-      rating: json["rating"] ?? 0,
+      rating: (json["rating"] ?? 0).toDouble(),
 
       delivery: json["delivery"] ?? false,
 

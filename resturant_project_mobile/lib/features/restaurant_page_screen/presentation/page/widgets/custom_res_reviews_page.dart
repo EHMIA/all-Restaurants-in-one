@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:resturant_project/core/app_assets/app_assets.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
@@ -114,7 +113,6 @@ class CustomResReviewsPage extends StatelessWidget {
                         HeightSpace(height: 24),
                         GestureDetector(
                           onTap: () async {
-                            // ✅ استنى الرجوع وبعدين عمل refresh
                             await GoRouter.of(context).pushNamed(
                               RouteName.writeReviewScreen,
                               extra: {
@@ -126,7 +124,6 @@ class CustomResReviewsPage extends StatelessWidget {
                               },
                             );
 
-                            // ✅ بعد ما اليوزر يرجع، حدّث البيانات
                             if (context.mounted) {
                               context
                                   .read<RestaurantPageCubit>()

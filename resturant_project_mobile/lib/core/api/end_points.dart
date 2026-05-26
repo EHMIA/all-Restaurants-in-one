@@ -2,6 +2,7 @@ class EndPoints {
   //!endPoints
   static const String baseUrl = "https://all-restaurants-in-one.vercel.app/";
   static const String login = "auth/login";
+  static const String contact = "contact";
   static const String signUp = "auth/register";
   static const String forgetPassword = "auth/forgot-password";
   static const String otpCode = "auth/verify-otp";

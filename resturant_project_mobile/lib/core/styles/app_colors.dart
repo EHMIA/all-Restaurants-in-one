@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class AppColors {
   //background color
   static const backgoroundColor = Color(0xffFFF8F0);
+  static const backgroundWhiteColor=Colors.white;
 
   // container auth color
   static const containerWhiteColor = Colors.white;

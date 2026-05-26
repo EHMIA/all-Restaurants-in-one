@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
+import '../../../../../core/app_assets/app_assets.dart';
 import '../../../../../core/widgets/spacing_widgets.dart';
 
 class CutomLogoTitleSubtitle extends StatelessWidget {
@@ -15,11 +17,7 @@ class CutomLogoTitleSubtitle extends StatelessWidget {
         CircleAvatar(
           radius: 35.r,
           backgroundColor: AppColors.primaryColor.withValues(alpha: 0.1),
-          child: Icon(
-            Icons.restaurant,
-            color: AppColors.primaryColor,
-            size: 35.sp,
-          ),
+          child: SvgPicture.asset(AppAssets.logo),
         ),
 
         const HeightSpace(height: 12),

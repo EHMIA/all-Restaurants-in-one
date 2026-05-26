@@ -174,11 +174,7 @@ class _SettingsView extends StatelessWidget {
           elevation: 0,
           leading: GestureDetector(
             onTap: () => context.pop(),
-            child: Icon(
-              Icons.arrow_back,
-              color: AppColors.primaryColor,
-              size: 24.sp,
-            ),
+            child: Icon(Icons.arrow_back, size: 24.sp),
           ),
           title: Text(
             'Settings',
@@ -192,121 +188,95 @@ class _SettingsView extends StatelessWidget {
         ),
         body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               HeightSpace(height: 24),
 
-              // Account Settings Section
               SettingsAccountSection(
                 onEditProfile: () {
-                  context.goNamed(RouteName.editProfileScreen);
+                  GoRouter.of(context).pushNamed(RouteName.editProfileScreen);
                 },
                 onChangePassword: () {
-                  context.goNamed(RouteName.editProfileScreen);
+                  GoRouter.of(
+                    context,
+                  ).pushNamed(RouteName.changePasswordScreen);
                 },
                 onDeleteAccount: () {
                   _showDeleteAccountDialog(context);
                 },
               ),
 
-              HeightSpace(height: 20),
-
               // Notifications Section
-              SettingsNotificationsSection(
-                pushEnabled: pushNotificationsEnabled,
-                emailEnabled: emailNotificationsEnabled,
-                promoEnabled: promotionsEnabled,
-                onPushChanged: onPushNotificationsChanged,
-                onEmailChanged: onEmailNotificationsChanged,
-                onPromoChanged: onPromotionsChanged,
-              ),
-
+              // SettingsNotificationsSection(
+              //   pushEnabled: pushNotificationsEnabled,
+              //   emailEnabled: emailNotificationsEnabled,
+              //   promoEnabled: promotionsEnabled,
+              //   onPushChanged: onPushNotificationsChanged,
+              //   onEmailChanged: onEmailNotificationsChanged,
+              //   onPromoChanged: onPromotionsChanged,
+              // ),
               HeightSpace(height: 20),
 
               // Appearance Section
-              SettingsAppearanceSection(
-                darkModeEnabled: darkModeEnabled,
-                onDarkModeChanged: onDarkModeChanged,
-                currentLanguage: currentLanguage,
-                onLanguageTap: onLanguageTap,
-              ),
-
-              HeightSpace(height: 20),
+              // SettingsAppearanceSection(
+              //   darkModeEnabled: darkModeEnabled,
+              //   onDarkModeChanged: onDarkModeChanged,
+              //   currentLanguage: currentLanguage,
+              //   onLanguageTap: onLanguageTap,
+              // ),
 
               // Privacy & Security Section
-              SettingsPrivacySection(
-                locationEnabled: locationEnabled,
-                onLocationChanged: onLocationChanged,
-                onPrivacyPolicy: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening Privacy Policy...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                onTermsOfService: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening Terms of Service...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
-
+              // SettingsPrivacySection(
+              //   locationEnabled: locationEnabled,
+              //   onLocationChanged: onLocationChanged,
+              //   onPrivacyPolicy: () {
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       const SnackBar(
+              //         content: Text('Opening Privacy Policy...'),
+              //         duration: Duration(seconds: 2),
+              //       ),
+              //     );
+              //   },
+              //   onTermsOfService: () {
+              //     ScaffoldMessenger.of(context).showSnackBar(
+              //       const SnackBar(
+              //         content: Text('Opening Terms of Service...'),
+              //         duration: Duration(seconds: 2),
+              //       ),
+              //     );
+              //   },
+              // ),
               HeightSpace(height: 20),
 
               // Support Section
               SettingsSupportSection(
-                onHelpCenter: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening Help Center...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
                 onContactUs: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening Contact Us...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-                onRateApp: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Opening App Store...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  GoRouter.of(context).pushNamed(RouteName.contactUsScreen);
                 },
               ),
-
-              HeightSpace(height: 20),
-
+              HeightSpace(height: 200),
               // Logout Button
-              SettingsLogoutButton(
-                onTap: () {
-                  SettingsLogoutDialog.show(
-                    context,
-                    onConfirm: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Logged out successfully'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                      Future.delayed(const Duration(seconds: 1), () {
-                        context.goNamed(RouteName.authRouteScreen);
-                      });
-                    },
-                  );
-                },
-              ),
+              // SettingsLogoutButton(
+              //   onTap: () {
+              //     SettingsLogoutDialog.show(
+              //       context,
+              //       onConfirm: () {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(
+              //             content: Text('Logged out successfully'),
+              //             duration: Duration(seconds: 2),
+              //           ),
+              //         );
+              //         Future.delayed(const Duration(seconds: 1), () {
+              //           context.goNamed(RouteName.authRouteScreen);
+              //         });
+              //       },
+              //     );
+              //   },
+              // ),
 
-              HeightSpace(height: 40),
+              //HeightSpace(height: 40),
             ],
           ),
         ),

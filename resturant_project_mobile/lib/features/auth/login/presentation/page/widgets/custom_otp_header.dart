@@ -13,7 +13,11 @@ class CustomOtpHeader extends StatelessWidget {
     return Column(
       children: [
         const HeightSpace(height: 40),
-        SvgPicture.asset(AppAssets.logo, width: 70.w, height: 70.h),
+        CircleAvatar(
+          radius: 35.r,
+          backgroundColor: AppColors.primaryColor.withValues(alpha: 0.1),
+          child: SvgPicture.asset(AppAssets.logo),
+        ),
         const HeightSpace(height: 16),
         Text(
           "Akiel",

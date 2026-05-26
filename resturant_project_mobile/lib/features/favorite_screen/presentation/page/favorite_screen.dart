@@ -4,12 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
-import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/expolore_screen/presentation/page/widgets/custom_list_cards.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/widgets/custom_favorite_header.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/page/widgets/favorite_empty_screen.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_cubit.dart';
 import 'package:resturant_project/features/favorite_screen/presentation/cubit/favorite_state.dart';
+
+import '../../../profile_screen/presentation/cubit/profile_cubit.dart';
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({super.key});
@@ -38,19 +39,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.filter_list, color: AppColors.primaryColor),
-          ),
-          WidthSpace(width: 16),
-        ],
       ),
       body: BlocBuilder<FavoriteCubit, FavoriteState>(
         builder: (context, state) {
           if (state is FavoriteLoading || state is FavoriteInitial) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.primaryColor),
+            return Scaffold(
+              backgroundColor: AppColors.backgroundWhiteColor,
+              body: const Center(
+                child: CircularProgressIndicator(color: AppColors.primaryColor),
+              ),
             );
           }
 
@@ -69,7 +66,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomFavoriteHeader(favoritesCount: state.favorites.length),
+                    CustomFavoriteHeader(
+                      favoritesCount: state.favorites.length,
+                    ),
 
                     Padding(
                       padding: EdgeInsets.all(8.sp),
@@ -85,12 +84,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         ),
                         itemBuilder: (context, index) {
                           final item = state.favorites[index];
-                          final restaurant = item
-                              .restaurant;
+                          final restaurant = item.restaurant;
 
                           return CustomListCards(
+                            haveReview: false,
                             onFavoriteToggle: () {
-                              context.read<FavoriteCubit>().removeCardFromFav(restaurant.id);
+                              context.read<FavoriteCubit>().removeCardFromFav(
+                                restaurant.id,
+                                context.read<ProfileCubit>(),
+                              );
                             },
                             onTap: () {
                               GoRouter.of(context).pushNamed(

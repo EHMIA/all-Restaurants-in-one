@@ -54,7 +54,9 @@ class QuickLinksSection extends StatelessWidget {
               bgColor: const Color(0xFFFFF4E5),
             ),
             ProfileCard(
-              onTap: () {},
+              onTap: () {
+                GoRouter.of(context).pushNamed(RouteName.settingsScreen);
+              },
               title: "Settings",
               subtitle: "Security, privacy",
               icon: Icons.settings,

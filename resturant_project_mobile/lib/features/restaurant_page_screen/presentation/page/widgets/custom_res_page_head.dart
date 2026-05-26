@@ -17,6 +17,8 @@ import 'package:resturant_project/features/restaurant_page_screen/presentation/p
 import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/restaurant_head_shimmer_loading.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../../profile_screen/presentation/cubit/profile_cubit.dart';
+
 class CustomResPageHead extends StatelessWidget {
   const CustomResPageHead({super.key, required this.restaurant});
 
@@ -30,26 +32,41 @@ class CustomResPageHead extends StatelessWidget {
       )..getRestaurantsMainData(restaurant.id),
       child: BlocBuilder<RestaurantMainDataCubit, RestaurantMainDataState>(
         builder: (context, state) {
-          // Show shimmer loading
+          Widget currentWidget;
+
           if (state is RestaurantMainDataLoading) {
-            return const RestaurantHeadShimmerLoading();
-          }
-
-          // Show error - still display basic restaurant info
-          if (state is RestaurantMainDataError) {
-            return _buildHeadContent(context, restaurant);
-          }
-
-          // Show loaded data with full details
-          if (state is RestaurantMainDataSuccess) {
+            currentWidget = const RestaurantHeadShimmerLoading(
+              key: ValueKey('loading_head'),
+            );
+          } else if (state is RestaurantMainDataError) {
+            currentWidget = _buildHeadContent(
+              context, 
+              restaurant, 
+              key: const ValueKey('error_head'),
+            );
+          } else if (state is RestaurantMainDataSuccess) {
             final loadedRestaurant = state.restaurant.data.isNotEmpty
                 ? state.restaurant.data.first
                 : restaurant;
-            return _buildHeadContent(context, loadedRestaurant);
+            currentWidget = _buildHeadContent(
+              context, 
+              loadedRestaurant, 
+              key: const ValueKey('success_head'),
+            );
+          } else {
+            currentWidget = _buildHeadContent(
+              context, 
+              restaurant, 
+              key: const ValueKey('default_head'),
+            );
           }
 
-          // Default: show basic restaurant info
-          return _buildHeadContent(context, restaurant);
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 600), 
+            switchInCurve: Curves.easeIn,                
+            switchOutCurve: Curves.easeOut,              
+            child: currentWidget,
+          );
         },
       ),
     );
@@ -57,8 +74,9 @@ class CustomResPageHead extends StatelessWidget {
 
   Widget _buildHeadContent(
     BuildContext context,
-    RestaurantModel restaurantData,
-  ) {
+    RestaurantModel restaurantData, {
+    Key? key,
+  }) {
     String getPriceSymbol(String priceRange) {
       switch (priceRange.toLowerCase()) {
         case 'low':
@@ -73,12 +91,12 @@ class CustomResPageHead extends StatelessWidget {
     }
 
     return SizedBox(
+      key: key, 
       height: 380.h,
       width: double.infinity,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          /// Image with Shimmer Placeholder
           CachedNetworkImage(
             imageUrl: restaurantData.coverPhoto.url,
             fit: BoxFit.cover,
@@ -93,8 +111,6 @@ class CustomResPageHead extends StatelessWidget {
               return Image.asset(AppAssets.image, fit: BoxFit.cover);
             },
           ),
-
-          /// Gradient Overlay
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -108,7 +124,6 @@ class CustomResPageHead extends StatelessWidget {
             ),
           ),
 
-          /// Back Button
           Positioned(
             top: 48.h,
             left: 16.w,
@@ -118,7 +133,6 @@ class CustomResPageHead extends StatelessWidget {
             ),
           ),
 
-          /// Favorite Button
           Positioned(
             top: 48.h,
             right: 16.w,
@@ -130,9 +144,13 @@ class CustomResPageHead extends StatelessWidget {
                 return CustomButtonResPage(
                   onTap: () {
                     if (isFav) {
-                      cubit.removeCardFromFav(restaurantData.id);
+                      cubit.removeCardFromFav(restaurantData.id,
+                        context.read<ProfileCubit>(),
+                      );
                     } else {
-                      cubit.addResToFavorites(restaurantData.id);
+                      cubit.addResToFavorites(restaurantData.id,
+                        context.read<ProfileCubit>(),
+                      );
                     }
                   },
                   icon: isFav ? Icons.favorite : Icons.favorite_border,
@@ -141,7 +159,6 @@ class CustomResPageHead extends StatelessWidget {
             ),
           ),
 
-          /// Bottom Content
           Positioned(
             bottom: 24.h,
             left: 24.w,
@@ -149,7 +166,6 @@ class CustomResPageHead extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// Open/Closed Badge
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 14.w,
@@ -172,7 +188,6 @@ class CustomResPageHead extends StatelessWidget {
                 ),
                 HeightSpace(height: 12),
 
-                /// Restaurant Name
                 Text(
                   restaurantData.name,
                   style: TextStyle(
@@ -184,7 +199,6 @@ class CustomResPageHead extends StatelessWidget {
 
                 HeightSpace(height: 8),
 
-                /// Rating Row
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -232,7 +246,6 @@ class CustomResPageHead extends StatelessWidget {
 
                 HeightSpace(height: 8),
 
-                /// Cuisine Types
                 SizedBox(
                   height: 20.h,
                   child: restaurantData.cuisineType.isEmpty

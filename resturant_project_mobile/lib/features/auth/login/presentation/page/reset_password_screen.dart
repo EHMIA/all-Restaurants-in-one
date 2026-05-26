@@ -5,12 +5,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:resturant_project/core/api/dio_consumer.dart';
 import 'package:resturant_project/core/widgets/custom_snack_bar.dart';
-import 'package:resturant_project/features/auth/login/presentation/page/widgets/custom_password_requirements_reset_password.dart';
 import 'package:resturant_project/features/auth/login/data/repository/reset_password_repo.dart';
 import 'package:resturant_project/core/routing/route_name.dart';
 import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/custom_text_field.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
+import '../../../../../core/constants/constant_validate.dart';
 import '../cubit/reset_password_cubit.dart';
 import '../cubit/reset_password_state.dart';
 import 'widgets/custom_reset_password_header.dart';
@@ -30,13 +30,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) return 'Password cannot be empty';
-    if (value.length < 8) return 'Must be at least 8 characters';
-    if (!value.contains(RegExp(r'[0-9]'))) return 'Must contain a number';
-    return null;
-  }
 
   void _handlePasswordReset(BuildContext context) {
     if (_formKey.currentState!.validate()) {
@@ -117,38 +110,68 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
                           CustomTextField(
                             controller: _newPasswordController,
-                            validator: _validatePassword,
-                            textFieldTitle: "New Password",
-                            hintText: "Enter new password",
-                            isPassword: true,
+                            validator: (value) => ConstantValidate()
+                                .validatePassword(value ?? ''),
+                            hintTextStyle: TextStyle(
+                              fontSize: 16.sp,
+                              color: AppColors.textFormFieldColor,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "Poppins",
+                            ),
+                            textStyle: TextStyle(
+                              fontSize: 16.sp,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textFormFieldColor,
+                            ),
                             prefixIcon: Icon(
                               Icons.lock_outline,
                               color: AppColors.textFormFieldColor,
                               size: 25.sp,
                             ),
+
+                            fillColor: Color(0xffF8FAFC),
+                            borderColor: AppColors.textFormFieldColor,
+                            radius: 8,
+
+                            textFieldTitle: "New Password",
+                            hintText: "Enter your new password",
+
+                            isPassword: true,
                           ),
+                          HeightSpace(height: 15),
 
-                          const CustomPasswordRequirementsResetPassword(),
-
+                          //const CustomPasswordRequirementsResetPassword(),
                           CustomTextField(
                             controller: _confirmPasswordController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please confirm your password';
-                              }
-                              if (value != _newPasswordController.text) {
-                                return 'Passwords do not match';
-                              }
-                              return null;
-                            },
-                            textFieldTitle: "Confirm Password",
-                            hintText: "Confirm your password",
-                            isPassword: true,
+                            validator: (value) => ConstantValidate()
+                                .validatePassword(value ?? ''),
+                            hintTextStyle: TextStyle(
+                              fontSize: 16.sp,
+                              color: AppColors.textFormFieldColor,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: "Poppins",
+                            ),
+                            textStyle: TextStyle(
+                              fontSize: 16.sp,
+                              fontFamily: "Poppins",
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textFormFieldColor,
+                            ),
                             prefixIcon: Icon(
                               Icons.lock_outline,
                               color: AppColors.textFormFieldColor,
                               size: 25.sp,
                             ),
+
+                            fillColor: Color(0xffF8FAFC),
+                            borderColor: AppColors.textFormFieldColor,
+                            radius: 8,
+
+                            textFieldTitle: "Comfirm Password",
+                            hintText: "Comfirm your new password",
+
+                            isPassword: true,
                           ),
 
                           const HeightSpace(height: 32),

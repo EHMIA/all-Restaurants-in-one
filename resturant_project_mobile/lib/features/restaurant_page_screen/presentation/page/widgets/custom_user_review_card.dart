@@ -127,7 +127,6 @@ class _CustomUserReviewCardState extends State<CustomUserReviewCard> {
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: List.generate(5, (index) {
-                                // تحديد أي أيقونة نجمة سنعرض
                                 IconData iconData;
                                 if (widget.rating >= index + 1) {
                                   iconData = Icons.star;

@@ -16,4 +16,6 @@ class RouteName {
   static const splashScreen = '/splashScreen';
   static const editProfileScreen = '/editProfileScreen';
   static const settingsScreen = '/settingsScreen';
+  static const changePasswordScreen = '/changePasswordScreen';
+  static const contactUsScreen = '/contactUsScreen';
 }

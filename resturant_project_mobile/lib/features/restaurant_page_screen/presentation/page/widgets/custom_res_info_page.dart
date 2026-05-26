@@ -6,7 +6,6 @@ import 'package:resturant_project/core/styles/app_colors.dart';
 import 'package:resturant_project/core/widgets/spacing_widgets.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_main_data_cubit.dart';
 import 'package:resturant_project/features/restaurant_page_screen/presentation/cubit/restaurant_main_data_state.dart';
-import 'package:resturant_project/features/restaurant_page_screen/presentation/page/widgets/restaurant_info_shimmer_loading.dart';
 
 class CustomResInfoPage extends StatelessWidget {
   const CustomResInfoPage({super.key, required this.restaurant});
@@ -14,11 +13,14 @@ class CustomResInfoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use the Cubit from parent (CustomResTabBarPage)
     return BlocBuilder<RestaurantMainDataCubit, RestaurantMainDataState>(
       builder: (context, state) {
         if (state is RestaurantMainDataLoading) {
-          return const RestaurantInfoShimmerLoading();
+          return Center(
+            child: const CircularProgressIndicator(
+              color: AppColors.primaryColor,
+            ),
+          );
         }
         if (state is RestaurantMainDataError) {
           return Center(
@@ -52,7 +54,6 @@ class CustomResInfoPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // General Information Section
                   Text(
                     'General Information',
                     style: TextStyle(
@@ -64,6 +65,7 @@ class CustomResInfoPage extends StatelessWidget {
                   HeightSpace(height: 7),
                   Text(
                     info.description ?? 'No description available',
+                    textAlign: TextAlign.start,
                     style: TextStyle(
                       fontFamily: "Poppins",
                       fontSize: 14.sp,
@@ -74,7 +76,6 @@ class CustomResInfoPage extends StatelessWidget {
                   ),
                   HeightSpace(height: 24),
 
-                  // Location Section
                   Text(
                     'Location',
                     style: TextStyle(
@@ -103,7 +104,6 @@ class CustomResInfoPage extends StatelessWidget {
                   ),
                   HeightSpace(height: 24),
 
-                  // Opening Hours Section
                   Text(
                     'Opening Hours',
                     style: TextStyle(
@@ -171,7 +171,6 @@ class CustomResInfoPage extends StatelessWidget {
                   ),
                   HeightSpace(height: 24),
 
-                  // Contact Information Section
                   Text(
                     'Contact Information',
                     style: TextStyle(
@@ -217,7 +216,6 @@ class CustomResInfoPage extends StatelessWidget {
                     ),
                   HeightSpace(height: 24),
 
-                  // Social Media Section
                   if (info.facebookLink != null)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

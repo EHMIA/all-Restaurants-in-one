@@ -12,7 +12,7 @@ class FavoriteEmptyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      backgroundColor: AppColors.backgroundWhiteColor,
       body: Column(
         children: [
           SizedBox(

@@ -34,6 +34,7 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
       child: SizedBox(
         width: 288.w,
         child: Card(
+          color: AppColors.backgroundWhiteColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24.r),
           ),
@@ -47,9 +48,7 @@ class CustomFeaturedRestaurantsCard extends StatelessWidget {
                 child: Stack(
                   children: [
                     CachedNetworkImage(
-                      imageUrl: 
-                           image??
-                           AppAssets.homeImage,
+                      imageUrl: image ?? AppAssets.homeImage,
 
                       width: double.infinity,
                       height: double.infinity,

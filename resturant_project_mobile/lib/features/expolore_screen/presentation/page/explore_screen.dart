@@ -110,7 +110,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
 
         if (state is ExploreLoading) {
           return Scaffold(
-            backgroundColor: AppColors.backgoroundColor,
+            backgroundColor: AppColors.backgroundWhiteColor,
             appBar: _buildAppBar(),
             body: const Center(
               child: CircularProgressIndicator(color: AppColors.primaryColor),
@@ -122,12 +122,11 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
         }
         final favCubit = context.watch<FavoriteCubit>();
         final results = cubit.getFilteredRestaurants();
-        
-        
+
         final hasActiveFilter = state.openOnly || state.minRating != null;
 
         return Scaffold(
-          backgroundColor: AppColors.backgoroundColor,
+          backgroundColor: AppColors.backgroundWhiteColor,
           appBar: _buildAppBar(),
           body: SingleChildScrollView(
             child: Padding(
@@ -137,7 +136,6 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                 children: [
                   HeightSpace(height: 16),
 
-                  // Search + Filter row
                   Row(
                     children: [
                       Expanded(
@@ -222,6 +220,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                           itemBuilder: (context, index) {
                             final res = results[index];
                             return CustomListCards(
+                              haveReview: true,
                               onTap: () {
                                 GoRouter.of(context).pushNamed(
                                   RouteName.restaurantScreen,
@@ -235,6 +234,7 @@ class _ExploreScreenContentState extends State<_ExploreScreenContent> {
                               numReviews: res.reviewsCount.toString(),
                               resRate: res.rating.toString(),
                               categories: res.cuisineType,
+                              
                             );
                           },
                         ),

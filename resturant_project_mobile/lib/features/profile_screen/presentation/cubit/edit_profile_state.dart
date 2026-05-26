@@ -40,8 +40,6 @@ class NotificationsToggled extends EditProfileState {
   NotificationsToggled({required this.isEnabled});
 }
 
-class PasswordChangeInitiated extends EditProfileState {}
-
 class DeleteProfilePictureLoading extends EditProfileState {}
 
 class DeleteProfilePictureSuccess extends EditProfileState {
@@ -54,14 +52,4 @@ class DeleteProfilePictureError extends EditProfileState {
   DeleteProfilePictureError({required this.error});
 }
 
-class ChangePasswordLoading extends EditProfileState {}
 
-class ChangePasswordSuccess extends EditProfileState {
-  final String message;
-  ChangePasswordSuccess({required this.message});
-}
-
-class ChangePasswordError extends EditProfileState {
-  final String error;
-  ChangePasswordError({required this.error});
-}

@@ -19,18 +19,19 @@ class CustomListCards extends StatefulWidget {
     this.onTap,
     required this.isFavorite,
     this.isOpen,
-    this.onFavoriteToggle,
+    this.onFavoriteToggle, required this.haveReview,
   });
 
   final String? image;
   final String? resName;
   final String? resRate;
   final String? numReviews;
-final List<String>? categories;
+  final List<String>? categories;
   final void Function()? onTap;
   final bool isFavorite;
   final bool? isOpen;
   final void Function()? onFavoriteToggle;
+  final bool haveReview;
 
   @override
   State<CustomListCards> createState() => _CustomListCardsState();
@@ -141,13 +142,14 @@ class _CustomListCardsState extends State<CustomListCards> {
                         ),
                       ),
                       WidthSpace(width: 4),
-                      Text(
-                        '(${widget.numReviews ?? "0"})',
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          color: Color(0xff94A3B8),
+                      if (widget.haveReview)
+                        Text(
+                          '(${widget.numReviews ?? "0"})',
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            color: Color(0xff94A3B8),
+                          ),
                         ),
-                      ),
                     ],
                   ),
                   HeightSpace(height: 4.h),
@@ -173,7 +175,6 @@ class _CustomListCardsState extends State<CustomListCards> {
                       },
                     ),
                   ),
-                  
                 ],
               ),
             ),
