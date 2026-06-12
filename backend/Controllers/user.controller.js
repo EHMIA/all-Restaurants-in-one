@@ -56,17 +56,17 @@ const getAllUsers = asyncHandler(async (req, res) => {
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit),
-        Users.countDocuments(conditions), // عد نتائج البحث فقط (عشان الصفحات)
-        Users.countDocuments({})         // عد كل اليوزرز في الداتابيز (بدون شروط)
+        Users.countDocuments(conditions), 
+        Users.countDocuments({})         
     ]);
 
     res.status(200).json({
         success: true,
         data: users,
         meta: {
-            totalInDatabase: absoluteTotal, // ده الرقم اللي هيتحط في خانة "Total Users" فوق في الـ Figma
-            foundResults: filteredCount,    // ده عدد النتائج اللي طلعت من البحث
-            pagesCount: Math.ceil(filteredCount / limit), // الصفحات بتتحسب دايماً على قد اللي لقيناه بس
+            totalInDatabase: absoluteTotal, // "Total Users" 
+            foundResults: filteredCount,    // "Found Users" based on search
+            pagesCount: Math.ceil(filteredCount / limit), 
             currentPage: page,
             limit
         }
