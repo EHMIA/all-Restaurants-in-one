@@ -20,7 +20,10 @@ import ReviewsRoutes from "../backend/Routes/reviews.route.js";
 import restaurantDataRoutes from "../backend/Routes/restaurantData.route.js";
 import notificationRoutes from "../backend/Routes/notification.route.js";
 const app = express();
-app.use(cors());
+app.use(cors(({
+    origin: 'https://akiel-front.vercel.app',
+    credentials: true
+})));
 app.use(json());
 app.use(cookieParser());
 
