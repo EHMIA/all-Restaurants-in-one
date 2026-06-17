@@ -31,7 +31,7 @@ export default function Sidebar() {
                 <div className="hidden h-auto w-full rounded-xl bg-gray-50 grow md:block"></div>
 
                 <Link
-                    to={`/profile/${user?._id}`}
+                    to={`/profile/${user?.id}`}
                     className="flex h-14 grow items-center justify-center gap-3 rounded-xl text-sm font-medium bg-gray-50 hover:bg-gray-100 hover:text-primary md:flex-none md:justify-start md:p-3 transition-all shrink-0"
                 >
                     {/* User Avatar */}

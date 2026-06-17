@@ -23,7 +23,7 @@ Before you begin, ensure you have the following installed:
 **1. Clone the Repository:**
 First, clone the specific branch of the project:
 ```bash
-git clone https://github.com/Youstina-Edward-70/Akiel_Front.git
+git clone -b frontend https://github.com/EHMIA/all-Restaurants-in-one.git
 ```
 
 **2. Navigate to the Frontend Directory:**
